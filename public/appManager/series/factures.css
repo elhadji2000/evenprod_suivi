@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    color: #1c1c1c;
+    padding: 20px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    margin: 0;
+    color: #1c1c1c;
+}
+
+.btn-add {
+    background: #b30000;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.btn-add:hover {
+    background: #800000;
+}
+
+.btn-view {
+    background: #333;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.btn-view:hover {
+    background: #000;
+}
+
+table.dataTable thead {
+    background: #b30000;
+    color: white;
+}
+
+table.dataTable tbody tr:hover {
+    background: #ffe5e5;
+}
+
+.table-container {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Statuts colorés */
+.status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.85em;
+    text-transform: capitalize;
+}
+
+.status.payé {
+    background: #28a745; /* Vert */
+}
+
+.status.en_attente {
+    background: #ffc107; /* Jaune */
+}
+
+.status.accepté {
+    background: #007bff; /* Bleu */
+}
+
+.status.refusé {
+    background: #dc3545; /* Rouge */
+}

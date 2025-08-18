@@ -1,0 +1,30 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar-brand img {
+    height: 45px;
+}
+
+.nav-link {
+    color: #333 !important;
+    font-weight: 500;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.nav-link:hover {
+    color: #700808cb !important;
+}
+
+.user-name {
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .navbar-collapse {
+        background: #f8f9fa;
+        padding: 10px;
+    }
+}

@@ -1,0 +1,57 @@
+<head>
+    <link rel="stylesheet" href="users1.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<?php include '../../includes/header.php'; ?>
+<section id="team" class="section bg-gray-100">
+    <div class="container">
+        <div class="row section-heading justify-content-center text-center wow fadeInUp" data-wow-duration="0.3s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.3s; animation-delay: 0.3s; animation-name: fadeInUp;">
+            <div class="col-lg-8 col-xl-6">
+                <h3 class="h1 bg-primary-after after-50px pb-3 mb-3">Our Advisors</h3>
+                <div class="lead">Mombo is a HTML5 template based on </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-sm-6 my-3 wow fadeInUp" data-wow-duration="0.3s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.3s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                <div class="hover-top-in text-center">
+                    <div class="overflow-hidden z-index-1 position-relative px-5"><img class="rounded-circle border border-5 border-white shadow" src="https://bootdey.com/img/Content/avatar/avatar1.png" title="" alt=""></div>
+                    <div class="mx-2 mx-xl-3 shadow rounded-3 position-relative mt-n4 bg-white p-4 pt-6 mx-4 text-center hover-top--in">
+                        <h6 class="fw-700 dark-color mb-1">Nancy Bayers</h6><small>Co-Founder</small>
+                        <div class="pt-2"><a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-facebook"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-twitter"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white"
+                                href="#"><i class="bi bi-linkedin"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-instagram"></i></a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 my-3 wow fadeInUp" data-wow-duration="0.3s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.3s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                <div class="hover-top-in text-center">
+                    <div class="overflow-hidden z-index-1 position-relative px-5"><img class="rounded-circle border border-5 border-white shadow" src="https://bootdey.com/img/Content/avatar/avatar2.png" title="" alt=""></div>
+                    <div class="mx-2 mx-xl-3 shadow rounded-3 position-relative mt-n4 bg-white p-4 pt-6 mx-4 text-center hover-top--in">
+                        <h6 class="fw-700 dark-color mb-1">Nancy Bayers</h6><small>Co-Founder</small>
+                        <div class="pt-2"><a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-facebook"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-twitter"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white"
+                                href="#"><i class="bi bi-linkedin"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-instagram"></i></a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 my-3 wow fadeInUp" data-wow-duration="0.3s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.3s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                <div class="hover-top-in text-center">
+                    <div class="overflow-hidden z-index-1 position-relative px-5"><img class="rounded-circle border border-5 border-white shadow" src="https://bootdey.com/img/Content/avatar/avatar3.png" title="" alt=""></div>
+                    <div class="mx-2 mx-xl-3 shadow rounded-3 position-relative mt-n4 bg-white p-4 pt-6 mx-4 text-center hover-top--in">
+                        <h6 class="fw-700 dark-color mb-1">Nancy Bayers</h6><small>Co-Founder</small>
+                        <div class="pt-2"><a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-facebook"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-twitter"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white"
+                                href="#"><i class="bi bi-linkedin"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-instagram"></i></a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 my-3 wow fadeInUp" data-wow-duration="0.3s" data-wow-delay="0.4s" style="visibility: visible; animation-duration: 0.3s; animation-delay: 0.4s; animation-name: fadeInUp;">
+                <div class="hover-top-in text-center">
+                    <div class="overflow-hidden z-index-1 position-relative px-5"><img class="rounded-circle border border-5 border-white shadow" src="https://bootdey.com/img/Content/avatar/avatar4.png" title="" alt=""></div>
+                    <div class="mx-2 mx-xl-3 shadow rounded-3 position-relative mt-n4 bg-white p-4 pt-6 mx-4 text-center hover-top--in">
+                        <h6 class="fw-700 dark-color mb-1">Nancy Bayers</h6><small>Co-Founder</small>
+                        <div class="pt-2"><a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-facebook"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-twitter"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white"
+                                href="#"><i class="bi bi-linkedin"></i></a> <a class="icon-sm bg-primary rounded-circle me-1 text-white" href="#"><i class="bi bi-instagram"></i></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

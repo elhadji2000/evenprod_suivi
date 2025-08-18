@@ -1,0 +1,47 @@
+.team{
+    border-top: 1px solid #e6e6e6;
+	padding-bottom: 60px;
+}
+.panel-shadow{
+    box-shadow: rgba(0, 0, 0, 0.3) 7px 7px 7px;
+}
+.team .team-member{
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.team .team-member img{
+	max-width: 55px;
+	float: left;
+	border: 1px solid #f5f5f5;
+	border-radius: 5px;
+}
+
+.team .team-member .member-details{
+	margin-left: 65px;
+}
+
+.team .team-member .member-details h4{
+	margin: 0;
+	margin-bottom: 3px;
+	padding-top: 9px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.team .team-member .member-details h4 a{
+	color: #787878;
+}
+
+.team .team-member .member-details span{
+	display: block;
+	margin-bottom: 2px;
+	font-size: 12px;
+	color: #aaaaaa;
+}
+.img-fixed {
+    width: 100px;       /* Largeur fixe */
+    height: 100px;      /* Hauteur fixe */
+    object-fit: cover;  /* Recadre l'image sans la déformer */
+    border: 5px solid white; /* Bordure blanche si besoin */
+}
