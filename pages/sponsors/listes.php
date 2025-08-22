@@ -15,38 +15,35 @@
     </div>
 
     <div class="row">
+        <!-- Sponsor 1 -->
         <div class="col-xl-12">
             <div class="card mb-3 card-body">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <a href="#!.html">
-                            <img src="../../assets/images/Coca.png" class="width-90 rounded-3"
-                                alt="">
+                        <a href="details_spg.php?id=1">
+                            <img src="../../assets/images/Coca.png" class="width-90 rounded-3" alt="Coca Cola">
                         </a>
                     </div>
                     <div class="col">
                         <div class="overflow-hidden flex-nowrap">
                             <h6 class="mb-1">
-                                <a href="#!" class="text-reset">CRM dashboard landing page</a>
+                                <a href="details_spg.php?id=1" class="text-reset">Coca Cola</a>
                             </h6>
                             <span class="text-muted d-block mb-2 small">
-                                Updated 2 Hours Ago
+                                Dernière mise à jour : il y a 2 heures
                             </span>
                             <div class="row align-items-center">
                                 <div class="col-12">
                                     <div class="row align-items-center g-0">
                                         <div class="col-auto">
-                                            <small class="me-2">45%</small>
+                                            <small class="me-2">45% versé</small>
                                         </div>
                                         <div class="col">
-
-                                            <!-- Progress bar -->
                                             <div class="progress bg-tint-success" style="height: 4px;">
                                                 <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 45%;" aria-valuenow="65" aria-valuemin="0"
+                                                    style="width: 45%;" aria-valuenow="45" aria-valuemin="0"
                                                     aria-valuemax="100"></div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -57,39 +54,35 @@
             </div>
         </div>
 
-
+        <!-- Sponsor 2 -->
         <div class="col-xl-12">
             <div class="card mb-3 card-body">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <a href="#!.html">
-                            <img src="../../assets/images/Pepsi-logo.png"  class="width-90 rounded-3"
-                                alt="">
+                        <a href="details_spg.php?id=2">
+                            <img src="../../assets/images/Pepsi-logo.png" class="width-90 rounded-3" alt="Pepsi">
                         </a>
                     </div>
                     <div class="col">
                         <div class="overflow-hidden flex-nowrap">
                             <h6 class="mb-1">
-                                <a href="#!" class="text-reset">CRM dashboard landing page</a>
+                                <a href="details_spg.php?id=2" class="text-reset">Pepsi</a>
                             </h6>
                             <span class="text-muted d-block mb-2 small">
-                                Updated 2 Hours Ago
+                                Dernière mise à jour : il y a 5 heures
                             </span>
                             <div class="row align-items-center">
                                 <div class="col-12">
                                     <div class="row align-items-center g-0">
                                         <div class="col-auto">
-                                            <small class="me-2">55%</small>
+                                            <small class="me-2">55% versé</small>
                                         </div>
                                         <div class="col">
-
-                                            <!-- Progress bar -->
                                             <div class="progress bg-tint-success" style="height: 4px;">
                                                 <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 55%;" aria-valuenow="65" aria-valuemin="0"
+                                                    style="width: 55%;" aria-valuenow="55" aria-valuemin="0"
                                                     aria-valuemax="100"></div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -100,39 +93,35 @@
             </div>
         </div>
 
-
+        <!-- Sponsor 3 -->
         <div class="col-xl-12">
             <div class="card mb-3 card-body">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <a href="#!.html">
-                            <img src="../../assets/images/samsung.jpg" class="width-90 rounded-3"
-                                alt="">
+                        <a href="details_spg.php?id=3">
+                            <img src="../../assets/images/samsung.jpg" class="width-90 rounded-3" alt="Samsung">
                         </a>
                     </div>
                     <div class="col">
                         <div class="overflow-hidden flex-nowrap">
                             <h6 class="mb-1">
-                                <a href="#!" class="text-reset">CRM dashboard landing page</a>
+                                <a href="details_spg.php?id=3" class="text-reset">Samsung</a>
                             </h6>
                             <span class="text-muted d-block mb-2 small">
-                                Updated 2 Hours Ago
+                                Dernière mise à jour : hier
                             </span>
                             <div class="row align-items-center">
                                 <div class="col-12">
                                     <div class="row align-items-center g-0">
                                         <div class="col-auto">
-                                            <small class="me-2">25%</small>
+                                            <small class="me-2">25% versé</small>
                                         </div>
                                         <div class="col">
-
-                                            <!-- Progress bar -->
                                             <div class="progress bg-tint-success" style="height: 4px;">
                                                 <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 25%;" aria-valuenow="65" aria-valuemin="0"
+                                                    style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
                                                     aria-valuemax="100"></div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -143,39 +132,35 @@
             </div>
         </div>
 
-
+        <!-- Sponsor 4 -->
         <div class="col-xl-12">
             <div class="card mb-3 card-body">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <a href="#!.html">
-                            <img src="../../assets/images/logo.jpg" class="width-90 rounded-3"
-                                alt="">
+                        <a href="details_spg.php?id=4">
+                            <img src="../../assets/images/logo.jpg" class="width-90 rounded-3" alt="Autre Sponsor">
                         </a>
                     </div>
                     <div class="col">
                         <div class="overflow-hidden flex-nowrap">
                             <h6 class="mb-1">
-                                <a href="#!" class="text-reset">CRM dashboard landing page</a>
+                                <a href="details_spg.php?id=4" class="text-reset">Autre Sponsor</a>
                             </h6>
                             <span class="text-muted d-block mb-2 small">
-                                Updated 2 Hours Ago
+                                Dernière mise à jour : il y a 3 jours
                             </span>
                             <div class="row align-items-center">
                                 <div class="col-12">
                                     <div class="row align-items-center g-0">
                                         <div class="col-auto">
-                                            <small class="me-2">65%</small>
+                                            <small class="me-2">65% versé</small>
                                         </div>
                                         <div class="col">
-
-                                            <!-- Progress bar -->
                                             <div class="progress bg-tint-success" style="height: 4px;">
                                                 <div class="progress-bar bg-success" role="progressbar"
                                                     style="width: 65%;" aria-valuenow="65" aria-valuemin="0"
                                                     aria-valuemax="100"></div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>

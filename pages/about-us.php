@@ -36,32 +36,31 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-8 mb-5 mt-5">
-                        <h3 style="color:white;">The Executive Team</h3>
+                        <h3 style="color:white;">Liste des Séries</h3>
                         <p class="opacity-75 mb-0">
-                            There’s nothing I really wanted to do in life that I wasn’t able to get good at. That’s my
-                            skill.
+                            Retrouvez ici l’ensemble des séries disponibles avec leur description et accédez aux
+                            détails.
                         </p>
                     </div>
                 </div>
 
                 <div class="row g-4">
-                    <!-- Card 1 -->
+                    <!-- Série 1 -->
                     <div class="col-lg-6 col-12">
                         <div class="card shadow-sm border-0">
                             <div class="row g-0">
                                 <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/series1.jpg" class="card-img-fixed" alt="Emma Roberts">
+                                    <img src="../assets/images/series1.jpg" class="card-img-fixed" alt="Série 1">
                                 </div>
                                 <div class="col-lg-8 col-md-6 d-flex align-items-center">
                                     <div class="card-body">
-                                        <h5 class="card-title mb-1">Emma Roberts</h5>
+                                        <h5 class="card-title mb-1">Série 1 : L’Ombre du Passé</h5>
                                         <h6 class="mb-2">
-                                            <a href="http://localhost/projet_suivi/public/appManager/series/about.php" class="text-primary text-decoration-none">UI Designer</a>
+                                            <a href="../public/appManager/series/about.php?id=1" class="text-primary text-decoration-none">Genre :
+                                                Drame</a>
                                         </h6>
-
                                         <p class="card-text mb-0">
-                                            Artist is a term applied to a person who engages in an activity deemed to be
-                                            an art.
+                                            Une histoire captivante mêlant secrets de famille et quête de vérité.
                                         </p>
                                     </div>
                                 </div>
@@ -69,20 +68,23 @@
                         </div>
                     </div>
 
-                    <!-- Card 2 -->
+                    <!-- Série 2 -->
                     <div class="col-lg-6 col-12">
                         <div class="card shadow-sm border-0 mt-lg-0 mt-4">
                             <div class="row g-0">
                                 <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/images1.jpg" class="card-img-fixed" alt="William Pearce">
+                                    <img src="../assets/images/images1.jpg" class="card-img-fixed" alt="Série 2">
                                 </div>
                                 <div class="col-lg-8 col-md-6 d-flex align-items-center">
                                     <div class="card-body">
-                                        <h5 class="mb-1">William Pearce</h5>
-                                        <h6 class="text-primary mb-2">Boss</h6>
+                                        <h5 class="mb-1">Série 2 : Les Voyageurs</h5>
+                                        <h6 class="mb-2">
+                                            <a href="../public/appManager/series/about.php?id=2" class="text-primary text-decoration-none">Genre :
+                                                Aventure</a>
+                                        </h6>
                                         <p class="mb-0">
-                                            Artist is a term applied to a person who engages in an activity deemed to be
-                                            an art.
+                                            Suivez un groupe d’explorateurs dans des contrées mystérieuses et
+                                            dangereuses.
                                         </p>
                                     </div>
                                 </div>
@@ -93,20 +95,22 @@
 
                 <!-- Ligne suivante -->
                 <div class="row g-4 mt-4">
-                    <!-- Card 3 -->
+                    <!-- Série 3 -->
                     <div class="col-lg-6 col-12">
                         <div class="card shadow-sm border-0">
                             <div class="row g-0">
                                 <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/series3.jpg" class=" card-img-fixed" alt="Ivana Flow">
+                                    <img src="../assets/images/series3.jpg" class=" card-img-fixed" alt="Série 3">
                                 </div>
                                 <div class="col-lg-8 col-md-6 d-flex align-items-center">
                                     <div class="card-body">
-                                        <h5 class="mb-1">Ivana Flow</h5>
-                                        <h6 class="text-primary mb-2">Athlete</h6>
+                                        <h5 class="mb-1">Série 3 : Course Contre le Temps</h5>
+                                        <h6 class="mb-2">
+                                            <a href="../public/appManager/series/about.php?id=3" class="text-primary text-decoration-none">Genre :
+                                                Action</a>
+                                        </h6>
                                         <p class="mb-0">
-                                            Artist is a term applied to a person who engages in an activity deemed to be
-                                            an art.
+                                            Un thriller haletant où chaque seconde compte pour sauver des vies.
                                         </p>
                                     </div>
                                 </div>
@@ -114,20 +118,22 @@
                         </div>
                     </div>
 
-                    <!-- Card 4 -->
+                    <!-- Série 4 -->
                     <div class="col-lg-6 col-12">
                         <div class="card shadow-sm border-0 mt-lg-0 mt-4">
                             <div class="row g-0">
                                 <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/series2.jpg" class="card-img-fixed" alt="Marquez Garcia">
+                                    <img src="../assets/images/series2.jpg" class="card-img-fixed" alt="Série 4">
                                 </div>
                                 <div class="col-lg-8 col-md-6 d-flex align-items-center">
                                     <div class="card-body">
-                                        <h5 class="mb-1">Marquez Garcia</h5>
-                                        <h6 class="text-primary mb-2">JS Developer</h6>
+                                        <h5 class="mb-1">Série 4 : Horizons Lointains</h5>
+                                        <h6 class="mb-2">
+                                            <a href="../public/appManager/series/about.php?id=4" class="text-primary text-decoration-none">Genre :
+                                                Science-Fiction</a>
+                                        </h6>
                                         <p class="mb-0">
-                                            Artist is a term applied to a person who engages in an activity deemed to be
-                                            an art.
+                                            Une immersion dans un futur où la technologie redéfinit l’humanité.
                                         </p>
                                     </div>
                                 </div>
@@ -138,6 +144,7 @@
 
             </div>
         </section>
+
 
         <!-- Logos & Stats -->
         <section class="pt-4 pb-6" id="count-stats">

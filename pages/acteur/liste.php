@@ -1,11 +1,11 @@
 <head>
-    <link rel="stylesheet" href="acteurs1.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<?php include '../../../includes/header.php'; ?>
+<?php include '../../includes/header.php'; ?>
 
 <?php
-// Tableau PHP des acteurs
+// Tableau PHP des acteurs (exemple)
 $acteurs = [
     [
         'id' => 1,
@@ -27,6 +27,51 @@ $acteurs = [
     ],
     [
         'id' => 3,
+        'nom' => 'Jonty Augusto',
+        'role' => 'Secondaire',
+        'date' => '1985/02/20',
+        'pays' => 'France',
+        'tel' => '(987) 654-3210',
+        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
+    ],
+    [
+        'id' => 4,
+        'nom' => 'Jonty Augusto',
+        'role' => 'Secondaire',
+        'date' => '1985/02/20',
+        'pays' => 'France',
+        'tel' => '(987) 654-3210',
+        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
+    ],
+    [
+        'id' => 5,
+        'nom' => 'Jonty Augusto',
+        'role' => 'Secondaire',
+        'date' => '1985/02/20',
+        'pays' => 'France',
+        'tel' => '(987) 654-3210',
+        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
+    ],
+    [
+        'id' => 6,
+        'nom' => 'Jonty Augusto',
+        'role' => 'Secondaire',
+        'date' => '1985/02/20',
+        'pays' => 'France',
+        'tel' => '(987) 654-3210',
+        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
+    ],
+    [
+        'id' => 7,
+        'nom' => 'Jonty Augusto',
+        'role' => 'Secondaire',
+        'date' => '1985/02/20',
+        'pays' => 'France',
+        'tel' => '(987) 654-3210',
+        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
+    ],
+    [
+        'id' => 8,
         'nom' => 'Androkles Allen',
         'role' => 'Cameo',
         'date' => '1992/08/15',
@@ -34,22 +79,21 @@ $acteurs = [
         'tel' => '(555) 123-4567',
         'avatar' => 'https://bootdey.com/img/Content/avatar/avatar4.png'
     ]
-    // Ajoute d'autres acteurs ici
 ];
 ?>
 
 <div class="container">
     <div id="content" class="content p-0">
-        <!-- En-tête de la série / maison de production -->
+        <!-- En-tête des acteurs -->
         <div class="profile-header">
             <div class="profile-header-cover"></div>
             <div class="profile-header-content">
                 <div class="profile-header-img mb-4">
-                    <img src="../../../assets/images/series1.jpg" class="mb-4" alt="Avatar" />
+                    <img src="../../assets/images/logo.jpg" class="mb-4" alt="Acteurs" />
                 </div>
                 <div class="profile-header-info">
-                    <h4 class="m-t-sm">Nom de la Série / Maison de Production</h4>
-                    <p class="m-b-sm">Gérer les acteurs associés à cette série</p>
+                    <h4 class="m-t-sm">Gestion des Acteurs</h4>
+                    <p class="m-b-sm">Liste et gestion des acteurs de la plateforme</p>
                     <a href="ajouter_acteur.php" class="btn btn-xs btn-primary mb-2">
                         <i class="bi bi-person-plus"></i> Ajouter un Acteur
                     </a>
@@ -64,11 +108,14 @@ $acteurs = [
                     <ul class="friend-list clearfix">
                         <?php foreach ($acteurs as $acteur): ?>
                         <li>
-                            <a href="#" class="acteur-item" data-nom="<?= $acteur['nom']; ?>"
-                                data-role="<?= $acteur['role']; ?>" data-date="<?= $acteur['date']; ?>"
-                                data-pays="<?= $acteur['pays']; ?>" data-tel="<?= $acteur['tel']; ?>"
-                                data-avatar="<?= $acteur['avatar']; ?>">
-                                <div class="friend-img"><img src="<?= $acteur['avatar']; ?>" alt="" /></div>
+                            <a href="#" class="acteur-item"
+                               data-nom="<?= $acteur['nom']; ?>"
+                               data-role="<?= $acteur['role']; ?>"
+                               data-date="<?= $acteur['date']; ?>"
+                               data-pays="<?= $acteur['pays']; ?>"
+                               data-tel="<?= $acteur['tel']; ?>"
+                               data-avatar="<?= $acteur['avatar']; ?>">
+                                <div class="friend-img"><img src="<?= $acteur['avatar']; ?>" alt="Avatar" /></div>
                                 <div class="friend-info">
                                     <h4><?= $acteur['nom']; ?></h4>
                                     <p>Rôle : <?= $acteur['role']; ?></p>
@@ -115,14 +162,11 @@ const items = document.querySelectorAll('.acteur-item');
 items.forEach(item => {
     item.addEventListener('click', function(e) {
         e.preventDefault();
-        // Mise à jour des informations
         document.getElementById('info-nom').textContent = this.dataset.nom;
         document.getElementById('info-role').textContent = this.dataset.role;
         document.getElementById('info-date').textContent = this.dataset.date;
         document.getElementById('info-pays').textContent = this.dataset.pays;
         document.getElementById('info-tel').textContent = this.dataset.tel;
-
-        // Mise à jour de l'avatar
     });
 });
 </script>
