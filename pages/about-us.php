@@ -27,10 +27,9 @@
 
 </head>
 <?php include '../includes/header.php'; ?>
-
+<br>
 <body class="bg-light">
     <div class="container-fluid">
-
         <!-- Section équipe -->
         <section class="pb-5 bg-dark text-white">
             <div class="container">

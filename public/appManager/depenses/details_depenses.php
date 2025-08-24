@@ -47,7 +47,7 @@
     </table>
 
     <div class="mt-3">
-        <a href="ajouter_depense.php?type=<?php echo $type; ?>" class="btn btn-success">➕ Ajouter une Dépense</a>
+        <a href="add_depense.php?type=<?php echo $type; ?>" class="btn btn-success">➕ Ajouter une Dépense</a>
         <a href="depenses.php" class="btn btn-secondary">🔙 Retour aux Types</a>
     </div>
 </div>

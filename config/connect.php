@@ -15,14 +15,14 @@ if (!empty($_GET['email']) && !empty($_GET['mot_de_passe'])) {
         $_SESSION['contact'] = $row['contact'];
         $_SESSION['profil'] = $row['profil'];
         if ($row['profil'] == 'admin') {
-            header('Location: /projet_suivi/public/admin/index');
+            header('Location: ../pages/about-us.php');
             exit();
         } 
         else if ($row['profil'] == 'manager') {
-            header('Location: /projet_suivi/public/appManager/index');
+           header('Location: ../pages/about-us.php');
             exit();
         }  else {
-            header('Location: /projet_suivi');
+            header('Location: ../index');
             exit();
             }
         }

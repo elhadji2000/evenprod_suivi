@@ -111,7 +111,7 @@
         </div>
         <?php endif; ?>
 
-        <form method="get" action="config/connect">
+        <form method="get" action="public/appManager/series/home.php">
             <div class="mb-3">
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-person-fill"></i></span>

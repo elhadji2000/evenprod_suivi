@@ -53,7 +53,7 @@
                                             </li>
                                         </ul>
                                     </td>
-                                    <td><a href="depense.php?id=1" class="text-info"> Voir</a></td>
+                                    <td><a href="#" style="text-decoration:underline;" class="text-info">2 550 400 Fcfa</a></td>
                                     <td>
                                         <a href="edit_tournage.php?id=2" class="text-primary mr-2"
                                             title="Modifier">modif </a>
@@ -84,7 +84,7 @@
                                             </li>
                                         </ul>
                                     </td>
-                                    <td><a href="depense.php?id=2" class=""> Voir</a></td>
+                                    <td><a href="#" style="text-decoration:underline;" class="text-info">650 000 Fcfa</a></td>
                                     <td>
                                         <a href="edit_tournage.php?id=2" class="text-primary mr-2"
                                             title="Modifier">modif </a>

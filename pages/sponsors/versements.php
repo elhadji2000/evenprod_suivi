@@ -1,5 +1,6 @@
 <head>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
 <?php include '../../includes/header.php'; ?>
 
@@ -29,9 +30,9 @@
             </div>
         </div>
         <h2 class="mb-4">Détails des versements du contrat</h2>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered align-middle">
-                <thead class="table-dark">
+        <div class="table-container">
+            <table id="factureTable" class="display table table-bordered">
+                <thead class="table-warning">
                     <tr>
                         <th>#</th>
                         <th>Type de versement</th>
@@ -56,7 +57,7 @@
                             <td>{$v['type']}</td>
                             <td>{$v['montant']} F CFA</td>
                             <td>{$v['ref']}</td>
-                            <td><a href='pdfs/{$v['pdf']}' target='_blank' class='btn btn-sm btn-outline-primary'>📄 Voir pièce jointe</a></td>
+                            <td><a href='#' target='_blank' style='text-decoration:underline;' class='text-info'>Voir-pièce-jointe</a></td>
                           </tr>";
                     $i++;
                 }
@@ -66,3 +67,15 @@
         </div>
     </div>
 </body>
+<!-- jQuery + DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#factureTable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
+        }
+    });
+});
+</script>

@@ -10,7 +10,7 @@
         <hr class="hr-primary w-15 hr-xl ml-0 mb-5">
         <div class="row mb-5">
             <div class="col-md-6 order-md-2">
-                <img src="http://localhost/projet_suivi/assets/images/series1.jpg" alt="Personal Trainer 1"
+                <img src="<?php echo $url_base; ?>assets/images/series1.jpg" alt="Personal Trainer 1"
                     class="img-fixed">
             </div>
             <div class="col-md-6 flex-valign text-md-right">
@@ -32,7 +32,7 @@
         <hr class="hr-primary w-15 hr-xl ml-0 mb-5">
         <div class="row mb-5">
             <div class="col-md-6 text-md-right">
-                <img src="http://localhost/projet_suivi/assets/images/images1.jpg" alt="Personal Trainer 2"
+                <img src="<?php echo $url_base; ?>assets/images/images1.jpg" alt="Personal Trainer 2"
                     class="img-fixed">
             </div>
             <div class="col-md-6 flex-valign">
@@ -55,7 +55,7 @@
         <hr class="hr-primary w-15 hr-xl ml-0 mb-5">
         <div class="row mb-5">
             <div class="col-md-6 order-md-2">
-                <img src="http://localhost/projet_suivi/assets/images/series3.jpg" alt="Personal Trainer 3"
+                <img src="<?php echo $url_base; ?>assets/images/series3.jpg" alt="Personal Trainer 3"
                     class="img-fixed">
             </div>
             <div class="col-md-6 flex-valign text-md-right">
@@ -78,7 +78,7 @@
         <hr class="hr-primary w-15 hr-xl ml-0 mb-5">
         <div class="row mb-5">
             <div class="col-md-6 text-md-right">
-                <img src="http://localhost/projet_suivi/assets/images/series2.jpg" alt="Personal Trainer 4"
+                <img src="<?php echo $url_base; ?>assets/images/series2.jpg" alt="Personal Trainer 4"
                     class="img-fixed">
             </div>
             <div class="col-md-6 flex-valign">
