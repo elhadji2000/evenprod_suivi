@@ -22,7 +22,7 @@ function login($username, $password)
     $hashed_password = sha1($password);
 
     // Requête SQL modifiée pour vérifier si l'utilisateur est actif
-    $query = "SELECT * FROM `utilisateurs` WHERE `email` = ? AND `mot_de_passe` = ?";
+    $query = "SELECT * FROM `users` WHERE `email` = ? AND `mot_de_passe` = ?";
     
     // Préparer la requête pour éviter les injections SQL
     $stmt = $connexion->prepare($query);
@@ -38,5 +38,45 @@ function login($username, $password)
     
     return $user; // Retourne les informations si l'utilisateur est trouvé et actif, sinon retourne null
 }
+/**
+ * Récupère toutes les séries
+ *
+ * @return array Liste des séries sous forme de tableaux associatifs
+ */
+function getAllSeries() {
+    global $connexion;
 
+    $series = [];
+    $sql = "SELECT id, titre, type, description, logo FROM series ORDER BY id DESC";
+    $result = mysqli_query($connexion, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $series[] = $row;
+        }
+    }
+
+    return $series;
+}
+/**
+ * Récupère la dernière série ajoutée
+ *
+ * @return array|null Tableau associatif de la série ou null si aucune série
+ */
+function getLastSerie() {
+    global $connexion;
+
+    $sql = "SELECT id, titre, type, budget, description, logo 
+            FROM series 
+            ORDER BY id DESC 
+            LIMIT 1";
+
+    $result = mysqli_query($connexion, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    }
+
+    return null;
+}
 ?>

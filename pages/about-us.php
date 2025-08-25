@@ -26,8 +26,14 @@
     </style>
 
 </head>
+<?php
+    include '../config/fonction.php';
+
+    $series = getAllSeries(); // Appel de la fonction
+?>
 <?php include '../includes/header.php'; ?>
 <br>
+
 <body class="bg-light">
     <div class="container-fluid">
         <!-- Section équipe -->
@@ -44,105 +50,38 @@
                 </div>
 
                 <div class="row g-4">
-                    <!-- Série 1 -->
+                    <?php if (!empty($series)) : ?>
+                    <?php foreach ($series as $serie) : ?>
                     <div class="col-lg-6 col-12">
-                        <div class="card shadow-sm border-0">
+                        <div class="card shadow-sm border-0 mt-4">
                             <div class="row g-0">
                                 <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/series1.jpg" class="card-img-fixed" alt="Série 1">
+                                    <img src="../uploads/series/<?php echo htmlspecialchars($serie['logo']); ?>"
+                                        class="card-img-fixed" alt="<?php echo htmlspecialchars($serie['titre']); ?>">
                                 </div>
                                 <div class="col-lg-8 col-md-6 d-flex align-items-center">
                                     <div class="card-body">
-                                        <h5 class="card-title mb-1">Série 1 : L’Ombre du Passé</h5>
+                                        <h5 class="mb-1"><?php echo htmlspecialchars($serie['titre']); ?></h5>
                                         <h6 class="mb-2">
-                                            <a href="../public/appManager/series/about.php?id=1" class="text-primary text-decoration-none">Genre :
-                                                Drame</a>
+                                            <a href="../public/appManager/series/about.php?id=<?php echo $serie['id']; ?>"
+                                                class="text-primary text-decoration-none">
+                                                Genre : <?php echo htmlspecialchars($serie['type']); ?>
+                                            </a>
                                         </h6>
-                                        <p class="card-text mb-0">
-                                            Une histoire captivante mêlant secrets de famille et quête de vérité.
-                                        </p>
+                                        <p class="mb-0"><?php echo htmlspecialchars($serie['description']); ?></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Série 2 -->
-                    <div class="col-lg-6 col-12">
-                        <div class="card shadow-sm border-0 mt-lg-0 mt-4">
-                            <div class="row g-0">
-                                <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/images1.jpg" class="card-img-fixed" alt="Série 2">
-                                </div>
-                                <div class="col-lg-8 col-md-6 d-flex align-items-center">
-                                    <div class="card-body">
-                                        <h5 class="mb-1">Série 2 : Les Voyageurs</h5>
-                                        <h6 class="mb-2">
-                                            <a href="../public/appManager/series/about.php?id=2" class="text-primary text-decoration-none">Genre :
-                                                Aventure</a>
-                                        </h6>
-                                        <p class="mb-0">
-                                            Suivez un groupe d’explorateurs dans des contrées mystérieuses et
-                                            dangereuses.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <p class="text-white">Aucune série enregistrée pour le moment.</p>
+                    <?php endif; ?>
                 </div>
-
-                <!-- Ligne suivante -->
-                <div class="row g-4 mt-4">
-                    <!-- Série 3 -->
-                    <div class="col-lg-6 col-12">
-                        <div class="card shadow-sm border-0">
-                            <div class="row g-0">
-                                <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/series3.jpg" class=" card-img-fixed" alt="Série 3">
-                                </div>
-                                <div class="col-lg-8 col-md-6 d-flex align-items-center">
-                                    <div class="card-body">
-                                        <h5 class="mb-1">Série 3 : Course Contre le Temps</h5>
-                                        <h6 class="mb-2">
-                                            <a href="../public/appManager/series/about.php?id=3" class="text-primary text-decoration-none">Genre :
-                                                Action</a>
-                                        </h6>
-                                        <p class="mb-0">
-                                            Un thriller haletant où chaque seconde compte pour sauver des vies.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Série 4 -->
-                    <div class="col-lg-6 col-12">
-                        <div class="card shadow-sm border-0 mt-lg-0 mt-4">
-                            <div class="row g-0">
-                                <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../assets/images/series2.jpg" class="card-img-fixed" alt="Série 4">
-                                </div>
-                                <div class="col-lg-8 col-md-6 d-flex align-items-center">
-                                    <div class="card-body">
-                                        <h5 class="mb-1">Série 4 : Horizons Lointains</h5>
-                                        <h6 class="mb-2">
-                                            <a href="../public/appManager/series/about.php?id=4" class="text-primary text-decoration-none">Genre :
-                                                Science-Fiction</a>
-                                        </h6>
-                                        <p class="mb-0">
-                                            Une immersion dans un futur où la technologie redéfinit l’humanité.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
+
 
 
         <!-- Logos & Stats -->

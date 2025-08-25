@@ -12,13 +12,13 @@ if (!empty($_GET['email']) && !empty($_GET['mot_de_passe'])) {
         $_SESSION['email'] = $row['email'];
         $_SESSION['nom'] = $row['nom'];
         $_SESSION['prenom'] = $row['prenom'];
-        $_SESSION['contact'] = $row['contact'];
-        $_SESSION['profil'] = $row['profil'];
-        if ($row['profil'] == 'admin') {
+        $_SESSION['telephone'] = $row['telephone'];
+        $_SESSION['role'] = $row['role'];
+        if ($row['role'] == 'admin') {
             header('Location: ../pages/about-us.php');
             exit();
         } 
-        else if ($row['profil'] == 'manager') {
+        else if ($row['role'] == 'manager') {
            header('Location: ../pages/about-us.php');
             exit();
         }  else {

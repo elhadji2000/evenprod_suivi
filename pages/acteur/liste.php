@@ -3,83 +3,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <?php include '../../includes/header.php'; ?>
+<?php include '../../config/fonction.php'; ?>
 
 <?php
-// Tableau PHP des acteurs (exemple)
-$acteurs = [
-    [
-        'id' => 1,
-        'nom' => 'Sancho Aldo',
-        'role' => 'Principal',
-        'date' => '1990/05/12',
-        'pays' => 'France',
-        'tel' => '(123) 456-7890',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar2.png'
-    ],
-    [
-        'id' => 2,
-        'nom' => 'Jonty Augusto',
-        'role' => 'Secondaire',
-        'date' => '1985/02/20',
-        'pays' => 'France',
-        'tel' => '(987) 654-3210',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
-    ],
-    [
-        'id' => 3,
-        'nom' => 'Jonty Augusto',
-        'role' => 'Secondaire',
-        'date' => '1985/02/20',
-        'pays' => 'France',
-        'tel' => '(987) 654-3210',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
-    ],
-    [
-        'id' => 4,
-        'nom' => 'Jonty Augusto',
-        'role' => 'Secondaire',
-        'date' => '1985/02/20',
-        'pays' => 'France',
-        'tel' => '(987) 654-3210',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
-    ],
-    [
-        'id' => 5,
-        'nom' => 'Jonty Augusto',
-        'role' => 'Secondaire',
-        'date' => '1985/02/20',
-        'pays' => 'France',
-        'tel' => '(987) 654-3210',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
-    ],
-    [
-        'id' => 6,
-        'nom' => 'Jonty Augusto',
-        'role' => 'Secondaire',
-        'date' => '1985/02/20',
-        'pays' => 'France',
-        'tel' => '(987) 654-3210',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
-    ],
-    [
-        'id' => 7,
-        'nom' => 'Jonty Augusto',
-        'role' => 'Secondaire',
-        'date' => '1985/02/20',
-        'pays' => 'France',
-        'tel' => '(987) 654-3210',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar3.png'
-    ],
-    [
-        'id' => 8,
-        'nom' => 'Androkles Allen',
-        'role' => 'Cameo',
-        'date' => '1992/08/15',
-        'pays' => 'Belgique',
-        'tel' => '(555) 123-4567',
-        'avatar' => 'https://bootdey.com/img/Content/avatar/avatar4.png'
-    ]
-];
+// Récupération des acteurs depuis la BDD
+$sql = "SELECT id, nom, prenom, date_naissance, adresse, contact, photo FROM acteurs ORDER BY id DESC";
+$result = mysqli_query($connexion, $sql);
+
+$acteurs = [];
+if ($result && mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $acteurs[] = $row;
+    }
+}
 ?>
 
 <div class="container">
@@ -106,23 +42,29 @@ $acteurs = [
                 <!-- Liste des acteurs -->
                 <div class="col-md-8">
                     <ul class="friend-list clearfix">
+                        <?php if (!empty($acteurs)): ?>
                         <?php foreach ($acteurs as $acteur): ?>
                         <li>
-                            <a href="#" class="acteur-item"
-                               data-nom="<?= $acteur['nom']; ?>"
-                               data-role="<?= $acteur['role']; ?>"
-                               data-date="<?= $acteur['date']; ?>"
-                               data-pays="<?= $acteur['pays']; ?>"
-                               data-tel="<?= $acteur['tel']; ?>"
-                               data-avatar="<?= $acteur['avatar']; ?>">
-                                <div class="friend-img"><img src="<?= $acteur['avatar']; ?>" alt="Avatar" /></div>
+                            <a href="#" class="acteur-item" data-nom="<?= htmlspecialchars($acteur['nom']); ?>"
+                                data-date="<?= htmlspecialchars($acteur['date_naissance']); ?>"
+                                data-prenom="<?= htmlspecialchars($acteur['prenom']); ?>"
+                                data-pays="<?= htmlspecialchars($acteur['adresse']); ?>"
+                                data-tel="<?= htmlspecialchars($acteur['contact']); ?>"
+                                data-avatar="<?= htmlspecialchars($acteur['photo']); ?>">
+                                <div class="friend-img">
+                                    <img src="<?= !empty($acteur['photo']) ? "../../uploads/photos/" . htmlspecialchars($acteur['photo']) : 'https://bootdey.com/img/Content/avatar/avatar2.png'; ?>" alt="Avatar" />
+                                </div>
+
                                 <div class="friend-info">
-                                    <h4><?= $acteur['nom']; ?></h4>
-                                    <p>Rôle : <?= $acteur['role']; ?></p>
+                                    <h4><?= htmlspecialchars($acteur['prenom']); ?> <?= htmlspecialchars($acteur['nom']); ?></h4>
+                                    <p>Tel : <?= htmlspecialchars($acteur['contact']); ?></p>
                                 </div>
                             </a>
                         </li>
                         <?php endforeach; ?>
+                        <?php else: ?>
+                        <p>Aucun acteur trouvé.</p>
+                        <?php endif; ?>
                     </ul>
                 </div>
 
@@ -130,26 +72,31 @@ $acteurs = [
                 <div class="col-md-4 hidden-xs hidden-sm">
                     <ul class="profile-info-list" id="acteur-details">
                         <li class="title">INFORMATIONS ACTEUR</li>
-                        <li>
-                            <div class="field"><i class="bi bi-person-fill"></i> Nom :</div>
-                            <div class="value" id="info-nom"><?= $acteurs[0]['nom']; ?></div>
+                        <?php if (!empty($acteurs)): ?>
+                            <li>
+                            <div class="field"><i class="bi bi-person-fill"></i> prenom :</div>
+                            <div class="value" id="info-prenom"><?= htmlspecialchars($acteurs[0]['prenom']); ?></div>
                         </li>
                         <li>
-                            <div class="field"><i class="bi bi-award-fill"></i> Rôle :</div>
-                            <div class="value" id="info-role"><?= $acteurs[0]['role']; ?></div>
+                            <div class="field"><i class="bi bi-person-fill"></i> Nom :</div>
+                            <div class="value" id="info-nom"><?= htmlspecialchars($acteurs[0]['nom']); ?></div>
                         </li>
                         <li>
                             <div class="field"><i class="bi bi-calendar-fill"></i> Date de Naissance :</div>
-                            <div class="value" id="info-date"><?= $acteurs[0]['date']; ?></div>
+                            <div class="value" id="info-date"><?= htmlspecialchars($acteurs[0]['date_naissance']); ?>
+                            </div>
                         </li>
                         <li>
-                            <div class="field"><i class="bi bi-geo-alt-fill"></i> Pays :</div>
-                            <div class="value" id="info-pays"><?= $acteurs[0]['pays']; ?></div>
+                            <div class="field"><i class="bi bi-geo-alt-fill"></i> Adresse :</div>
+                            <div class="value" id="info-pays"><?= htmlspecialchars($acteurs[0]['adresse']); ?></div>
                         </li>
                         <li>
                             <div class="field"><i class="bi bi-telephone-fill"></i> Téléphone :</div>
-                            <div class="value" id="info-tel"><?= $acteurs[0]['tel']; ?></div>
+                            <div class="value" id="info-tel"><?= htmlspecialchars($acteurs[0]['contact']); ?></div>
                         </li>
+                        <?php else: ?>
+                        <li>Aucune information à afficher</li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
@@ -162,10 +109,10 @@ const items = document.querySelectorAll('.acteur-item');
 items.forEach(item => {
     item.addEventListener('click', function(e) {
         e.preventDefault();
+        document.getElementById('info-prenom').textContent = this.dataset.prenom;
         document.getElementById('info-nom').textContent = this.dataset.nom;
         document.getElementById('info-role').textContent = this.dataset.role;
         document.getElementById('info-date').textContent = this.dataset.date;
-        document.getElementById('info-pays').textContent = this.dataset.pays;
         document.getElementById('info-tel').textContent = this.dataset.tel;
     });
 });

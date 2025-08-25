@@ -4,97 +4,125 @@
         integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
 </head>
 <?php include '../../includes/header.php'; ?>
+<?php
+include '../../config/fonction.php'; 
+$lastSerie = getLastSerie(); // retourne la dernière série ajoutée
+?>
+
 <section class="section gray-bg" id="contactus">
     <div class="container">
         <div class="row">
             <div class="col-lg-6">
                 <div class="section-title">
                     <h2>Ajouter un acteur</h2>
-                    <p>Remplissez le formulaire ci-dessous pour enregistrer un nouvel acteur dans une série existante.
-                    </p>
+                    <p>Remplissez le formulaire ci-dessous pour enregistrer un nouvel acteur.</p>
                 </div>
+            </div>
+        </div>
+        <!-- ✅ Affichage des messages Bootstrap -->
+        <div class="row">
+            <div class="col-12">
+                <?php if(isset($_SESSION['success'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+                <?php unset($_SESSION['success']); ?>
+                <?php endif; ?>
+
+                <?php if(isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
             </div>
         </div>
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="/" method="post" class="contactform contact_form" id="contact_form">
-                        <div class="returnmessage valid-feedback p-15px-b"
-                            data-success="Your message has been received, We will contact you soon."></div>
-                        <div class="empty_notice invalid-feedback p-15px-b"><span>Please Fill Required Fields</span>
-                        </div>
+                    <form action="trait_acteur.php" method="post" enctype="multipart/form-data"
+                        class="contactform contact_form" id="contact_form">
                         <div class="row">
+                            <!-- Prénom -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input id="name" type="text" placeholder="Prenom" class="form-control">
+                                    <input type="text" name="prenom" placeholder="Prénom" class="form-control" required>
                                 </div>
                             </div>
+                            <!-- Nom -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input id="email" type="text" placeholder="Nom" class="form-control">
+                                    <input type="text" name="nom" placeholder="Nom" class="form-control" required>
                                 </div>
                             </div>
+                            <!-- Date de naissance -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input id="budget" type="text" placeholder="Email" class="form-control">
+                                    <input type="date" name="date_naissance" class="form-control" required>
                                 </div>
                             </div>
+                            <!-- Contact -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input id="budget" type="text" placeholder="Contact" class="form-control">
+                                    <input type="text" name="contact" placeholder="Contact" class="form-control"
+                                        required>
                                 </div>
                             </div>
+                            <!-- Adresse -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <!-- Input file caché -->
-                                    <input type="file" id="cv" name="cv" accept="image/*" class="form-control"
+                                    <input type="text" name="adresse" placeholder="Adresse" class="form-control"
+                                        required>
+                                </div>
+                            </div>
+                            <!-- CV PDF -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="file" id="cv" name="cv" accept="application/pdf" class="form-control"
                                         required hidden>
-
-                                    <!-- Label personnalisé -->
                                     <label for="cv" class="custom-file-label form-control">
-                                        <span><i class="fas fa-upload"></i> Choisir pdf</span>
+                                        <span><i class="fas fa-upload"></i> Choisir CV (PDF)</span>
                                         <span id="file-cv" class="file-name">Aucun fichier choisi</span>
                                     </label>
-
                                 </div>
                             </div>
+                            <!-- Photo -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <!-- Input file caché -->
-                                    <input type="file" id="photo" name="photo" accept="image/*"
-                                        class="form-control" required hidden>
-
-                                    <!-- Label personnalisé -->
+                                    <input type="file" id="photo" name="photo" accept="image/*" class="form-control"
+                                        required hidden>
                                     <label for="photo" class="custom-file-label form-control">
-                                        <span><i class="fas fa-upload"></i> Choisir
-                                            une photo</span>
+                                        <span><i class="fas fa-upload"></i> Choisir une photo</span>
                                         <span id="file-name" class="file-name">Aucun fichier choisi</span>
                                     </label>
-
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <textarea id="message" placeholder="Description" class="form-control"
-                                        rows="3"></textarea>
-                                </div>
-                            </div>
+                            <!-- Bouton -->
                             <div class="col-md-12">
                                 <div class="send">
-                                    <a id="send_message" class="px-btn theme" href="#"><span>ENREGISTRER</span> <i
-                                            class="arrow"></i></a>
+                                    <button type="submit" class="px-btn theme">
+                                        <span>ENREGISTRER</span> <i class="arrow"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <!-- Partie gauche : info dernière série -->
             <div class="col-md-5 col-lg-4 m-15px-tb">
                 <div class="contact-name">
                     <h5>Dernière série ajoutée</h5>
-                    <p>Nom : Breaking Bad</p>
-                    <p>Type : Drame</p>
-                    <p>Budget : 2M $</p>
+                    <?php if($lastSerie): ?>
+                    <p>Nom : <?php echo htmlspecialchars($lastSerie['titre']); ?></p>
+                    <p>Type : <?php echo htmlspecialchars($lastSerie['type']); ?></p>
+                    <p>Budget : <?php echo htmlspecialchars($lastSerie['budget']); ?></p>
+                    <?php else: ?>
+                    <p>Aucune série enregistrée pour le moment.</p>
+                    <?php endif; ?>
                 </div>
                 <div class="contact-name">
                     <h5>Conseil</h5>
@@ -105,27 +133,17 @@
         </div>
     </div>
 </section>
-<script>
-const inputFile = document.getElementById("cv");
-const fileName = document.getElementById("file-cv");
 
-inputFile.addEventListener("change", function() {
-    if (this.files && this.files.length > 0) {
-        fileName.textContent = this.files[0].name;
-    } else {
-        fileName.textContent = "Aucun fichier choisi";
-    }
+<script>
+const inputFileCV = document.getElementById("cv");
+const fileNameCV = document.getElementById("file-cv");
+inputFileCV.addEventListener("change", function() {
+    fileNameCV.textContent = this.files.length > 0 ? this.files[0].name : "Aucun fichier choisi";
 });
-</script>
-<script>
-const inputFile = document.getElementById("photo");
-const fileName = document.getElementById("file-name");
 
-inputFile.addEventListener("change", function() {
-    if (this.files && this.files.length > 0) {
-        fileName.textContent = this.files[0].name;
-    } else {
-        fileName.textContent = "Aucun fichier choisi";
-    }
+const inputFilePhoto = document.getElementById("photo");
+const fileNamePhoto = document.getElementById("file-name");
+inputFilePhoto.addEventListener("change", function() {
+    fileNamePhoto.textContent = this.files.length > 0 ? this.files[0].name : "Aucun fichier choisi";
 });
 </script>
