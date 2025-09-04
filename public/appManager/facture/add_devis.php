@@ -1,4 +1,44 @@
-<?php include '../../../includes/header.php'; ?>
+<?php include '../../../config/fonction.php';
+
+$serieId = $_GET['id'] ?? 0;
+$serie = getSerieById($serieId);
+$clients = getClients($connexion);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $client = $_POST['client'];
+    $serie_id = $_POST['serie']; // ⚡ récupérer depuis le formulaire
+    $date = $_POST['date'];
+    $description = $_POST['description'];
+
+    $libelles = $_POST['libelle'];
+    $prixUnitaires = $_POST['prix_unitaire'];
+    $quantites = $_POST['quantite'];
+    $montants = $_POST['montant'];
+
+    try {
+    $facture_id = ajouterFacture(
+        $connexion,
+        $client,
+        $serie_id,
+        $date,
+        $description,
+        $libelles,
+        $prixUnitaires,
+        $quantites,
+        $montants
+    );
+
+    echo "<script>
+            alert('Devis enregistré avec succès !');
+            window.location.href='all_devis_fac.php?id=" . $serie_id . "';
+          </script>";
+} catch (Exception $e) {
+    die($e->getMessage());
+}
+}
+ ?>
+
+ <?php include '../../../includes/header.php'; ?>
 <head>
     <link rel="stylesheet" href="<?php echo $url_base; ?>pages/acteur/add.css">
     <link rel="stylesheet" 
@@ -38,21 +78,23 @@
 
         <div class="row flex-row-reverse">
             <div class="contact-form">
-                <form action="ajouter_devis.php" method="post" enctype="multipart/form-data"
+                <form action="add_devis.php" method="post" enctype="multipart/form-data"
                       class="contactform contact_form" id="contact_form">
 
                     <!-- Client -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <select id="client" name="client" class="form-control" required>
-                                    <option value="">-- Sélectionnez un client --</option>
-                                    <option value="coca_cola">Coca Cola</option>
-                                    <option value="samsung">Samsung</option>
-                                    <option value="maggie">Maggie</option>
-                                </select>
+                        <input type="hidden" name="serie" value="<?php echo $serieId; ?>">
+                       <div class="col-md-6">
+                                <div class="form-group">
+                                    <select name="client" class="form-control">
+                                        <option value="">-- Sélectionnez un client (**) --</option>
+                                        <?php foreach($clients as $t): ?>
+                                        <option value="<?php echo $t['id']; ?>">
+                                            <?php echo htmlspecialchars($t['nom']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
                         <!-- Date -->
                         <div class="col-md-6">
                             <div class="form-group">

@@ -48,9 +48,9 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <a href="#" class="acteur-item" data-nom="<?= htmlspecialchars($acteur['nom']); ?>"
                                 data-date="<?= htmlspecialchars($acteur['date_naissance']); ?>"
                                 data-prenom="<?= htmlspecialchars($acteur['prenom']); ?>"
-                                data-pays="<?= htmlspecialchars($acteur['adresse']); ?>"
-                                data-tel="<?= htmlspecialchars($acteur['contact']); ?>"
-                                data-avatar="<?= htmlspecialchars($acteur['photo']); ?>">
+                                data-adresse="<?= htmlspecialchars($acteur['adresse']); ?>"
+                                data-contact="<?= htmlspecialchars($acteur['contact']); ?>"
+                                data-photo="<?= htmlspecialchars($acteur['photo']); ?>">
                                 <div class="friend-img">
                                     <img src="<?= !empty($acteur['photo']) ? "../../uploads/photos/" . htmlspecialchars($acteur['photo']) : 'https://bootdey.com/img/Content/avatar/avatar2.png'; ?>" alt="Avatar" />
                                 </div>
@@ -88,11 +88,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </li>
                         <li>
                             <div class="field"><i class="bi bi-geo-alt-fill"></i> Adresse :</div>
-                            <div class="value" id="info-pays"><?= htmlspecialchars($acteurs[0]['adresse']); ?></div>
+                            <div class="value" id="info-adresse"><?= htmlspecialchars($acteurs[0]['adresse']); ?></div>
                         </li>
                         <li>
                             <div class="field"><i class="bi bi-telephone-fill"></i> Téléphone :</div>
-                            <div class="value" id="info-tel"><?= htmlspecialchars($acteurs[0]['contact']); ?></div>
+                            <div class="value" id="info-contact"><?= htmlspecialchars($acteurs[0]['contact']); ?></div>
                         </li>
                         <?php else: ?>
                         <li>Aucune information à afficher</li>
@@ -111,9 +111,9 @@ items.forEach(item => {
         e.preventDefault();
         document.getElementById('info-prenom').textContent = this.dataset.prenom;
         document.getElementById('info-nom').textContent = this.dataset.nom;
-        document.getElementById('info-role').textContent = this.dataset.role;
         document.getElementById('info-date').textContent = this.dataset.date;
-        document.getElementById('info-tel').textContent = this.dataset.tel;
+        document.getElementById('info-adresse').textContent = this.dataset.adresse;
+        document.getElementById('info-contact').textContent = this.dataset.contact;
     });
 });
 </script>

@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($cvExt !== 'pdf') {
             $_SESSION['error'] = "Le CV doit être un fichier PDF.";
-            header("Location: trait_acteur.php");
+            header("Location: add_act.php");
             exit;
         }
 
@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!move_uploaded_file($cvTmp, $cvDestination)) {
             $_SESSION['error'] = "Erreur lors de l'upload du CV.";
-            header("Location: trait_acteur.php");
+            header("Location: add_act.php");
             exit;
         }
     } else {
         $_SESSION['error'] = "Veuillez sélectionner un CV.";
-        header("Location: trait_acteur.php");
+        header("Location: add_act.php");
         exit;
     }
 
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!in_array($photoExt, $allowed)) {
             $_SESSION['error'] = "La photo doit être au format jpg, jpeg, png ou gif.";
-            header("Location: trait_acteur.php");
+            header("Location: add_act.php");
             exit;
         }
 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!move_uploaded_file($photoTmp, $photoDestination)) {
             $_SESSION['error'] = "Erreur lors de l'upload de la photo.";
-            header("Location: trait_acteur.php");
+            header("Location: add_act.php");
             exit;
         }
     } else {
@@ -74,15 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (mysqli_query($connexion, $sql)) {
         $_SESSION['success'] = "L'acteur a été ajouté avec succès.";
-        header("Location: trait_acteur.php");
+        header("Location: add_act.php");
         exit;
     } else {
         $_SESSION['error'] = "Erreur SQL : " . mysqli_error($connexion);
-        header("Location: trait_acteur.php");
+        header("Location: add_act.php");
         exit;
     }
 
-    header("Location: trait_acteur.php");
+   header("Location: add_act.php");
     exit;
 }
 ?>

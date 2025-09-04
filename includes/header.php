@@ -18,6 +18,7 @@ $url_base ="http://localhost/projet_suivi/";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>evenprod</title>
+    <link rel="shortcut icon" href="<?php echo $url_base; ?>monde.svg" />
     <link href="<?php echo $url_base; ?>assets/bootstrap-5.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link id="pagestyle" href="<?php echo $url_base; ?>assets/css/material-kit.css?v=3.1.0" rel="stylesheet" />

@@ -1,174 +1,90 @@
+<?php
+include '../../config/fonction.php';
+
+$clients = getClients($connexion);
+?>
+
 <head>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        .client-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+        }
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        }
+        .client-logo {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            background: #f8f9fa;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .card-body h6 {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .card-footer {
+            font-size: 12px;
+        }
+    </style>
 </head>
+
 <?php include '../../includes/header.php'; ?>
 
-<div class="container">
-    <div class="row">
+<div class="container mt-4">
+    <div class="row mb-3">
         <div class="col-lg-8">
             <div class="section-title">
-                <h2>Liste des sponsors</h2>
-                <p>Retrouvez ci-dessous l’ensemble des sponsors enregistrés dans la plateforme.
-                    Vous pouvez consulter leurs informations, les modifier ou en ajouter de nouveaux.</p>
+                <h2>Liste des partenariats</h2>
+                <p>Clients, Sponsors et Partenaires enregistrés dans la plateforme.</p>
             </div>
+        </div>
+        <div class="col-lg-4 text-end">
+            <a href="add_spon.php" class="btn btn-warning">
+                <i class="fas fa-plus"></i> Ajouter
+            </a>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Sponsor 1 -->
-        <div class="col-xl-12">
-            <div class="card mb-3 card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <a href="details_spg.php?id=1">
-                            <img src="../../assets/images/Coca.png" class="width-90 rounded-3" alt="Coca Cola">
+    <div class="row g-3">
+        <?php if (!empty($clients)) : ?>
+            <?php foreach ($clients as $cl) : ?>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card client-card">
+                        <a href="details_client.php?id=<?= htmlspecialchars($cl['id']) ?>">
+                            <img src="<?= !empty($cl['logo']) ? '../../uploads/logos/' . htmlspecialchars($cl['logo']) : '../../assets/images/default_logo.png' ?>" 
+                                 class="client-logo" 
+                                 alt="<?= htmlspecialchars($cl['nom']) ?>">
                         </a>
-                    </div>
-                    <div class="col">
-                        <div class="overflow-hidden flex-nowrap">
-                            <h6 class="mb-1">
-                                <a href="details_spg.php?id=1" class="text-reset">Coca Cola</a>
+                        <div class="card-body">
+                            <h6 class="mb-1 text-truncate">
+                                <a href="details_client.php?id=<?= htmlspecialchars($cl['id']) ?>" class="text-dark text-decoration-none">
+                                    <?= htmlspecialchars($cl['nom']) ?>
+                                </a>
                             </h6>
-                            <span class="text-muted d-block mb-2 small">
-                                Dernière mise à jour : il y a 2 heures
+                            <span class="text-muted small d-block">
+                                <strong>NINEA :</strong> <?= htmlspecialchars($cl['ninea']) ?>
                             </span>
-                            <div class="row align-items-center">
-                                <div class="col-12">
-                                    <div class="row align-items-center g-0">
-                                        <div class="col-auto">
-                                            <small class="me-2">45% versé</small>
-                                        </div>
-                                        <div class="col">
-                                            <div class="progress bg-tint-success" style="height: 4px;">
-                                                <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 45%;" aria-valuenow="45" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <span class="text-muted small d-block mb-1">
+                                <strong>Nom :</strong> <?= ucfirst(htmlspecialchars($cl['nom'])) ?>
+                            </span>
+                            <p class="small text-muted text-truncate">
+                                <?= nl2br(htmlspecialchars($cl['contact'])) ?>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-light small text-muted">
+                            Ajouté le <?= date("d/m/Y", strtotime($cl['created_at'])) ?>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Sponsor 2 -->
-        <div class="col-xl-12">
-            <div class="card mb-3 card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <a href="details_spg.php?id=2">
-                            <img src="../../assets/images/Pepsi-logo.png" class="width-90 rounded-3" alt="Pepsi">
-                        </a>
-                    </div>
-                    <div class="col">
-                        <div class="overflow-hidden flex-nowrap">
-                            <h6 class="mb-1">
-                                <a href="details_spg.php?id=2" class="text-reset">Pepsi</a>
-                            </h6>
-                            <span class="text-muted d-block mb-2 small">
-                                Dernière mise à jour : il y a 5 heures
-                            </span>
-                            <div class="row align-items-center">
-                                <div class="col-12">
-                                    <div class="row align-items-center g-0">
-                                        <div class="col-auto">
-                                            <small class="me-2">55% versé</small>
-                                        </div>
-                                        <div class="col">
-                                            <div class="progress bg-tint-success" style="height: 4px;">
-                                                <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 55%;" aria-valuenow="55" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sponsor 3 -->
-        <div class="col-xl-12">
-            <div class="card mb-3 card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <a href="details_spg.php?id=3">
-                            <img src="../../assets/images/samsung.jpg" class="width-90 rounded-3" alt="Samsung">
-                        </a>
-                    </div>
-                    <div class="col">
-                        <div class="overflow-hidden flex-nowrap">
-                            <h6 class="mb-1">
-                                <a href="details_spg.php?id=3" class="text-reset">Samsung</a>
-                            </h6>
-                            <span class="text-muted d-block mb-2 small">
-                                Dernière mise à jour : hier
-                            </span>
-                            <div class="row align-items-center">
-                                <div class="col-12">
-                                    <div class="row align-items-center g-0">
-                                        <div class="col-auto">
-                                            <small class="me-2">25% versé</small>
-                                        </div>
-                                        <div class="col">
-                                            <div class="progress bg-tint-success" style="height: 4px;">
-                                                <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sponsor 4 -->
-        <div class="col-xl-12">
-            <div class="card mb-3 card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <a href="details_spg.php?id=4">
-                            <img src="../../assets/images/logo.jpg" class="width-90 rounded-3" alt="Autre Sponsor">
-                        </a>
-                    </div>
-                    <div class="col">
-                        <div class="overflow-hidden flex-nowrap">
-                            <h6 class="mb-1">
-                                <a href="details_spg.php?id=4" class="text-reset">Autre Sponsor</a>
-                            </h6>
-                            <span class="text-muted d-block mb-2 small">
-                                Dernière mise à jour : il y a 3 jours
-                            </span>
-                            <div class="row align-items-center">
-                                <div class="col-12">
-                                    <div class="row align-items-center g-0">
-                                        <div class="col-auto">
-                                            <small class="me-2">65% versé</small>
-                                        </div>
-                                        <div class="col">
-                                            <div class="progress bg-tint-success" style="height: 4px;">
-                                                <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: 65%;" aria-valuenow="65" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <p class="text-center">Aucun partenariat trouvé.</p>
+        <?php endif; ?>
     </div>
 </div>

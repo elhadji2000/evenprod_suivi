@@ -3,7 +3,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
         integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
 </head>
-<?php include '../includes/header.php'; ?>
+<?php include '../includes/header.php'; 
+include '../config/fonction.php'; 
+$lastSerie = getLastSerie();
+?>
 <link rel="stylesheet" href="add.css">
 <section class="section gray-bg" id="contactus">
     <div class="container">
@@ -89,14 +92,18 @@
             <!-- Partie droite (Aperçu) -->
             <div class="col-md-5 col-lg-4 m-15px-tb">
                 <div class="contact-name">
-                    <h5>Aperçu</h5>
-                    <p>Séries déjà enregistrées : 8</p>
-                    <p>Acteurs au total : 24</p>
+                    <h5>Dernière série ajoutée</h5>
+                    <?php if($lastSerie): ?>
+                    <p>Nom : <?php echo htmlspecialchars($lastSerie['titre']); ?></p>
+                    <p>Type : <?php echo htmlspecialchars($lastSerie['type']); ?></p>
+                    <p>Budget : <?php echo htmlspecialchars($lastSerie['budget']); ?></p>
+                    <?php else: ?>
+                    <p>Aucune série enregistrée pour le moment.</p>
+                    <?php endif; ?>
                 </div>
-                <div class="contact-name shortcut-links">
-                    <h5>Raccourcis</h5>
-                    <p><a href="#">Voir toutes les séries</a></p>
-                    <p><a href="#">Voir tous les acteurs</a></p>
+                <div class="contact-name">
+                    <h5>Conseil</h5>
+                    <p>Ajoutez d’abord la série avant d’ajouter ses acteurs.</p>
                 </div>
             </div>
         </div>

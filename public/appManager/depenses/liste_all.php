@@ -1,18 +1,25 @@
+<?php
+include '../../../config/fonction.php';
+
+$serieId = $_GET['id'] ?? 0; 
+$serie = getSerieById($serieId);
+$depenses = getDepensesBySerie($serieId);
+
+// Calcul du total
+$total = 0;
+foreach ($depenses as $d) {
+    $total += $d['montant'];
+}
+?>
+
 <?php include '../../../includes/header.php'; ?>
+
 <head>
     <link rel="stylesheet" href="<?php echo $url_base; ?>pages/acteur/add.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
         integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
 </head>
-<?php
-// Données factices pour test
-$data = [
-    ["type" => "Décor", "date" => "2025-01-05", "montant" => 250000, "tournage" => "Film", "justificatif" => "decor1.jpg", "description" => "Achat de matériels"],
-    ["type" => "Transport", "date" => "2025-02-10", "montant" => 85000, "tournage" => "Série TV", "justificatif" => "transport1.jpg", "description" => "Déplacement équipe"],
-    ["type" => "Cachets", "date" => "2025-03-01", "montant" => 120000, "tournage" => "Documentaire", "justificatif" => "cachets1.jpg", "description" => "Paiement comédiens"],
-];
-?>
 <section class="section gray-bg" id="contactus">
     <div class="container">
         <div class="row align-items-center mb-3">
@@ -23,7 +30,8 @@ $data = [
                 </div>
             </div>
             <div class="col-lg-4 text-end">
-                <a href="add_depense.php" class="btn btn-success">➕ Ajouter une Dépense</a>
+                <a href="add_depense.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="btn btn-success">➕
+                    Ajouter une Dépense</a>
             </div>
         </div>
 
@@ -35,7 +43,7 @@ $data = [
                             <thead class="table-warning">
                                 <tr>
                                     <th>#</th>
-                                    <th>Description</th>
+                                    <th>Libellé</th>
                                     <th>Type</th>
                                     <th>Date</th>
                                     <th>Montant</th>
@@ -45,23 +53,34 @@ $data = [
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $i=1; foreach ($data as $row): ?>
+                                <?php $i=1; foreach ($depenses as $row): ?>
                                 <tr>
                                     <td><?php echo $i++; ?></td>
-                                    <td><?php echo $row['description']; ?></td>
-                                    <td><?php echo $row['type']; ?></td>
-                                    <td><?php echo date('d/m/Y', strtotime($row['date'])); ?></td>
+                                    <td><?php echo $row['libelle'] ? $row['libelle'] : '<em>Aucun</em>'; ?></td>
+                                    <td><?php echo htmlspecialchars($row['type_depense']); ?></td>
+                                    <td><?php echo date('d/m/Y', strtotime($row['date_depense'])); ?></td>
                                     <td><?php echo number_format($row['montant'], 0, ',', ' '); ?> FCFA</td>
-                                    <td><?php echo $row['tournage']; ?></td>
-                                    <td><a href="#" target="_blank" style="text-decoration:underline;" class="text-info">Voir-pdf</a></td>
-                                    
+                                    <td><?php echo $row['tournage_reference'] ? $row['tournage_reference'] : '<em>Aucun</em>'; ?>
+                                    </td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="#" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                                        <?php if (!empty($row['justificatif'])): ?>
+                                        <a style="text-decoration:underline;" class="text-info" href="<?php echo $url_base . 'uploads/justificatifs/' . htmlspecialchars($row['justificatif']); ?>"
+                                            target="_blank">Voir justificatif</a>
+                                        <?php else: ?>
+                                        -
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="edit_depense.php?id=<?php echo $row['id']; ?>"
+                                            class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        <a href="delete_depense.php?id=<?php echo $row['id']; ?>"
+                                            class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?');"><i
+                                                class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -71,8 +90,8 @@ $data = [
             <div class="col-lg-12 mt-4">
                 <div class="contact-name">
                     <h5>Aperçu</h5>
-                    <p>Projet : FASSEMA</p>
-                    <p>Total des Dépenses : <strong>455 000 FCFA</strong></p>
+                    <p>SERIE : <?php echo htmlspecialchars($serie['titre']); ?></p>
+                    <p>Total des Dépenses : <strong><?php echo htmlspecialchars($total); ?> FCFA</strong></p>
                 </div>
             </div>
         </div>

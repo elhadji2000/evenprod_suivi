@@ -1,3 +1,22 @@
+<?php 
+include '../../config/fonction.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $ninea = $_POST['ninea'];
+    $nom = $_POST['nom'];
+    $contact = $_POST['contact'];
+    $email = $_POST['email'];
+    $logoFile = $_FILES['logo'];
+
+    if (ajouterPartenaire($ninea, $nom, $email, $contact, $logoFile)) {
+        // Redirection après succès
+        header("Location: listes.php?success=1");
+        exit;
+    } else {
+        echo "<p style='color:red'>Erreur lors de l’enregistrement du partenariat.</p>";
+    }
+}
+
+?>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
         integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -18,7 +37,7 @@
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="ajouter_partenariat.php" method="post" enctype="multipart/form-data"
+                    <form action="add_spon.php" method="post" enctype="multipart/form-data"
                         class="contactform contact_form" id="contact_form">
 
                         <div class="returnmessage valid-feedback p-15px-b"
@@ -57,22 +76,17 @@
                                 </div>
                             </div>
                             <!-- Type de partenariat (optionnel) -->
-                            <div class="col-md-6">
+                           <div class="col-md-6">
                                 <div class="form-group">
-                                    <select id="type" name="type" class="form-control" required>
-                                        <option value="">-- Sélectionnez un type --</option>
-                                        <option value="client">Client</option>
-                                        <option value="sponsor">Sponsor</option>
-                                        <option value="partenaire">Partenaire</option>
-                                    </select>
+                                    <input id="email" name="email" type="email" placeholder="E-mail"
+                                        class="form-control" required>
                                 </div>
                             </div>
                             <!-- Description -->
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <textarea id="description" name="description"
-                                        placeholder="Description du partenariat" class="form-control" rows="3"
-                                        required></textarea>
+                                    <input id="contact" name="contact" type="text" placeholder="Contact"
+                                        class="form-control" required>
                                 </div>
                             </div>
                             <!-- Bouton -->
@@ -91,12 +105,12 @@
             <div class="col-md-5 col-lg-4 m-15px-tb">
                 <div class="contact-name">
                     <h5>Aperçu</h5>
-                    <p>Partenariats enregistrés : 12</p>
-                    <p>Types actifs : Clients, Sponsors, Partenaires</p>
+                    <p>EVENPROD </p>
+                    <p>####</p>
                 </div>
                 <div class="contact-name shortcut-links">
                     <h5>Raccourcis</h5>
-                    <p><a href="#">Voir tous les partenariats</a></p>
+                    <p><a href="#">Voir tous</a></p>
                     <p><a href="#">Ajouter un sponsor</a></p>
                 </div>
             </div>

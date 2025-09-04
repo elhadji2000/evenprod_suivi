@@ -1,19 +1,17 @@
+<?php 
+include '../../../config/fonction.php';
+
+$serieId = $_GET['id'] ?? 0;
+$serie = getSerieById($serieId);
+$factures = getFacturesBySerieId($connexion, $serieId); 
+?>
 <?php include '../../../includes/header.php'; ?>
+
 <head>
     <link rel="stylesheet" href="<?php echo $url_base; ?>pages/acteur/add.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
-        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
 </head>
-
-<?php
-// Données factices pour test (dans ta BDD tu auras plutôt type = devis ou facture)
-$data = [
-    ["id" => 1, "type" => "Devis", "date" => "2025-01-05", "montant" => 250000, "client" => "Coca Cola", "description" => "Achat de matériels"],
-    ["id" => 2, "type" => "Facture", "date" => "2025-02-10", "montant" => 85000, "client" => "Samsung", "description" => "Déplacement équipe"],
-    ["id" => 3, "type" => "Devis", "date" => "2025-03-01", "montant" => 120000, "client" => "Maggie", "description" => "Paiement comédiens"],
-];
-?>
 
 <section class="section gray-bg" id="contactus">
     <div class="container">
@@ -25,7 +23,8 @@ $data = [
                 </div>
             </div>
             <div class="col-lg-4 text-end">
-                <a href="add_devis.php" class="btn btn-success">➕ Ajouter un devis</a>
+                <a href="add_devis.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="btn btn-success">➕ Ajouter
+                    un devis</a>
             </div>
         </div>
         <div class="table-container">
@@ -33,45 +32,48 @@ $data = [
                 <thead class="table-warning">
                     <tr>
                         <th>#</th>
-                        <th>Description</th>
+                        <th>Reference</th>
                         <th>Client</th>
                         <th>Date</th>
                         <th>Montant</th>
                         <th>Type</th>
                         <th>Valider</th>
-                        <th>justificatif</th>
+                        <th>Pdf_facture</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i=1; foreach ($data as $row): ?>
+                    <?php $i=1; foreach ($factures as $row): ?>
                     <tr>
                         <td><?php echo $i++; ?></td>
-                        <td><?php echo $row['description']; ?></td>
-                        <td><?php echo $row['client']; ?></td>
-                        <td><?php echo date('d/m/Y', strtotime($row['date'])); ?></td>
-                        <td><?php echo number_format($row['montant'], 0, ',', ' '); ?> FCFA</td>
-                        <td>
+                        <td><?php echo htmlspecialchars($row['reference']?? "NULL"); ?></td>
+                        <td><?php echo htmlspecialchars($row['client_nom']); ?></td>
+                        <td><?php echo date('d/m/Y', strtotime($row['date_facture'])); ?></td>
+                        <td><?php echo number_format($row['total'], 0, ',', ' '); ?> FCFA</td>
+                        <td class="col-type">
                             <?php if ($row['type'] == "Facture"): ?>
                             <span class="text-warning">Facture</span>
                             <?php else: ?>
                             <span class="text-dark">Devis</span>
                             <?php endif; ?>
                         </td>
-                        <td>
-                            <?php if ($row['type'] == "Devis"): ?>
-                            <a href="valider_devis.php?id=<?php echo $row['id']; ?>" style="text-decoration:underline;"
-                                class="text-primary">Valider</a>
+                        <td class="col-valider">
+                            <?php if ($row['type'] == "devis"): ?>
+                            <a href="javascript:void(0);" onclick="validerDevis(<?php echo $row['id']; ?>, this)"
+                                style="text-decoration:underline;" class="text-primary">Valider</a>
                             <?php else: ?>
-                            <span class="text-success">✅ Déjà validé</span>
+                            <span class="text-success">✅valide</span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="#" style="text-decoration:underline;" class="text-info">voir-pdf</a>
+                            <a href="facture_pdf.php?id=<?php echo $row['id']; ?>" class="text-info"
+                                style="text-decoration:underline;">voir-pdf</a>
                         </td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                            <a href="edit_facture.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><i
+                                    class="fas fa-edit"></i></a>
+                            <a href="delete_facture.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Supprimer ?')"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -83,13 +85,12 @@ $data = [
         <div class="col-lg-12 mt-4">
             <div class="contact-name">
                 <h5>Aperçu</h5>
-                <p>Projet : FASSEMA</p>
+                <p>Serie : <?php echo htmlspecialchars($serie['titre']); ?></p>
                 <p>Total Devis + Factures : <strong>
-                        <?php echo number_format(array_sum(array_column($data, 'montant')), 0, ',', ' '); ?> FCFA
+                        <?php echo number_format(array_sum(array_column($factures, 'total')), 0, ',', ' '); ?> FCFA
                     </strong></p>
             </div>
         </div>
-    </div>
     </div>
 </section>
 
@@ -104,4 +105,32 @@ $(document).ready(function() {
         }
     });
 });
+</script>
+
+<script>
+function validerDevis(id, el) {
+    if (confirm("Voulez-vous vraiment valider ce devis ?")) {
+        fetch("valider_devis.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "id=" + id
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Devis validé avec succès !");
+                let row = el.closest("tr");
+
+                // Mettre à jour la colonne "Valider"
+                row.querySelector(".col-valider").innerHTML = '<span class="text-success">✅valide</span>';
+
+                // Mettre à jour la colonne "Type"
+                row.querySelector(".col-type").innerHTML = '<span class="text-warning">Facture</span>';
+            } else {
+                alert("Erreur : " + data.message);
+            }
+        })
+        .catch(err => alert("Erreur serveur : " + err));
+    }
+}
 </script>
