@@ -1,13 +1,18 @@
+<?php
+include '../../config/fonction.php'; 
+$lastSerie = getLastSerie(); // retourne la dernière série ajoutée
+// Vérifier si on modifie
+$acteur = null;
+if (isset($_GET['id'])) {
+    $acteur = getActeurById($_GET['id']); // fonction à créer dans fonction.php
+}
+?> 
 <head>
     <link rel="stylesheet" href="add.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
         integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
 </head>
 <?php include '../../includes/header.php'; ?>
-<?php
-include '../../config/fonction.php'; 
-$lastSerie = getLastSerie(); // retourne la dernière série ajoutée
-?>
 
 <section class="section gray-bg" id="contactus">
     <div class="container">
@@ -22,106 +27,111 @@ $lastSerie = getLastSerie(); // retourne la dernière série ajoutée
         <!-- ✅ Affichage des messages Bootstrap -->
         <div class="row">
             <div class="col-12">
-                <?php if(isset($_SESSION['success'])): ?>
+                <?php if(isset($_SESSION['successact'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?= $_SESSION['success']; ?>
+                    <?= $_SESSION['successact']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>
-                <?php unset($_SESSION['success']); ?>
+                <?php unset($_SESSION['successact']); ?>
                 <?php endif; ?>
 
-                <?php if(isset($_SESSION['error'])): ?>
+                <?php if(isset($_SESSION['erroract'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <?= $_SESSION['error']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>
-                <?php unset($_SESSION['error']); ?>
+                <?php unset($_SESSION['erroract']); ?>
                 <?php endif; ?>
             </div>
         </div>
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="trait_acteur.php" method="post" enctype="multipart/form-data"
-                        class="contactform contact_form" id="contact_form">
-                        <div class="row">
-                            <!-- Prénom -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" name="prenom" placeholder="Prénom" class="form-control" required>
-                                </div>
-                            </div>
-                            <!-- Nom -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" name="nom" placeholder="Nom" class="form-control" required>
-                                </div>
-                            </div>
-                            <!-- Date de naissance -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="date" name="date_naissance" class="form-control" required>
-                                </div>
-                            </div>
-                            <!-- Contact -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" name="contact" placeholder="Contact" class="form-control"
-                                        required>
-                                </div>
-                            </div>
-                            <!-- Adresse -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" name="adresse" placeholder="Adresse" class="form-control"
-                                        required>
-                                </div>
-                            </div>
-                            <!-- CV PDF -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="file" id="cv" name="cv" accept="application/pdf" class="form-control"
-                                        required hidden>
-                                    <label for="cv" class="custom-file-label form-control">
-                                        <span><i class="fas fa-upload"></i> Choisir CV (PDF)</span>
-                                        <span id="file-cv" class="file-name">Aucun fichier choisi</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <!-- Photo -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="file" id="photo" name="photo" accept="image/*" class="form-control"
-                                        required hidden>
-                                    <label for="photo" class="custom-file-label form-control">
-                                        <span><i class="fas fa-upload"></i> Choisir une photo</span>
-                                        <span id="file-name" class="file-name">Aucun fichier choisi</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <!-- Bouton -->
-                            <div class="col-md-12">
-                                <div class="send">
-                                    <button type="submit" class="px-btn theme">
-                                        <span>ENREGISTRER</span> <i class="arrow"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                    <form action="trait_acteur.php" method="post" enctype="multipart/form-data">
+            
+            <?php if($acteur): ?>
+              <input type="hidden" name="id" value="<?= $acteur['id'] ?>">
+            <?php endif; ?>
+
+            <div class="row">
+              <!-- Prénom -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="text" name="prenom" placeholder="Prénom" class="form-control" required
+                         value="<?= $acteur['prenom'] ?? '' ?>">
+                </div>
+              </div>
+              <!-- Nom -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="text" name="nom" placeholder="Nom" class="form-control" required
+                         value="<?= $acteur['nom'] ?? '' ?>">
+                </div>
+              </div>
+              <!-- Date de naissance -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="date" name="date_naissance" class="form-control" required
+                         value="<?= $acteur['date_naissance'] ?? '' ?>">
+                </div>
+              </div>
+              <!-- Contact -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="text" name="contact" placeholder="Contact" class="form-control" required
+                         value="<?= $acteur['contact'] ?? '' ?>">
+                </div>
+              </div>
+              <!-- Adresse -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="text" name="adresse" placeholder="Adresse" class="form-control" required
+                         value="<?= $acteur['adresse'] ?? '' ?>">
+                </div>
+              </div>
+              <!-- CV PDF -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="file" id="cv" name="cv" accept="application/pdf" class="form-control" <?= $acteur ? '' : 'required' ?> hidden>
+                  <label for="cv" class="custom-file-label form-control">
+                    <span><i class="fas fa-upload"></i> Choisir CV (PDF)</span>
+                    <span id="file-cv" class="file-name"><?= $acteur['cv_file'] ?? 'Aucun fichier choisi' ?></span>
+                  </label>
+                </div>
+              </div>
+              <!-- Photo -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="file" id="photo" name="photo" accept="image/*" class="form-control" <?= $acteur ? '' : 'required' ?> hidden>
+                  <label for="photo" class="custom-file-label form-control">
+                    <span><i class="fas fa-upload"></i> Choisir une photo</span>
+                    <span id="file-name" class="file-name"><?= $acteur['photo'] ?? 'Aucun fichier choisi' ?></span>
+                  </label>
+                </div>
+              </div>
+              <!-- Bouton -->
+              <div class="col-md-12">
+                <div class="send">
+                  <button type="submit" class="px-btn theme">
+                    <span><?= $acteur ? "MODIFIER" : "ENREGISTRER" ?></span> <i class="arrow"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
                 </div>
             </div>
 
             <!-- Partie gauche : info dernière série -->
             <div class="col-md-5 col-lg-4 m-15px-tb">
-                <div class="contact-name">
+               <div class="contact-name">
                     <h5>Dernière série ajoutée</h5>
                     <?php if($lastSerie): ?>
-                    <p>Nom : <?php echo htmlspecialchars($lastSerie['titre']); ?></p>
-                    <p>Type : <?php echo htmlspecialchars($lastSerie['type']); ?></p>
-                    <p>Budget : <?php echo htmlspecialchars($lastSerie['budget']); ?></p>
+                        <p>Nom : <?= htmlspecialchars($lastSerie['titre']) ?></p>
+                        <p>Type : <?= htmlspecialchars($lastSerie['type']) ?></p>
+                        <p>Budget : <?= number_format($lastSerie['budget'], 0, ',', ',') ?> fcfa</p>
                     <?php else: ?>
-                    <p>Aucune série enregistrée pour le moment.</p>
+                        <p>Aucune série enregistrée pour le moment.</p>
                     <?php endif; ?>
                 </div>
                 <div class="contact-name">

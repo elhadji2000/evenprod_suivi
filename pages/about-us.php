@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Redirection si l'utilisateur n'a pas mis à jour son mot de passe
+if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
+    header("Location: ../public/admin/profile.php?forceUpdate=1");
+    exit;
+}
+?>
 <head>
     <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
@@ -29,9 +38,11 @@
 <?php
     include '../config/fonction.php';
 
-    $series = getAllSeries(); // Appel de la fonction
+    $series = getAllSeries();
+    $totauxtous = getTotauxGeneraux($connexion);
 ?>
 <?php include '../includes/header.php'; ?>
+
 <br>
 
 <body class="bg-light">
@@ -118,23 +129,31 @@
                     <div class="container">
                         <div class="row justify-content-center text-center g-4">
                             <div class="col-md-3">
-                                <h1 class="text-primary" id="state1" data-count="5234">0</h1>
-                                <h5>Projects</h5>
-                                <p>Led by certified project managers</p>
+                                <h4 class="text-primary" id="state1" data-count="5234">
+                                    <?php echo number_format($totauxtous['total_series'], 0, ',', ','); ?>
+                                </h4>
+                                <h5>Séries</h5>
+                                <p>Nombre total de séries enregistrées.</p>
                             </div>
                             <div class="col-md-3">
-                                <h1 class="text-primary" id="state2" data-count="3400">0</h1>
-                                <h5>Hours</h5>
-                                <p>Meeting quality standards required by users</p>
+                                <h4 class="text-primary" id="state2" data-count="3400">
+                                    <?php echo number_format($totauxtous['total_depenses'], 0, ',', ','); ?>
+                                </h4>
+                                <h5>Dépenses</h5>
+                                <p>Montant total des dépenses effectuées.</p>
                             </div>
                             <div class="col-md-3">
-                                <h1 class="text-primary" id="state3" data-count="24">0</h1>
-                                <h5>Support</h5>
-                                <p>Actively engage team members finishing on time</p>
+                                <h4 class="text-primary" id="state3" data-count="24">
+                                    <?php echo number_format($totauxtous['total_factures'], 0, ',', ','); ?>
+                                </h'>
+                                <h5>Recettes</h5>
+                                <p>Montant total des factures validées.</p>
                             </div>
                         </div>
                     </div>
                 </section>
+
+            </div>
         </section>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.6.2/countUp.min.js"></script>
@@ -173,4 +192,39 @@
 </body>
 
 <?php include '../includes/footer.php'; ?>
+
 </html>
+<?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Création de l'alerte
+    const toast = document.createElement("div");
+    toast.textContent = "Série suppimer avec succès !";
+    toast.style.position = "fixed";
+    toast.style.top = "80px";
+    toast.style.right = "30px";
+    toast.style.padding = "15px 25px";
+    toast.style.backgroundColor = "#d21515ff"; // vert succès
+    toast.style.color = "white";
+    toast.style.borderRadius = "5px";
+    toast.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
+    toast.style.zIndex = 9999;
+    toast.style.fontWeight = "bold";
+    toast.style.opacity = 0;
+    toast.style.transition = "opacity 0.5s";
+
+    document.body.appendChild(toast);
+
+    // Animation pour fade in
+    setTimeout(() => {
+        toast.style.opacity = 1;
+    }, 100);
+
+    // Disparition après 3 secondes
+    setTimeout(() => {
+        toast.style.opacity = 0;
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
+});
+</script>
+<?php endif; ?>

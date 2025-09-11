@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'];
 
     $libelles = $_POST['libelle'];
-    $prixUnitaires = $_POST['prix_unitaire'];
+    /* $prixUnitaires = $_POST['prix_unitaire']; */
     $quantites = $_POST['quantite'];
     $montants = $_POST['montant'];
 
@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date,
         $description,
         $libelles,
-        $prixUnitaires,
         $quantites,
         $montants
     );
@@ -116,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <thead>
                             <tr>
                                 <th>Libellé</th>
-                                <th>Prix Unitaire</th>
+                                <!-- <th>Prix Unitaire</th> -->
                                 <th>Quantité</th>
                                 <th>Montant</th>
                                 <th>Action</th>
@@ -125,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <tbody>
                             <tr>
                                 <td><input name="libelle[]" type="text" placeholder="Libellé" class="form-control" required></td>
-                                <td><input name="prix_unitaire[]" type="text" placeholder="Prix unitaire" class="form-control"></td>
+                               <!--  <td><input name="prix_unitaire[]" type="text" placeholder="Prix unitaire" class="form-control"></td> -->
                                 <td><input name="quantite[]" type="number" placeholder="Quantité" class="form-control" min="1" ></td>
                                 <td><input name="montant[]" type="number" placeholder="Montant" class="form-control" min="0"></td>
                                 <td><button type="button" class="remove-line btn btn-danger btn-sm">X</button></td>
@@ -157,7 +156,6 @@ addLineBtn.addEventListener("click", function() {
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
         <td><input name="libelle[]" type="text" placeholder="Libellé" class="form-control" required></td>
-        <td><input name="prix_unitaire[]" type="text" placeholder="Prix unitaire" class="form-control"></td>
         <td><input name="quantite[]" type="number" placeholder="Quantité" class="form-control" min="1"></td>
         <td><input name="montant[]" type="number" placeholder="Montant" class="form-control" min="0"></td>
         <td><button type="button" class="remove-line btn btn-danger btn-sm">X</button></td>

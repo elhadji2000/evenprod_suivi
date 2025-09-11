@@ -5,7 +5,7 @@ $id = $_GET['id'] ?? 0;
 $serie = getSerieById($id);
 
 // Si on clique sur supprimer
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+/* if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $deleteId = (int)$_POST['delete_id'];
 
     if ($deleteId > 0) {
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     // Recharge la page
     header("Location: acteurs.php?id=" . $id);
     exit();
-}
+} */
 
 $acteurs = getActeursBySerieId($id);
 ?>
@@ -66,12 +66,13 @@ $acteurs = getActeursBySerieId($id);
                         <?php if (!empty($acteurs)): ?>
                         <?php foreach ($acteurs as $acteur): ?>
                         <li>
-                            <a href="#" class="acteur-item" data-id="<?= htmlspecialchars($acteur['id']); ?>"
+                            <a href="#" class="acteur-item" data-id="<?= htmlspecialchars($acteur['serie_acteur']); ?>"
                                 data-nom="<?= htmlspecialchars($acteur['nom']); ?>"
                                 data-prenom="<?= htmlspecialchars($acteur['prenom']); ?>"
                                 data-date="<?= htmlspecialchars($acteur['date_naissance']); ?>"
                                 data-adresse="<?= htmlspecialchars($acteur['adresse']); ?>"
                                 data-contact="<?= htmlspecialchars($acteur['contact']); ?>"
+                                data-cachet="<?= htmlspecialchars(number_format($acteur['cachet'], 0, ',', ','));?> fcfa"
                                 data-cv="<?= htmlspecialchars($acteur['cv_file'] ?? ''); ?>"
                                 data-piece="<?= htmlspecialchars($acteur['piece_jointe'] ?? ''); ?>"
                                 data-photo="<?= htmlspecialchars($acteur['photo']); ?>">
@@ -119,6 +120,10 @@ $acteurs = getActeursBySerieId($id);
                             <div class="field"><i class="bi bi-telephone-fill"></i> Téléphone :</div>
                             <div class="value" id="info-contact">---</div>
                         </li>
+                        <li>
+                            <div class="field"><i class="bi bi-cash-stack"></i> Cachet :</div>
+                            <div class="value" id="info-cachet">---</div>
+                        </li>
 
                         <!-- CV PDF -->
                         <li id="cv-section" style="display:none;">
@@ -131,14 +136,10 @@ $acteurs = getActeursBySerieId($id);
                         <li>
                             <div class="field"><i class="bi bi-trash-fill"></i> Action :</div>
                             <div class="value">
-                                <form method="POST" style="display:inline;"
-                                    onsubmit="return confirm('Êtes-vous sûr de vouloir retirer cet acteur de la série ?');">
-                                    <input type="hidden" name="delete_id" value="<?= $acteurs[0]['id']; ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        Supprimer l’acteur
-                                    </button>
-                                </form>
-                            </div>
+                                <a href="#" id="delete-link" class="text-danger" style="text-decoration:underline;"
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.');">
+                                    Supprimer
+                                </a>
                         </li>
 
 
@@ -157,9 +158,11 @@ const nom = document.getElementById('info-nom');
 const date = document.getElementById('info-date');
 const adresse = document.getElementById('info-adresse');
 const contact = document.getElementById('info-contact');
+const cachet = document.getElementById('info-cachet');
 const cvSection = document.getElementById('cv-section');
 const cvLink = document.getElementById('info-cv');
 const deleteLink = document.getElementById('delete-link');
+const redirectUrl = "<?php echo $url_base; ?>public/appManager/acteur/acteurs.php?id=<?php echo $id; ?>";
 
 items.forEach(item => {
     item.addEventListener('click', function(e) {
@@ -171,6 +174,7 @@ items.forEach(item => {
         date.textContent = this.dataset.date;
         adresse.textContent = this.dataset.adresse;
         contact.textContent = this.dataset.contact;
+        cachet.textContent = this.dataset.cachet;
 
         // CV
         if (this.dataset.cv) {
@@ -179,9 +183,44 @@ items.forEach(item => {
         } else {
             cvSection.style.display = 'none';
         }
+        // Mettre à jour le lien de suppression avec l'ID sélectionné
+        deleteLink.href = "<?php echo $url_base; ?>public/appManager/delete.php?table=serie_acteur&id=" +
+            this.dataset.id + "&redirect=" + encodeURIComponent(redirectUrl);
 
-        // Mettre l’ID dans le champ hidden du formulaire de suppression
-        document.getElementById('delete-id').value = this.dataset.id;
     });
 });
 </script>
+<?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Création de l'alerte
+    const toast = document.createElement("div");
+    toast.textContent = "acteur suppimer avec succès !";
+    toast.style.position = "fixed";
+    toast.style.top = "80px";
+    toast.style.right = "30px";
+    toast.style.padding = "15px 25px";
+    toast.style.backgroundColor = "#d21515ff"; // vert succès
+    toast.style.color = "white";
+    toast.style.borderRadius = "5px";
+    toast.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
+    toast.style.zIndex = 9999;
+    toast.style.fontWeight = "bold";
+    toast.style.opacity = 0;
+    toast.style.transition = "opacity 0.5s";
+
+    document.body.appendChild(toast);
+
+    // Animation pour fade in
+    setTimeout(() => {
+        toast.style.opacity = 1;
+    }, 100);
+
+    // Disparition après 3 secondes
+    setTimeout(() => {
+        toast.style.opacity = 0;
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
+});
+</script>
+<?php endif; ?>

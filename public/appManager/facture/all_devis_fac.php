@@ -49,7 +49,7 @@ $factures = getFacturesBySerieId($connexion, $serieId);
                         <td><?php echo htmlspecialchars($row['reference']?? "NULL"); ?></td>
                         <td><?php echo htmlspecialchars($row['client_nom']); ?></td>
                         <td><?php echo date('d/m/Y', strtotime($row['date_facture'])); ?></td>
-                        <td><?php echo number_format($row['total'], 0, ',', ' '); ?> FCFA</td>
+                        <td><?php echo number_format($row['total'], 0, ',', ','); ?> fcfa</td>
                         <td class="col-type">
                             <?php if ($row['type'] == "Facture"): ?>
                             <span class="text-warning">Facture</span>
@@ -67,14 +67,21 @@ $factures = getFacturesBySerieId($connexion, $serieId);
                         </td>
                         <td>
                             <a href="facture_pdf.php?id=<?php echo $row['id']; ?>" class="text-info"
-                                style="text-decoration:underline;">voir-pdf</a>
+                                style="text-decoration:underline;" target="_blank">
+                                voir-pdf
+                            </a>
+
                         </td>
                         <td>
-                            <a href="edit_facture.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><i
-                                    class="fas fa-edit"></i></a>
-                            <a href="delete_facture.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Supprimer ?')"><i class="fas fa-trash"></i></a>
+                            <?php if (isset($row['type']) && $row['type'] === 'Facture'): ?>
+                            <span class="text-muted">Suppr</span>
+                            <?php else: ?>
+                            <a href="<?php echo $url_base; ?>public/appManager/delete.php?table=factures&id=<?php echo htmlspecialchars($row['id']); ?>&serie_id=<?php echo $serieId; ?>&redirect=<?php echo $url_base; ?>public/appManager/facture/all_devis_fac.php?id=<?php echo $serieId; ?>"
+                                onclick="return confirm('Supprimer ?')"
+                                class="text-danger text-decoration-underline">suppr</a>
+                            <?php endif; ?>
                         </td>
+
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -87,7 +94,7 @@ $factures = getFacturesBySerieId($connexion, $serieId);
                 <h5>Aperçu</h5>
                 <p>Serie : <?php echo htmlspecialchars($serie['titre']); ?></p>
                 <p>Total Devis + Factures : <strong>
-                        <?php echo number_format(array_sum(array_column($factures, 'total')), 0, ',', ' '); ?> FCFA
+                        <?php echo number_format(array_sum(array_column($factures, 'total')), 0, ',', ','); ?> fcfa
                     </strong></p>
             </div>
         </div>
@@ -111,26 +118,62 @@ $(document).ready(function() {
 function validerDevis(id, el) {
     if (confirm("Voulez-vous vraiment valider ce devis ?")) {
         fetch("valider_devis.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "id=" + id
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Devis validé avec succès !");
-                let row = el.closest("tr");
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "id=" + id
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Devis validé avec succès !");
+                    let row = el.closest("tr");
 
-                // Mettre à jour la colonne "Valider"
-                row.querySelector(".col-valider").innerHTML = '<span class="text-success">✅valide</span>';
+                    // Mettre à jour la colonne "Valider"
+                    row.querySelector(".col-valider").innerHTML = '<span class="text-success">✅valide</span>';
 
-                // Mettre à jour la colonne "Type"
-                row.querySelector(".col-type").innerHTML = '<span class="text-warning">Facture</span>';
-            } else {
-                alert("Erreur : " + data.message);
-            }
-        })
-        .catch(err => alert("Erreur serveur : " + err));
+                    // Mettre à jour la colonne "Type"
+                    row.querySelector(".col-type").innerHTML = '<span class="text-warning">Facture</span>';
+                } else {
+                    alert("Erreur : " + data.message);
+                }
+            })
+            .catch(err => alert("Erreur serveur : " + err));
     }
 }
 </script>
+<?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Création de l'alerte
+    const toast = document.createElement("div");
+    toast.textContent = "devis suppimer avec succès !";
+    toast.style.position = "fixed";
+    toast.style.top = "80px";
+    toast.style.right = "30px";
+    toast.style.padding = "15px 25px";
+    toast.style.backgroundColor = "#d21515ff"; // vert succès
+    toast.style.color = "white";
+    toast.style.borderRadius = "5px";
+    toast.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
+    toast.style.zIndex = 9999;
+    toast.style.fontWeight = "bold";
+    toast.style.opacity = 0;
+    toast.style.transition = "opacity 0.5s";
+
+    document.body.appendChild(toast);
+
+    // Animation pour fade in
+    setTimeout(() => {
+        toast.style.opacity = 1;
+    }, 100);
+
+    // Disparition après 3 secondes
+    setTimeout(() => {
+        toast.style.opacity = 0;
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
+});
+</script>
+<?php endif; ?>

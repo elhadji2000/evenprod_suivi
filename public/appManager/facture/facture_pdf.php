@@ -6,7 +6,7 @@ include '../../../config/fonction.php'; // connexion etc
 
 $facture_id = $_GET['id'] ?? 0;
 $facture = getFactureDetails($connexion, $facture_id);
-$url_base = "http://localhost/projet_suivi/";
+$url_base = "https://gescoud.com/sygep/";
 
 if (!$facture) exit('Facture introuvable');
 
@@ -228,7 +228,7 @@ $html = '
                 <img src="' . $url_base . 'assets/images/logo2.png" width="120" height="120" alt="Logo">
             </div>
             <div class="facture-title">
-                FACTURE PROFORMA ' . $facture['facture_id'] . '
+               '. ($facture['type'] === 'Facture' ? 'FACTURE PROFORMA' : 'DEVIS PROFORMA') . ' ' . $facture['facture_id'] . '
             </div>
         </div>
 
@@ -238,7 +238,7 @@ $html = '
                     <strong>Client:</strong> ' . htmlspecialchars($facture['client_nom'] ?? '') . '
                 </div>
                 <div class="info-section">
-                    <strong>Adresse:</strong> ' . htmlspecialchars($facture['entreprise_nom'] ?? '') . '
+                    <strong>Adresse:</strong> ' . htmlspecialchars($facture['adresse'] ?? '') . '
                 </div>
                 <div class="info-section">
                     <strong>Téléphone:</strong> ' . htmlspecialchars($facture['client_contact'] ?? '') . '
@@ -276,7 +276,7 @@ foreach ($facture['designations'] as $d) {
     $html .= '<tr>
         <td class="description-cell">' . htmlspecialchars($d['libelle']) . '</td>
         <td class="quantity-cell">' . $d['quantite'] . '</td>
-        <td class="price-cell">' . htmlspecialchars($d['prix_unitaire']) . '</td>
+        <td class="price-cell">' . htmlspecialchars($d['prix_unitaire']??"") . '</td>
         <td class="amount-cell">' . (!empty($d['montant']) ? number_format($d['montant'], 0, ',', ' ') : '') . '</td>
 
     </tr>';

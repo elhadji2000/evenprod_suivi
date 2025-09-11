@@ -1,21 +1,39 @@
 <?php
 include '../../../config/fonction.php';
+
 $serieId = $_GET['id_serie'] ?? 0;
 $serie = getSerieById($serieId);
 
-// Générer automatiquement la référence du tournage
-$reference = generateTournageReference($serieId);
+// Vérifie si on est en édition
+$tournageId = $_GET['id_tournage'] ?? null;
+if ($tournageId) {
+    $tournage = getTournageById($tournageId); // fonction à créer si elle n’existe pas
+    $reference = $tournage['reference'];
+    $date = $tournage['date_tournage'];
+    $acteursSelectionnes = getActeursByTournage($tournageId); // récupère les IDs
+    $acteursSelectionnesIds = array_map(function($a){ return $a['id']; }, $acteursSelectionnes);
+} else {
+    $reference = generateTournageReference();
+    $date = '';
+    $acteursSelectionnesIds = [];
+}
 
-// Récupérer les acteurs disponibles pour cette série
+// Récupérer tous les acteurs disponibles pour cette série
 $acteurs = getActeursBySerieId($serieId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $serieId = $_POST['serie_id'];
     $date = $_POST['date'];
     $reference = $_POST['reference'];
-    $acteursIds = $_POST['acteurs'] ?? []; // tableau des IDs des acteurs sélectionnés
+    $acteursIds = $_POST['acteurs'] ?? [];
 
-    $result = ajouterTournage($serieId, $date, $reference, $acteursIds);
+    if ($tournageId) {
+        // Modification
+        $result = modifierTournage($tournageId, $serieId, $date, $reference, $acteursIds);
+    } else {
+        // Ajout
+        $result = ajouterTournage($serieId, $date, $reference, $acteursIds);
+    }
 
     if ($result['success']) {
         header("Location: tournages.php?id=$serieId");
@@ -74,50 +92,44 @@ include '../../../includes/header.php';
 <section class="section gray-bg">
     <div class="container">
         <div class="section-title">
-            <h2>Ajouter un Tournage pour : <?php echo htmlspecialchars($serie['titre']); ?></h2>
+            <h2><?= $tournageId ? "Modifier" : "Ajouter" ?> un Tournage pour : <?= htmlspecialchars($serie['titre']) ?></h2>
             <p>Sélectionnez la date et les acteurs participant au tournage.</p>
         </div>
 
         <div class="contact-form">
-            <form action="add_tourn.php?id_serie=<?php echo htmlspecialchars($serie['id'])?>" method="post" class="contactform contact_form" id="tournageForm">
-                <!-- ID de la série caché -->
-                <input type="hidden" name="serie_id" value="<?php echo $serieId; ?>">
+            <form action="add_tourn.php?id_serie=<?= htmlspecialchars($serie['id']) ?><?= $tournageId ? '&id_tournage='.$tournageId : '' ?>" 
+                  method="post" class="contactform contact_form" id="tournageForm">
+                <input type="hidden" name="serie_id" value="<?= $serieId ?>">
 
                 <div class="row mb-3">
-                    <!-- Date du tournage -->
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="date">Date du tournage</label>
-                            <input id="date" name="date" type="date" class="form-control" required>
-                        </div>
+                        <label for="date">Date du tournage</label>
+                        <input id="date" name="date" type="date" class="form-control" required value="<?= $date ?>">
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="reference">Reference</label>
-                            <input id="ref" name="reference" type="text" class="form-control" 
-                                   value="<?php echo $reference; ?>" readonly required>
-                        </div>
+                        <label for="reference">Référence</label>
+                        <input id="ref" name="reference" type="text" class="form-control" 
+                               value="<?= $reference ?>" readonly required>
                     </div>
                 </div>
 
-                <!-- Sélection des acteurs -->
                 <h4>Acteurs disponibles</h4>
                 <div class="custom-multi-select">
                     <?php foreach ($acteurs as $acteur): ?>
                         <div>
-                            <input type="checkbox" id="acteur_<?php echo $acteur['id']; ?>" 
-                                   name="acteurs[]" value="<?php echo $acteur['id']; ?>">
-                            <label for="acteur_<?php echo $acteur['id']; ?>">
-                               <?php echo htmlspecialchars($acteur['prenom']); ?>  <?php echo htmlspecialchars($acteur['nom']); ?> (<?php echo htmlspecialchars($acteur['date_naissance']); ?>)
+                            <input type="checkbox" id="acteur_<?= $acteur['id']; ?>" 
+                                   name="acteurs[]" value="<?= $acteur['id']; ?>" 
+                                   <?= in_array($acteur['id'], $acteursSelectionnesIds) ? 'checked' : '' ?>>
+                            <label for="acteur_<?= $acteur['id']; ?>">
+                               <?= htmlspecialchars($acteur['prenom']); ?> <?= htmlspecialchars($acteur['nom']); ?> (<?= htmlspecialchars($acteur['date_naissance']); ?>)
                             </label>
                         </div>
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Bouton Enregistrer -->
                 <div class="form-group mt-3">
                     <button type="submit" class="px-btn theme">
-                        <span>ENREGISTRER</span> <i class="arrow"></i>
+                        <span><?= $tournageId ? "MODIFIER" : "ENREGISTRER" ?></span> <i class="arrow"></i>
                     </button>
                 </div>
             </form>

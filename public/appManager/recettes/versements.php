@@ -1,49 +1,77 @@
 <?php
 include '../../../config/fonction.php';
 
-$id_fact = $_GET['id_fact'] ?? 0;
+$id_fact = (int)($_GET['id_fact'] ?? 0);
 
-// ---- Traitement ajout paiement ----
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'], $_POST['montant'])) {
+// === AJOUT ===
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['action']) && $_POST['action']==='add') {
     $type = mysqli_real_escape_string($connexion, $_POST['type']);
-    $montant = (int) $_POST['montant'];
-    $facture_id = (int) $_POST['facture_id'];
+    $montant = (int)$_POST['montant'];
 
-    // 1. Générer une référence unique (ex: PAY-2025-001)
-    $result = mysqli_query($connexion, "SELECT COUNT(*) as total FROM paiements");
+    // Référence unique basée sur l'id maximal existant
+    $result = mysqli_query($connexion, "SELECT MAX(id) AS max_id FROM paiements");
     $row = mysqli_fetch_assoc($result);
-    $nextId = $row['total'] + 1;
-    $reference = "PAY-" . date("y") . "-" . str_pad($nextId, 3, "0", STR_PAD_LEFT);
+    // si la table est vide, max_id sera NULL => on démarre à 0
+    $nextId = ($row['max_id'] ?? 0) + 1;
+    // génération de la référence
+    $ref = "PAY-" . date("y") . "-" . str_pad($nextId, 3, "0", STR_PAD_LEFT);
 
-    // 2. Gestion upload PDF
-    $pdfFileName = null;
+
+    // upload pdf
+    $pdf = null;
     if (!empty($_FILES['pdf']['name'])) {
-        $uploadDir = "../../../uploads/paiements/";
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        $pdfFileName = time() . "_" . basename($_FILES['pdf']['name']);
-        move_uploaded_file($_FILES['pdf']['tmp_name'], $uploadDir . $pdfFileName);
+        $dir = "../../../uploads/paiements/";
+        if(!is_dir($dir)) mkdir($dir,0777,true);
+        $pdf = time()."_".basename($_FILES['pdf']['name']);
+        move_uploaded_file($_FILES['pdf']['tmp_name'],$dir.$pdf);
     }
 
-    // 3. Insertion en base
-    $sql = "INSERT INTO paiements (facture_id, type, montant, reference, piece_jointe) 
-            VALUES ('$facture_id', '$type', '$montant', '$reference', " . 
-            ($pdfFileName ? "'$pdfFileName'" : "NULL") . ")";
-    
-    if (mysqli_query($connexion, $sql)) {
-        header("Location: versements.php?id_fact=$facture_id&success=1");
-        exit();
-    } else {
-        echo "Erreur : " . mysqli_error($connexion);
-    }
+    mysqli_query($connexion,"INSERT INTO paiements (facture_id,type,montant,reference,piece_jointe)
+        VALUES ($id_fact,'$type',$montant,'$ref',".($pdf?"'$pdf'":"NULL").")");
+    header("Location: versements.php?id_fact=$id_fact&success=1");
+    exit;
 }
 
-// ---- Récupération facture + paiements ----
-/* $serie = getSerieById($id_fact); */
-$paiements = getPaiementsByFactureId($connexion, $id_fact);
-$facture = getFactureWithPaiements($connexion, $id_fact);
+// === MODIFICATION ===
+if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['action']) && $_POST['action']==='edit') {
+    $pid = (int)$_POST['id'];
+    $type = mysqli_real_escape_string($connexion,$_POST['type']);
+    $montant = (int)$_POST['montant'];
+
+    // récupérer ancien pdf
+    $old = mysqli_fetch_assoc(mysqli_query($connexion,"SELECT piece_jointe FROM paiements WHERE id=$pid"));
+    $pdf = $old['piece_jointe'];
+
+    if(!empty($_FILES['pdf']['name'])){
+        $dir = "../../../uploads/paiements/";
+        if($pdf && is_file($dir.$pdf)) unlink($dir.$pdf); // suppr ancien
+        $pdf = time()."_".basename($_FILES['pdf']['name']);
+        move_uploaded_file($_FILES['pdf']['tmp_name'],$dir.$pdf);
+    }
+
+    mysqli_query($connexion,"UPDATE paiements SET type='$type',montant=$montant,
+        piece_jointe=".($pdf?"'$pdf'":"NULL")." WHERE id=$pid");
+    header("Location: versements.php?id_fact=$id_fact");
+    exit;
+}
+
+// === SUPPRESSION ===
+if (isset($_GET['delete'])) {
+    $pid = (int)$_GET['delete'];
+    $old = mysqli_fetch_assoc(mysqli_query($connexion,"SELECT piece_jointe FROM paiements WHERE id=$pid"));
+    if($old['piece_jointe'] && is_file("../../../uploads/paiements/".$old['piece_jointe'])){
+        unlink("../../../uploads/paiements/".$old['piece_jointe']);
+    }
+    mysqli_query($connexion,"DELETE FROM paiements WHERE id=$pid");
+    header("Location: versements.php?id_fact=$id_fact");
+    exit;
+}
+
+// === récupération données ===
+$paiements = getPaiementsByFactureId($connexion,$id_fact);
+$facture   = getFactureWithPaiements($connexion,$id_fact);
 ?>
+
 
 <head>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -70,21 +98,21 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
                 <div class="card mb-3 shadow-sm border-0">
                     <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
                         <h6 class="fw-bold mb-0">
-                            Facture N° <?php echo $facture['id']; ?>
+                            Facture N° <?php echo $facture['reference']; ?>
                         </h6>
                         <span class="text-muted">
                             Client : <strong><?php echo htmlspecialchars($facture['client_nom']); ?></strong>
                         </span>
                         <span class="text-muted">
-                            Total : <strong><?php echo number_format($facture['total'], 0, ',', ' '); ?> F CFA</strong>
+                            Total : <strong><?php echo number_format($facture['total'], 0, ',', ','); ?> fcfa</strong>
                         </span>
                         <span class="text-muted">
-                            Payé : <strong><?php echo number_format($facture['verse'], 0, ',', ' '); ?> F CFA</strong>
+                            Payé : <strong><?php echo number_format($facture['verse'], 0, ',', ','); ?> fcfa</strong>
                         </span>
                         <span class="text-muted">
                             Reste :
                             <strong class="<?php echo ($facture['reste'] > 0) ? 'text-danger' : 'text-success'; ?>">
-                                <?php echo number_format($facture['reste'], 0, ',', ' '); ?> F CFA
+                                <?php echo number_format($facture['reste'], 0, ',', ','); ?> fcfa
                             </strong>
                         </span>
                     </div>
@@ -94,6 +122,12 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
                 <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
                 <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
                     ✅ Paiement enregistré avec succès !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+                <?php endif; ?>
+                <?php if (isset($_GET['success']) && $_GET['success'] == 2): ?>
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    ✅ Paiement modifier avec succès !
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>
                 <?php endif; ?>
@@ -129,80 +163,157 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
                         <th>Montant</th>
                         <th>Référence</th>
                         <th>Pièce jointe</th>
+                        <th>Action(s)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-    if (!empty($paiements)) {
-        $i = 1;
-        foreach ($paiements as $v) {
-            echo "<tr>
-                    <td>{$i}</td>
-                    <td>{$v['type']}</td>
-                    <td>".number_format($v['montant'],0,',',' ')." F CFA</td>
-                    <td>{$v['reference']}</td>
-                    <td>";
-            if (!empty($v['piece_jointe'])) {
-                echo "<a href='../../../uploads/paiements/{$v['piece_jointe']}' target='_blank' 
-                        style='text-decoration:underline;' class='text-info'>Voir pièce jointe</a>";
-            } else {
-                echo "<span class='text-muted'>Aucune</span>";
-            }
-            echo "</td></tr>";
-            $i++;
-        }
-    } else {
-        echo "<tr><td colspan='5' class='text-center text-muted'>Aucun versement trouvé</td></tr>";
-    }
-    ?>
+                    <?php if (!empty($paiements)): ?>
+                    <?php $i=1; foreach($paiements as $v): ?>
+                    <tr>
+                        <td><?= $i++; ?></td>
+                        <td><?= htmlspecialchars($v['type']); ?></td>
+                        <td><?= number_format($v['montant'],0,',',','); ?> f cfa</td>
+                        <td><?= htmlspecialchars($v['reference']); ?></td>
+                        <td>
+                            <?php if (!empty($v['piece_jointe'])): ?>
+                            <a href="../../../uploads/paiements/<?= $v['piece_jointe']; ?>" target="_blank"
+                                class="text-info" style="text-decoration:underline;">Voir pièce jointe</a>
+                            <?php else: ?>
+                            <span class="text-muted">Aucune</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <!-- bouton ouvrir modal édition -->
+                            <a href="" class="text-warning text-decoration-underline" data-bs-toggle="modal"
+                                data-bs-target="#editModal<?= $v['id']; ?>">Modifier
+                            </a> |
+                            <a href="?id_fact=<?= $id_fact; ?>&delete=<?= $v['id']; ?>"
+                                onclick="return confirm('Supprimer ce versement ?');"
+                                class="text-danger text-decoration-underline">Supprimer
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- Modal édition -->
+                    <div class="modal fade" id="editModal<?= $v['id']; ?>" tabindex="-1"
+                        aria-labelledby="editVersementLabel<?= $v['id']; ?>" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="action" value="edit">
+                                <input type="hidden" name="id" value="<?= $v['id']; ?>">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editVersementLabel<?= $v['id']; ?>">Modifier un
+                                            versement</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Fermer"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Type -->
+                                        <div class="mb-3">
+                                            <label for="type<?= $v['id']; ?>" class="form-label">Type de
+                                                versement</label>
+                                            <select name="type" id="type<?= $v['id']; ?>"
+                                                class="form-control border border-secondary" required>
+                                                <option value="">-- Sélectionner --</option>
+                                                <option value="Virement bancaire"
+                                                    <?= $v['type']==='Virement bancaire'?'selected':''; ?>>
+                                                    Virement bancaire</option>
+                                                <option value="Chèque" <?= $v['type']==='Chèque'?'selected':''; ?>>
+                                                    Chèque</option>
+                                                <option value="Espèces" <?= $v['type']==='Espèces'?'selected':''; ?>>
+                                                    Espèces</option>
+                                            </select>
+                                        </div>
+                                        <!-- Montant -->
+                                        <div class="mb-3">
+                                            <label for="montant<?= $v['id']; ?>" class="form-label">Montant (F
+                                                CFA)</label>
+                                            <input type="number" name="montant" id="montant<?= $v['id']; ?>"
+                                                class="form-control border border-secondary" min="0"
+                                                value="<?= htmlspecialchars($v['montant']); ?>" required>
+                                        </div>
+                                        <!-- Pièce jointe -->
+                                        <div class="mb-3">
+                                            <label for="pdf<?= $v['id']; ?>" class="form-label">Nouvelle pièce jointe
+                                                (PDF)</label>
+                                            <input type="file" name="pdf" id="pdf<?= $v['id']; ?>"
+                                                class="form-control border border-secondary" accept=".pdf">
+                                            <span class="text-muted" style="font-size:0.9rem;">
+                                                Fichier actuel : <?= $v['piece_jointe'] ?? 'Aucun' ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Aucun versement trouvé</td>
+                    </tr>
+                    <?php endif; ?>
                 </tbody>
 
             </table>
         </div>
-    </div>
 
-    <!-- Modal ajouter versement -->
-    <div class="modal fade" id="addVersementModal" tabindex="-1" aria-labelledby="addVersementLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="facture_id" value="<?php echo $id_fact; ?>">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addVersementLabel">Ajouter un versement</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Type de versement</label>
-                            <select name="type" id="type" class="form-control border border-secondary" required>
-                                <option value="">-- Sélectionner --</option>
-                                <option value="Virement bancaire">Virement bancaire</option>
-                                <option value="Chèque">Chèque</option>
-                                <option value="Espèces">Espèces</option>
-                            </select>
+        <!-- Modal ajouter versement -->
+        <div class="modal fade" id="addVersementModal" tabindex="-1" aria-labelledby="addVersementLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="facture_id" value="<?php echo $id_fact; ?>">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addVersementLabel">Ajouter un versement</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fermer"></button>
                         </div>
-                        <div class="mb-3">
-                            <label for="montant" class="form-label">Montant (F CFA)</label>
-                            <input type="number" name="montant" id="montant"
-                                class="form-control border border-secondary" min="0" required>
+                        <div class="modal-body">
+                            <!-- Type -->
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type de versement</label>
+                                <select name="type" id="type" class="form-control border border-secondary" required>
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="Virement bancaire">Virement bancaire</option>
+                                    <option value="Chèque">Chèque</option>
+                                    <option value="Espèces">Espèces</option>
+                                </select>
+                            </div>
+                            <!-- Montant -->
+                            <div class="mb-3">
+                                <label for="montant" class="form-label">Montant (F CFA)</label>
+                                <input type="number" name="montant" id="montant"
+                                    class="form-control border border-secondary" min="0" required>
+                            </div>
+                            <!-- Pièce jointe -->
+                            <div class="mb-3">
+                                <label for="pdf" class="form-label">Pièce jointe (PDF)</label>
+                                <input type="file" name="pdf" id="pdf" class="form-control border border-secondary"
+                                    accept=".pdf">
+                                <span class="text-muted" style="font-size:0.9rem;">Choisissez un fichier PDF à
+                                    joindre</span>
+                            </div>
+                            <input type="hidden" name="contrat_id" value="$contrat_id">
                         </div>
-                        <div class="mb-3">
-                            <label for="pdf" class="form-label">Pièce jointe (PDF)</label>
-                            <input type="file" name="pdf" id="pdf" class="form-control bg-red border border-secondary"
-                                accept=".pdf">
-                            <span class="text-muted" style="font-size:0.9rem;">Choisissez un fichier PDF à
-                                joindre</span>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
                         </div>
-                        <input type="hidden" name="contrat_id" value="$contrat_id">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
+
 
 
 </body>

@@ -1,3 +1,23 @@
+<?php
+session_start();
+
+// Vérifier si l'utilisateur veut se déconnecter
+if (isset($_GET['logout'])) {
+    // Supprimer toutes les variables de session
+    $_SESSION = [];
+
+    // Détruire la session
+    session_destroy();
+ 
+
+    // Rediriger vers la page de connexion sans paramètre
+    header("Location: index.php");
+    exit;
+}
+session_unset();
+session_destroy();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 

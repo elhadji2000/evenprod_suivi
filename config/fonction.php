@@ -3,16 +3,24 @@
 // Connectez-vous à votre base de données MySQL
 function connexionBD()
 {
-    $connexion = mysqli_connect("localhost", "root", "", "evenprod_db");
+    $host = "localhost"; // Host distant
+    $user = "u893234126_ep_user";
+    //$user = "root";
+    $pass = "Pw@Ep@2025";
+    //$pass = "";
+    $db   = "u893234126_sygep";
+    //$db   = "evenprod_db";
 
-    // Vérifiez la connexion
-    if ($connexion === false) {
-        die("Erreur : Impossible de se connecter. " . mysqli_connect_error());
+    $connexion = mysqli_connect($host, $user, $pass, $db);
+
+    if (!$connexion) {
+        die("Erreur : Impossible de se connecter à la base distante. " . mysqli_connect_error());
     }
-    mysqli_set_charset($connexion, "utf8mb4");
 
+    mysqli_set_charset($connexion, "utf8mb4");
     return $connexion;
 }
+
 
 $connexion = connexionBD();
 
@@ -22,7 +30,7 @@ function login($username, $password)
     $hashed_password = sha1($password);
 
     // Requête SQL modifiée pour vérifier si l'utilisateur est actif
-    $query = "SELECT * FROM `users` WHERE `email` = ? AND `mot_de_passe` = ?";
+    $query = "SELECT * FROM `users` WHERE `email` = ? AND `mot_de_passe` = ? AND `statut` = 1";
     
     // Préparer la requête pour éviter les injections SQL
     $stmt = $connexion->prepare($query);
@@ -59,6 +67,77 @@ function getAllSeries() {
     return $series;
 }
 /**
+ * Ajouter une nouvelle série
+ */
+function ajouterSerie($titre, $type, $budget, $description, $logo) {
+    global $connexion;
+
+    $titre = mysqli_real_escape_string($connexion, $titre);
+    $type = mysqli_real_escape_string($connexion, $type);
+    $budget = floatval($budget);
+    $description = mysqli_real_escape_string($connexion, $description);
+    $logo = mysqli_real_escape_string($connexion, $logo);
+
+    $sql = "INSERT INTO series (titre, type, budget, description, logo) 
+            VALUES ('$titre', '$type', $budget, '$description', '$logo')";
+    if (mysqli_query($connexion, $sql)) {
+        return ['success' => true, 'serie_id' => mysqli_insert_id($connexion)];
+    }
+    return ['success' => false, 'message' => mysqli_error($connexion)];
+}
+
+/**
+ * Modifier une série existante
+ */
+function modifierSerie($serieId, $titre, $type, $budget, $description, $nouveauLogo = null) {
+    global $connexion;
+
+    $serieId = (int)$serieId;
+    $titre = mysqli_real_escape_string($connexion, $titre);
+    $type = mysqli_real_escape_string($connexion, $type);
+    $budget = floatval($budget);
+    $description = mysqli_real_escape_string($connexion, $description);
+
+    // Récupérer l'ancienne série pour le logo
+    $oldSerie = getSerieById($serieId);
+    if(!$oldSerie) return ['success' => false, 'message' => 'Série introuvable'];
+
+    $logo = $oldSerie['logo']; // par défaut on garde l'ancien logo
+
+    // Si un nouveau logo est uploadé, remplacer l'ancien
+    if($nouveauLogo) {
+        $uploadDir = '../uploads/series/';
+        if(!empty($logo) && file_exists($uploadDir . $logo)) {
+            unlink($uploadDir . $logo); // suppression de l'ancien fichier
+        }
+        $logo = $nouveauLogo; // remplacer par le nouveau
+    }
+
+    $sql = "UPDATE series 
+            SET titre='$titre', type='$type', budget=$budget, description='$description', logo='$logo'
+            WHERE id=$serieId";
+
+    if(mysqli_query($connexion, $sql)) {
+        return ['success' => true];
+    } else {
+        return ['success' => false, 'message' => mysqli_error($connexion)];
+    }
+}
+
+
+/**
+ * Récupérer une série par son ID
+ */
+function getSerieById($serieId) {
+    global $connexion;
+    $serieId = (int)$serieId;
+
+    $sql = "SELECT * FROM series WHERE id = $serieId";
+    $res = mysqli_query($connexion, $sql);
+    return mysqli_fetch_assoc($res);
+}
+
+/**
  * Récupère la dernière série ajoutée
  *
  * @return array|null Tableau associatif de la série ou null si aucune série
@@ -79,25 +158,7 @@ function getLastSerie() {
 
     return null;
 }
-// ************FONCTION POUR RECUPERER UNE SERIE PAR SON ID********************
-function getSerieById($id)
-{
-    // on récupère la connexion globale
-    global $connexion;
 
-    // sécurisation de l'id
-    $id = (int)$id;
-
-    // requête SQL
-    $sql = "SELECT * FROM series WHERE id = $id LIMIT 1";
-    $result = mysqli_query($connexion, $sql);
-
-    if ($result && mysqli_num_rows($result) > 0) {
-        return mysqli_fetch_assoc($result); // retourne un tableau associatif
-    } else {
-        return null; // rien trouvé
-    }
-}
 
 function getActeursBySerieId($serieId)
 {
@@ -106,7 +167,7 @@ function getActeursBySerieId($serieId)
     $serieId = (int)$serieId;
 
     $sql = "
-        SELECT a.*
+        SELECT a.*, sa.id AS serie_acteur, sa.cachet
         FROM acteurs a
         INNER JOIN serie_acteur sa ON a.id = sa.acteur_id
         INNER JOIN series s ON s.id = sa.serie_id
@@ -200,23 +261,55 @@ function getEquipeCountByTournage($tournageId) {
     $row = mysqli_fetch_assoc($result);
     return $row['total'] ?? 0;
 }
-function generateTournageReference($serieId) {
+function getActeursByTournage($tournageId) {
     global $connexion;
+    $tournageId = (int)$tournageId;
 
-    $serieId = (int)$serieId;
+    $sql = "SELECT a.id, a.nom, a.prenom, a.date_naissance, a.contact, a.adresse, sa.cachet
+            FROM acteurs a
+            INNER JOIN tournage_acteur ta ON ta.acteur_id = a.id
+            LEFT JOIN serie_acteur sa ON sa.acteur_id = a.id
+            WHERE ta.tournage_id = $tournageId";
+    $res = mysqli_query($connexion, $sql);
+
+    $acteurs = [];
+    while ($row = mysqli_fetch_assoc($res)) {
+        $acteurs[] = $row; // retourne tout le tableau avec l'id
+    }
+    return $acteurs;
+}
+
+function getTournageById($tournageId) {
+    global $connexion;
+    $tournageId = (int)$tournageId;
+
+    $sql = "SELECT * FROM tournages WHERE id = $tournageId LIMIT 1";
+    $result = mysqli_query($connexion, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    } else {
+        return null;
+    }
+}
+function generateTournageReference() {
+    global $connexion;
     $year = date('y'); // année actuelle sur 2 chiffres
 
-    // Compter le nombre de tournages déjà existants pour cette série
-    $sql = "SELECT COUNT(*) as count FROM tournages WHERE serie_id = $serieId";
+    // Récupérer l'ID max de la table tournages
+    $sql = "SELECT MAX(id) as max_id FROM tournages";
     $result = mysqli_query($connexion, $sql);
     $row = mysqli_fetch_assoc($result);
-    $num = $row['count'] + 1;
+    $lastId = $row['max_id'] ?? 0;
+
+    $num = $lastId + 1; // On ajoute 1 à l'ID max pour la nouvelle référence
 
     // Formater en 3 chiffres
     $numFormatted = str_pad($num, 3, '0', STR_PAD_LEFT);
 
     return "RF-$year-$numFormatted";
 }
+
 function ajouterTournage($serieId, $date, $reference, $acteursIds) {
     global $connexion;
 
@@ -254,12 +347,68 @@ function ajouterTournage($serieId, $date, $reference, $acteursIds) {
     // 3️⃣ Ajouter la dépense "cachet"
     if ($totalCachet > 0) {
         $sqlDepense = "INSERT INTO depenses (serie_id, tournage_id, type_depense, montant, date_depense) 
-                       VALUES ($serieId, $tournageId, 'cachet', $totalCachet, $date)";
+                       VALUES ($serieId, $tournageId, 'cachet', $totalCachet, '$date')";
         mysqli_query($connexion, $sqlDepense);
     }
 
     return ['success' => true, 'tournage_id' => $tournageId];
 }
+function modifierTournage($tournageId, $serieId, $date, $reference, $acteursIds) {
+    global $connexion;
+
+    $tournageId = (int)$tournageId;
+    $serieId = (int)$serieId;
+    $date = mysqli_real_escape_string($connexion, $date);
+    $reference = mysqli_real_escape_string($connexion, $reference);
+
+    // 1️⃣ Mettre à jour le tournage
+    $sqlUpdate = "UPDATE tournages 
+                  SET date_tournage = '$date', reference = '$reference' 
+                  WHERE id = $tournageId";
+    if (!mysqli_query($connexion, $sqlUpdate)) {
+        return ['success' => false, 'message' => 'Erreur mise à jour tournage : '.mysqli_error($connexion)];
+    }
+
+    // 2️⃣ Supprimer les anciens acteurs du tournage
+    $sqlDelete = "DELETE FROM tournage_acteur WHERE tournage_id = $tournageId";
+    mysqli_query($connexion, $sqlDelete);
+
+    // 3️⃣ Réinsérer les nouveaux acteurs et calculer le total des cachets
+    $totalCachet = 0;
+    foreach ($acteursIds as $acteurId) {
+        $acteurId = (int)$acteurId;
+
+        // Récupérer le cachet depuis serie_acteur
+        $sqlCachet = "SELECT cachet FROM serie_acteur WHERE serie_id = $serieId AND acteur_id = $acteurId";
+        $res = mysqli_query($connexion, $sqlCachet);
+        $row = mysqli_fetch_assoc($res);
+        $cachet = $row['cachet'] ?? 0;
+        $totalCachet += $cachet;
+
+        // Insérer dans tournage_acteur
+        $sqlTA = "INSERT INTO tournage_acteur (tournage_id, acteur_id) VALUES ($tournageId, $acteurId)";
+        mysqli_query($connexion, $sqlTA);
+    }
+
+    // 4️⃣ Mettre à jour la dépense "cachet" du tournage
+    $sqlDepenseCheck = "SELECT id FROM depenses WHERE tournage_id = $tournageId AND type_depense = 'cachet'";
+    $resDepense = mysqli_query($connexion, $sqlDepenseCheck);
+    if (mysqli_num_rows($resDepense) > 0) {
+        // Mise à jour
+        $rowDepense = mysqli_fetch_assoc($resDepense);
+        $depenseId = $rowDepense['id'];
+        $sqlUpdateDepense = "UPDATE depenses SET montant = $totalCachet, date_depense = '$date' WHERE id = $depenseId";
+        mysqli_query($connexion, $sqlUpdateDepense);
+    } else if ($totalCachet > 0) {
+        // Nouvelle insertion si inexistante
+        $sqlInsertDepense = "INSERT INTO depenses (serie_id, tournage_id, type_depense, montant, date_depense) 
+                             VALUES ($serieId, $tournageId, 'cachet', $totalCachet, '$date')";
+        mysqli_query($connexion, $sqlInsertDepense);
+    }
+
+    return ['success' => true, 'tournage_id' => $tournageId];
+}
+
 function getDepensesBySerie($serieId) {
     global $connexion;
     $serieId = (int)$serieId;
@@ -299,7 +448,7 @@ function ajouterDepense($serieId, $tournageId, $type, $montant, $description, $j
     return ['success' => true, 'depense_id' => mysqli_insert_id($connexion)];
 }
 
-function ajouterPartenaire($ninea, $nom, $email, $contact, $logoFile)
+function ajouterPartenaire($ninea, $nom, $email, $contact, $adresse, $logoFile)
 {
     global $connexion; // ta connexion MySQLi
 
@@ -326,18 +475,64 @@ function ajouterPartenaire($ninea, $nom, $email, $contact, $logoFile)
     // --- 2. Insertion dans la base ---
     $stmt = mysqli_prepare(
         $connexion,
-        "INSERT INTO clients (ninea, nom, email, contact, logo) VALUES (?, ?, ?, ?, ?)"
+        "INSERT INTO clients (ninea, nom, email, contact, adresse, logo) VALUES (?, ?, ?, ?, ?, ?)"
     );
 
-    mysqli_stmt_bind_param($stmt, "sssss", $ninea, $nom, $email, $contact, $logo);
+    mysqli_stmt_bind_param($stmt, "ssssss", $ninea, $nom, $email, $contact, $adresse, $logo);
     $success = mysqli_stmt_execute($stmt);
 
     mysqli_stmt_close($stmt);
 
     return $success;
 }
+function modifierPartenaire($id, $ninea, $nom, $email, $contact, $adresse, $logoFile = null)
+{
+    global $connexion;
+
+    // Récupérer l'ancien partenaire pour savoir quel logo supprimer
+    $id = (int)$id;
+    $res = mysqli_query($connexion, "SELECT logo FROM clients WHERE id=$id");
+    $old = mysqli_fetch_assoc($res);
+
+    $logo = $old['logo']; // par défaut garder l'ancien logo
+
+    // S'il y a un nouveau fichier
+    if ($logoFile && $logoFile['error'] === 0) {
+        $ext = strtolower(pathinfo($logoFile['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array($ext, $allowed)) {
+            $uploadDir = __DIR__ . "/../uploads/logos/";
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            // Supprimer l’ancien logo
+            if ($logo && file_exists($uploadDir . $logo)) {
+                unlink($uploadDir . $logo);
+            }
+
+            $logoName = "logo_" . time() . "." . $ext;
+            $destination = $uploadDir . $logoName;
+            if (move_uploaded_file($logoFile['tmp_name'], $destination)) {
+                $logo = $logoName;
+            }
+        }
+    }
+
+    // Mise à jour
+    $stmt = mysqli_prepare(
+        $connexion,
+        "UPDATE clients SET ninea=?, nom=?, email=?, contact=?, adresse=?, logo=? WHERE id=?"
+    );
+    mysqli_stmt_bind_param($stmt, "ssssssi", $ninea, $nom, $email, $contact, $adresse, $logo, $id);
+    $success = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $success;
+}
+
 function getClients($connexion) {
-    $sql = "SELECT id, ninea, nom, logo, email, contact, created_at 
+    $sql = "SELECT id, ninea, nom, logo, email, contact, adresse, created_at 
             FROM clients 
             ORDER BY id DESC";
     $result = mysqli_query($connexion, $sql);
@@ -351,7 +546,7 @@ function getClients($connexion) {
     return $clients;
 }
 
-function ajouterFacture($connexion, $client, $serie_id, $date, $description, $libelles, $prixUnitaires, $quantites, $montants) {
+function ajouterFacture($connexion, $client, $serie_id, $date, $description, $libelles, $quantites, $montants) {
     try {
         // Calcul du total
         $total = 0;
@@ -381,12 +576,12 @@ function ajouterFacture($connexion, $client, $serie_id, $date, $description, $li
         // 3. Enregistrer chaque ligne
         for ($i = 0; $i < count($libelles); $i++) {
             $lib = $connexion->real_escape_string(trim($libelles[$i]));
-            $pu  = $connexion->real_escape_string(trim($prixUnitaires[$i]));
+            /* $pu  = $connexion->real_escape_string(trim($prixUnitaires[$i])); */
             $qte = (int)$quantites[$i];
             $mt  = (float)$montants[$i];
 
-            $sql2 = "INSERT INTO designation (facture_id, libelle, prix_unitaire, quantite, montant) 
-                     VALUES ('$facture_id', '$lib', '$pu', '$qte', '$mt')";
+            $sql2 = "INSERT INTO designation (facture_id, libelle, quantite, montant) 
+                     VALUES ('$facture_id', '$lib', '$qte', '$mt')";
             if (!$connexion->query($sql2)) {
                 throw new Exception("Erreur designation : " . $connexion->error);
             }
@@ -405,7 +600,7 @@ function ajouterFacture($connexion, $client, $serie_id, $date, $description, $li
 
 
 function getFacturesBySerieId($connexion, $serieId) {
-    $sql = "SELECT f.id, f.type, f.date_facture, f.description, f.total, 
+    $sql = "SELECT f.id, f.type, f.date_facture, f.reference, f.description, f.total, 
                    c.nom AS client_nom
             FROM factures f
             INNER JOIN clients c ON f.client_id = c.id
@@ -477,7 +672,7 @@ function getPaiementsByFactureId($connexion, $factureId) {
 }
 
 function getFactureWithPaiements($connexion, $factId) {
-    $sql = "SELECT f.id, f.description, f.total, c.nom AS client_nom, c.ninea, c.contact
+    $sql = "SELECT f.id, f.description, f.reference, f.total, c.nom AS client_nom, c.ninea, c.contact
             FROM factures f
             JOIN clients c ON f.client_id = c.id
             WHERE f.id = " . (int)$factId . " AND f.type = 'facture'
@@ -508,7 +703,7 @@ function getFactureDetails($connexion, $facture_id) {
 
     // Récupérer la facture avec client et série
     $sql = "SELECT f.id AS facture_id, f.reference, f.date_facture, f.date_validation, f.type, f.description, f.total, 
-                   c.nom AS client_nom, c.contact AS client_contact, c.ninea AS client_ninea,
+                   c.nom AS client_nom, c.contact AS client_contact, c.adresse, c.ninea AS client_ninea,
                    s.titre AS serie_nom, s.logo
             FROM factures f
             JOIN clients c ON f.client_id = c.id
@@ -554,6 +749,295 @@ function deleteActeurBySerie($acteurId, $serieId) {
         error_log("Erreur suppression acteur: " . mysqli_error($connexion));
         return false;
     }
+}
+function ajouterUser($nom, $prenom, $email, $telephone, $role, $photoFile)
+{
+    global $connexion; // connexion MySQLi
+
+    // --- 1. Vérifier si l'utilisateur existe déjà ---
+    $stmt = mysqli_prepare($connexion, "SELECT id FROM users WHERE email = ?");
+    if (!$stmt) {
+        return "error"; // erreur de préparation
+    }
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
+
+    if (mysqli_stmt_num_rows($stmt) > 0) {
+        mysqli_stmt_close($stmt);
+        return "exists"; // déjà dans la base
+    }
+    mysqli_stmt_close($stmt);
+
+    // --- 2. Gestion de l'upload du profil ---
+    $photo = null;
+    if (!empty($photoFile) && $photoFile['error'] === 0) {
+        $ext = strtolower(pathinfo($photoFile['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array($ext, $allowed)) {
+            $uploadDir = __DIR__ . "/../uploads/profile/";
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $photoName = "profil_" . uniqid() . "." . $ext; // éviter doublons
+            $destination = $uploadDir . $photoName;
+
+            if (move_uploaded_file($photoFile['tmp_name'], $destination)) {
+                $photo = $photoName;
+            }
+        }
+    }
+
+    // --- 3. Générer un mot de passe par défaut avec SHA1 ---
+    $password = sha1("Evenprod2025"); 
+
+    // --- 4. Insertion dans la base ---
+    $stmt = mysqli_prepare(
+        $connexion,
+        "INSERT INTO users (nom, prenom, email, telephone, role, profile, mot_de_passe) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)"
+    );
+    if (!$stmt) {
+        return "error"; // erreur de préparation
+    }
+
+    mysqli_stmt_bind_param($stmt, "sssssss", $nom, $prenom, $email, $telephone, $role, $photo, $password);
+    $success = mysqli_stmt_execute($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    return $success ? "success" : "error";
+}
+
+function modifierUser($id, $nom, $prenom, $email, $telephone, $role, $photoFile)
+{
+    global $connexion;
+
+    // 1. Récupérer l’ancien profil
+    $stmt = mysqli_prepare($connexion, "SELECT profile FROM users WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $oldProfile);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+
+    // 2. Gestion du nouveau fichier photo
+    $photo = $oldProfile; // par défaut garder l’ancienne photo
+    if (!empty($photoFile) && $photoFile['error'] === 0) {
+        $ext = strtolower(pathinfo($photoFile['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array($ext, $allowed)) {
+            $uploadDir = __DIR__ . "/../uploads/profile/";
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $photoName = "profil_" . uniqid() . "." . $ext;
+            $destination = $uploadDir . $photoName;
+
+            if (move_uploaded_file($photoFile['tmp_name'], $destination)) {
+                // supprimer l’ancien si existe
+                if (!empty($oldProfile) && file_exists($uploadDir.$oldProfile)) {
+                    unlink($uploadDir.$oldProfile);
+                }
+                $photo = $photoName;
+            }
+        }
+    }
+
+    // 3. Update dans la base
+    $stmt = mysqli_prepare(
+        $connexion,
+        "UPDATE users SET nom=?, prenom=?, email=?, telephone=?, role=?, profile=? WHERE id=?"
+    );
+    if (!$stmt) {
+        return "error";
+    }
+    mysqli_stmt_bind_param($stmt, "ssssssi", $nom, $prenom, $email, $telephone, $role, $photo, $id);
+    $success = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $success ? "success" : "error";
+}
+
+
+function getUsers($connexion) {
+    $users = [];
+    $sql = "SELECT id, nom, prenom, role, profile, email, statut
+            FROM users";
+    $result = mysqli_query($connexion, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $users[] = $row;
+        }
+    }
+    return $users;
+}
+
+function getTotauxDepenses($connexion)
+{
+    $totaux = [
+        "decor" => 0,
+        "transport" => 0,
+        "cachet" => 0,
+        "autre" => 0,
+    ];
+
+    // Préparer la requête
+    $sql = "SELECT type_depense, SUM(montant) as total 
+            FROM depenses 
+            WHERE type_depense IN ('decor','transport','cachet','autre')
+            GROUP BY type_depense";
+
+    $result = mysqli_query($connexion, $sql);
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $type = strtolower($row['type_depense']);
+            $totaux[$type] = $row['total'];
+        }
+    }
+
+    return $totaux;
+}
+function getTotauxDepensesBySerie($connexion, $serie_id)
+{
+    $totaux = [
+        "decor" => 0,
+        "transport" => 0,
+        "cachet" => 0,
+        "autre" => 0,
+    ];
+
+    // Préparer la requête avec condition sur la série
+    $sql = "SELECT type_depense, SUM(montant) as total 
+            FROM depenses 
+            WHERE serie_id = ? 
+              AND type_depense IN ('decor','transport','cachet','autre')
+            GROUP BY type_depense";
+
+    $stmt = mysqli_prepare($connexion, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $serie_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $type = strtolower($row['type_depense']);
+            $totaux[$type] = $row['total'];
+        }
+    }
+
+    mysqli_stmt_close($stmt);
+
+    return $totaux;
+}
+
+
+function getTotaux($connexion) {
+    $totaux = [];
+
+    // Total utilisateurs
+    $sql = "SELECT COUNT(*) as total FROM users";
+    $res = $connexion->query($sql);
+    $totaux['users'] = $res->fetch_assoc()['total'];
+
+    // Total acteurs
+    $sql = "SELECT COUNT(*) as total FROM acteurs";
+    $res = $connexion->query($sql);
+    $totaux['acteurs'] = $res->fetch_assoc()['total'];
+
+    // Total séries
+    $sql = "SELECT COUNT(*) as total FROM series";
+    $res = $connexion->query($sql);
+    $totaux['series'] = $res->fetch_assoc()['total'];
+
+    // Total clients
+    $sql = "SELECT COUNT(*) as total FROM clients";
+    $res = $connexion->query($sql);
+    $totaux['clients'] = $res->fetch_assoc()['total'];
+
+    // Total factures
+    $sql = "SELECT COUNT(*) as total FROM factures";
+    $res = $connexion->query($sql);
+    $totaux['factures'] = $res->fetch_assoc()['total'];
+
+    // Total paiements
+    $sql = "SELECT COUNT(*) as total FROM paiements";
+    $res = $connexion->query($sql);
+    $totaux['paiements'] = $res->fetch_assoc()['total'];
+
+    // Total dépenses
+    $sql = "SELECT SUM(montant) as total FROM depenses";
+    $res = $connexion->query($sql);
+    $totaux['depenses'] = $res->fetch_assoc()['total'] ?? 0;
+
+    return $totaux;
+}
+function getTotauxGeneraux($connexion, $serie_id = null)
+{
+    $totaux = [
+        "total_series" => 0,
+        "total_depenses" => 0,
+        "total_factures" => 0,
+    ];
+
+    // Filtre pour la série si fournie
+    $filter = "";
+    if ($serie_id !== null) {
+        $filter = "WHERE id = " . intval($serie_id);
+    }
+
+    // Total séries
+    $sqlSeries = "SELECT COUNT(*) as total FROM series $filter";
+    $result = mysqli_query($connexion, $sqlSeries);
+    if ($row = mysqli_fetch_assoc($result)) {
+        $totaux['total_series'] = $row['total'];
+    }
+
+    // Total dépenses
+    $filterDepenses = ($serie_id !== null) ? "WHERE serie_id = " . intval($serie_id) : "";
+    $sqlDepenses = "SELECT SUM(montant) as total_depenses FROM depenses $filterDepenses";
+    $result = mysqli_query($connexion, $sqlDepenses);
+    if ($row = mysqli_fetch_assoc($result)) {
+        $totaux['total_depenses'] = $row['total_depenses'] ?? 0;
+    }
+
+    // Total factures type='Facture'
+    $filterFactures = ($serie_id !== null) ? "WHERE serie_id = " . intval($serie_id) . " AND type='Facture'" : "WHERE type='Facture'";
+    $sqlFactures = "SELECT SUM(total) as total_factures FROM factures $filterFactures";
+    $result = mysqli_query($connexion, $sqlFactures);
+    if ($row = mysqli_fetch_assoc($result)) {
+        $totaux['total_factures'] = $row['total_factures'] ?? 0;
+    }
+
+    return $totaux;
+}
+function getUserById($connexion, $id) {
+    $id = intval($id); // sécurité de base
+
+    $sql = "SELECT id, nom, prenom, email, telephone,mot_de_passe AS password, role, profile, statut, created_at 
+            FROM users 
+            WHERE id = ?";
+    
+    if ($stmt = mysqli_prepare($connexion, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $user = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($stmt);
+        return $user;
+    } else {
+        return null;
+    }
+}
+function getActeurById($id) {
+  global $connexion;
+  $id = (int)$id;
+  $res = mysqli_query($connexion,"SELECT * FROM acteurs WHERE id=$id");
+  return mysqli_fetch_assoc($res);
 }
 
 ?>
