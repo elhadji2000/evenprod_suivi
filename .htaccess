@@ -1,0 +1,19 @@
+RewriteEngine On
+Options +FollowSymLinks -MultiViews
+
+# Rediriger les URLs avec extension vers celles sans extension
+RewriteCond %{THE_REQUEST} \s([^.]+)\.(php|html|htm)[\s?] [NC]
+RewriteRule ^ %1 [R=301,L,NE]
+
+# Réécriture interne pour les fichiers sans extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.htm -f
+RewriteRule ^(.+?)/?$ $1.htm [L]

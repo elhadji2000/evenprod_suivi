@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo "<script>
             alert('Devis enregistré avec succès !');
-            window.location.href='all_devis_fac.php?id=" . $serie_id . "';
+            window.location.href='all_devis_fac?id=" . $serie_id . "';
           </script>";
 } catch (Exception $e) {
     die($e->getMessage());
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="row flex-row-reverse">
             <div class="contact-form">
-                <form action="add_devis.php" method="post" enctype="multipart/form-data"
+                <form action="add_devis" method="post" enctype="multipart/form-data"
                       class="contactform contact_form" id="contact_form">
 
                     <!-- Client -->

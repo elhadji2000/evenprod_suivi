@@ -49,18 +49,22 @@ $permissions = [
                         <div class="col-md-4 col-sm-6">
                             <div class="team-member">
                                 <?php if (in_array($role, $permissions['acteur'])): ?>
-                                    <a href="<?php echo $url_base; ?>public/appManager/acteur/acteurs.php?id=<?php echo htmlspecialchars($serie['id'])?>">
-                                        <img src="<?php echo $url_base; ?>assets/images/peoples.png" class="img-responsive" alt="Acteurs">
-                                    </a>
+                                <a
+                                    href="<?php echo $url_base; ?>public/appManager/acteur/acteurs.php?id=<?php echo htmlspecialchars($serie['id'])?>">
+                                    <img src="<?php echo $url_base; ?>assets/images/peoples.png" class="img-responsive"
+                                        alt="Acteurs">
+                                </a>
                                 <?php else: ?>
-                                    <img src="<?php echo $url_base; ?>assets/images/peoples.png" class="img-responsive" alt="Acteurs">
+                                <img src="<?php echo $url_base; ?>assets/images/peoples.png" class="img-responsive"
+                                    alt="Acteurs">
                                 <?php endif; ?>
                                 <div class="member-details">
                                     <h4>
                                         <?php if (in_array($role, $permissions['acteur'])): ?>
-                                            <a href="<?php echo $url_base; ?>public/appManager/acteur/acteurs.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="text-info text-decoration-underline">Acteurs</a>
+                                        <a href="<?php echo $url_base; ?>public/appManager/acteur/acteurs.php?id=<?php echo htmlspecialchars($serie['id'])?>"
+                                            class="text-info text-decoration-underline">Acteurs</a>
                                         <?php else: ?>
-                                            <span class="text-muted">Acteurs</span>
+                                        <span class="text-muted">Acteurs</span>
                                         <?php endif; ?>
                                     </h4>
                                     <span>Gestion des acteurs de la série</span>
@@ -72,18 +76,22 @@ $permissions = [
                         <div class="col-md-4 col-sm-6">
                             <div class="team-member">
                                 <?php if (in_array($role, $permissions['facture'])): ?>
-                                    <a href="<?php echo $url_base; ?>public/appManager/facture/all_devis_fac.php?id=<?php echo htmlspecialchars($serie['id'])?>">
-                                        <img src="<?php echo $url_base; ?>assets/images/facture.png" class="img-responsive" alt="Factures et Devis">
-                                    </a>
+                                <a
+                                    href="<?php echo $url_base; ?>public/appManager/facture/all_devis_fac.php?id=<?php echo htmlspecialchars($serie['id'])?>">
+                                    <img src="<?php echo $url_base; ?>assets/images/facture.png" class="img-responsive"
+                                        alt="Factures et Devis">
+                                </a>
                                 <?php else: ?>
-                                    <img src="<?php echo $url_base; ?>assets/images/facture.png" class="img-responsive" alt="Factures et Devis">
+                                <img src="<?php echo $url_base; ?>assets/images/facture.png" class="img-responsive"
+                                    alt="Factures et Devis">
                                 <?php endif; ?>
                                 <div class="member-details">
                                     <h4>
                                         <?php if (in_array($role, $permissions['facture'])): ?>
-                                            <a href="<?php echo $url_base; ?>public/appManager/facture/all_devis_fac.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="text-info text-decoration-underline">Factures & Devis</a>
+                                        <a href="<?php echo $url_base; ?>public/appManager/facture/all_devis_fac.php?id=<?php echo htmlspecialchars($serie['id'])?>"
+                                            class="text-info text-decoration-underline">Factures & Devis</a>
                                         <?php else: ?>
-                                            <span class="text-muted">Factures & Devis</span>
+                                        <span class="text-muted">Factures & Devis</span>
                                         <?php endif; ?>
                                     </h4>
                                     <span>Suivi des documents financiers</span>
@@ -95,18 +103,22 @@ $permissions = [
                         <div class="col-md-4 col-sm-6">
                             <div class="team-member">
                                 <?php if (in_array($role, $permissions['tournages'])): ?>
-                                    <a href="<?php echo $url_base; ?>public/appManager/series/tournages.php?id=<?php echo htmlspecialchars($serie['id'])?>">
-                                        <img src="<?php echo $url_base; ?>assets/images/tourn.jpg" class="img-responsive" alt="Tournages">
-                                    </a>
+                                <a
+                                    href="<?php echo $url_base; ?>public/appManager/series/tournages.php?id=<?php echo htmlspecialchars($serie['id'])?>">
+                                    <img src="<?php echo $url_base; ?>assets/images/tourn.jpg" class="img-responsive"
+                                        alt="Tournages">
+                                </a>
                                 <?php else: ?>
-                                    <img src="<?php echo $url_base; ?>assets/images/tourn.jpg" class="img-responsive" alt="Tournages">
+                                <img src="<?php echo $url_base; ?>assets/images/tourn.jpg" class="img-responsive"
+                                    alt="Tournages">
                                 <?php endif; ?>
                                 <div class="member-details">
                                     <h4>
                                         <?php if (in_array($role, $permissions['tournages'])): ?>
-                                            <a href="<?php echo $url_base; ?>public/appManager/series/tournages.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="text-info text-decoration-underline">Tournages</a>
+                                        <a href="<?php echo $url_base; ?>public/appManager/series/tournages.php?id=<?php echo htmlspecialchars($serie['id'])?>"
+                                            class="text-info text-decoration-underline">Tournages</a>
                                         <?php else: ?>
-                                            <span class="text-muted">Tournages</span>
+                                        <span class="text-muted">Tournages</span>
                                         <?php endif; ?>
                                     </h4>
                                     <span>Organisation et suivi des tournages</span>
@@ -118,18 +130,21 @@ $permissions = [
                         <div class="col-md-4 col-sm-6">
                             <div class="team-member">
                                 <?php if (in_array($role, $permissions['depenses'])): ?>
-                                    <a href="../depenses/liste_all.php?id=<?php echo htmlspecialchars($serie['id'])?>">
-                                        <img src="<?php echo $url_base; ?>assets/images/depense.jpg" class="img-responsive" alt="Dépenses">
-                                    </a>
+                                <a href="../depenses/liste_all.php?id=<?php echo htmlspecialchars($serie['id'])?>">
+                                    <img src="<?php echo $url_base; ?>assets/images/depense.jpg" class="img-responsive"
+                                        alt="Dépenses">
+                                </a>
                                 <?php else: ?>
-                                    <img src="<?php echo $url_base; ?>assets/images/depense.jpg" class="img-responsive" alt="Dépenses">
+                                <img src="<?php echo $url_base; ?>assets/images/depense.jpg" class="img-responsive"
+                                    alt="Dépenses">
                                 <?php endif; ?>
                                 <div class="member-details">
                                     <h4>
                                         <?php if (in_array($role, $permissions['depenses'])): ?>
-                                            <a href="../depenses/liste_all.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="text-info text-decoration-underline">Dépenses</a>
+                                        <a href="../depenses/liste_all.php?id=<?php echo htmlspecialchars($serie['id'])?>"
+                                            class="text-info text-decoration-underline">Dépenses</a>
                                         <?php else: ?>
-                                            <span class="text-muted">Dépenses</span>
+                                        <span class="text-muted">Dépenses</span>
                                         <?php endif; ?>
                                     </h4>
                                     <span>Suivi des coûts de production</span>
@@ -141,18 +156,22 @@ $permissions = [
                         <div class="col-md-4 col-sm-6">
                             <div class="team-member">
                                 <?php if (in_array($role, $permissions['recettes'])): ?>
-                                    <a href="<?php echo $url_base; ?>public/appManager/recettes/details_spg.php?id=<?php echo htmlspecialchars($serie['id'])?>">
-                                        <img src="<?php echo $url_base; ?>assets/images/recette.avif" class="img-responsive" alt="Recettes">
-                                    </a>
+                                <a
+                                    href="<?php echo $url_base; ?>public/appManager/recettes/details_spg.php?id=<?php echo htmlspecialchars($serie['id'])?>">
+                                    <img src="<?php echo $url_base; ?>assets/images/recette.avif" class="img-responsive"
+                                        alt="Recettes">
+                                </a>
                                 <?php else: ?>
-                                    <img src="<?php echo $url_base; ?>assets/images/recette.avif" class="img-responsive" alt="Recettes">
+                                <img src="<?php echo $url_base; ?>assets/images/recette.avif" class="img-responsive"
+                                    alt="Recettes">
                                 <?php endif; ?>
                                 <div class="member-details">
                                     <h4>
                                         <?php if (in_array($role, $permissions['recettes'])): ?>
-                                            <a href="<?php echo $url_base; ?>public/appManager/recettes/details_spg.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="text-info text-decoration-underline">Recettes</a>
+                                        <a href="<?php echo $url_base; ?>public/appManager/recettes/details_spg.php?id=<?php echo htmlspecialchars($serie['id'])?>"
+                                            class="text-info text-decoration-underline">Recettes</a>
                                         <?php else: ?>
-                                            <span class="text-muted">Recettes</span>
+                                        <span class="text-muted">Recettes</span>
                                         <?php endif; ?>
                                     </h4>
                                     <span>Entrées financières générées</span>
@@ -203,10 +222,13 @@ $permissions = [
 <div class="serie-settings">
     <h4>Paramètres de la série</h4>
     <div class="settings-actions">
-        <a href="<?php echo $url_base; ?>pages/add_serie.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="btn btn-warning">Modifier</a>
+        <a href="<?php echo $url_base; ?>pages/add_serie.php?id=<?php echo htmlspecialchars($serie['id'])?>"
+            class="btn btn-warning">Modifier</a>
+        <?php if ($role === 'admin'): ?>
         <a href="<?php echo $url_base; ?>public/appManager/delete.php?table=series&id=<?php echo htmlspecialchars($serie['id']); ?>&redirect=<?php echo $url_base; ?>pages/about-us.php"
-           class="btn btn-danger"
-           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.');">Supprimer</a>
+            class="btn btn-danger"
+            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.');">Supprimer</a>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -218,15 +240,51 @@ $permissions = [
     text-align: center;
     max-width: 800px;
 }
-.serie-settings h4 { margin-bottom: 15px; font-weight: bold; }
-.settings-actions { display: flex; justify-content: center; gap: 15px; }
-.btn { padding: 8px 18px; text-decoration: none; border-radius: 5px; font-size: 14px; }
-.btn-warning { background-color: #f39c12; color: #fff; }
-.btn-warning:hover { background-color: #e67e22; }
-.btn-danger { background-color: #e74c3c; color: #fff; }
-.btn-danger:hover { background-color: #c0392b; }
-.text-info.text-decoration-underline { text-decoration: underline; color: #17a2b8 !important; }
-.text-muted { color: #6c757d !important; }
+
+.serie-settings h4 {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 8px 18px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn-warning {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background-color: #e67e22;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.text-info.text-decoration-underline {
+    text-decoration: underline;
+    color: #17a2b8 !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
 </style>
 
 <?php include '../../../includes/footer.php'; ?>

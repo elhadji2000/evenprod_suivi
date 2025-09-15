@@ -57,7 +57,7 @@ include '../../../includes/header.php';
         </div>
 
         <div class="contact-form">
-            <form action="serie_acteur.php?id_serie=<?php echo htmlspecialchars($serie['id'])?>" method="post" class="contactform contact_form" id="actorForm">
+            <form action="serie_acteur?id_serie=<?php echo htmlspecialchars($serie['id'])?>" method="post" class="contactform contact_form" id="actorForm">
 
                 <!-- ID de la série caché -->
                 <input type="hidden" name="serie_id" value="<?php echo htmlspecialchars($id); ?>">

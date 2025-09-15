@@ -4,12 +4,12 @@
 function connexionBD()
 {
     $host = "localhost"; // Host distant
-    $user = "u893234126_ep_user";
-    //$user = "root";
-    $pass = "Pw@Ep@2025";
-    //$pass = "";
-    $db   = "u893234126_sygep";
-    //$db   = "evenprod_db";
+    //$user = "u893234126_ep_user";
+    $user = "root";
+    //$pass = "Pw@Ep@2025";
+    $pass = "";
+    //$db   = "u893234126_sygep";
+    $db   = "evenprod_db";
 
     $connexion = mysqli_connect($host, $user, $pass, $db);
 

@@ -2,9 +2,9 @@
 <div class="footer-banner">
     <div class="scrolling-text">
         &copy; <?php echo date("Y"); ?> EvenProd - Maison de production & événements |
-        Adresse : Dakar, Sénégal |
+        Adresse : Sipres 2 Cité Villa N*36*BP : 15949 Dakar Fann. |
         Tél : +221 33 827 60 61 |
-        Email : contact@evenprod.com
+        Email : commercialetyprod19@gmail.com
     </div>
 </div>
 

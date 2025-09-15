@@ -73,7 +73,7 @@ foreach ($depenses as $d) {
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="<?php echo $url_base; ?>public/appManager/delete.php?table=depenses&id=<?= htmlspecialchars($row['id']) ?>&redirect=<?php echo $url_base; ?>public/appManager/depenses/liste_all.php?id=<?php echo $serieId; ?>"
+                                        <a href="<?php echo $url_base; ?>public/appManager/delete?table=depenses&id=<?= htmlspecialchars($row['id']) ?>&redirect=<?php echo $url_base; ?>public/appManager/depenses/liste_all?id=<?php echo $serieId; ?>"
                                             class="text-decoration-underline text-danger"
                                             onclick="return confirm('Voulez-vous vraiment supprimer ce depense ?');">
                                             Supprimer

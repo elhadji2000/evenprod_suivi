@@ -50,7 +50,7 @@ $acteurs = getActeursBySerieId($id);
                 <div class="profile-header-info">
                     <h4 class="m-t-sm"><?php echo htmlspecialchars($serie['titre'])?> / EVENPROD</h4>
                     <p class="m-b-sm">Gérer les acteurs associés à cette série</p>
-                    <a href="serie_acteur.php?id_serie=<?php echo htmlspecialchars($serie['id'])?>"
+                    <a href="serie_acteur?id_serie=<?php echo htmlspecialchars($serie['id'])?>"
                         class="btn btn-xs btn-primary mb-2">
                         <i class="bi bi-person-plus"></i> Ajouter un Acteur
                     </a>

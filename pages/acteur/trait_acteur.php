@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cvExt = strtolower(pathinfo($cvName, PATHINFO_EXTENSION));
         if ($cvExt !== 'pdf') {
             $_SESSION['erroract'] = "Le CV doit être un fichier PDF.";
-            header("Location: add_act.php");
+            header("Location: add_act");
             exit;
         }
         // supprimer ancien CV si existe
@@ -46,12 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cvDestination = $cvUploadDir.$cvNewName;
         if (!move_uploaded_file($cvTmp, $cvDestination)) {
             $_SESSION['erroract'] = "Erreur lors de l'upload du CV.";
-            header("Location: add_act.php");
+            header("Location: add_act");
             exit;
         }
     } elseif ($id === 0) {
         $_SESSION['erroract'] = "Veuillez sélectionner un CV.";
-        header("Location: add_act.php");
+        header("Location: add_act");
         exit;
     }
 
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $allowed = ['jpg','jpeg','png','gif'];
         if (!in_array($photoExt, $allowed)) {
             $_SESSION['erroract'] = "La photo doit être au format jpg, jpeg, png ou gif.";
-            header("Location: add_act.php");
+            header("Location: add_act");
             exit;
         }
         // supprimer ancienne photo si existe
@@ -75,12 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $photoDestination = $photoUploadDir.$photoNewName;
         if (!move_uploaded_file($photoTmp, $photoDestination)) {
             $_SESSION['erroract'] = "Erreur lors de l'upload de la photo.";
-            header("Location: add_act.php");
+            header("Location: add_act");
             exit;
         }
     } elseif ($id === 0) {
         $_SESSION['erroract'] = "Veuillez sélectionner une photo.";
-        header("Location: add_act.php");
+        header("Location: add_act");
         exit;
     }
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header("Location: add_act.php");
+    header("Location: add_act");
     exit;
 }
 ?>

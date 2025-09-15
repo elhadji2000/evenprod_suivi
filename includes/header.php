@@ -3,8 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$url_base = "https://gescoud.com/sygep/";  
-/* $url_base = "http://localhost/projet_suivi/"; */
+$url_base = "https://evenapp.fr/";  
+//$url_base = "http://localhost/projet_suivi/"; 
 $role = $_SESSION['role']; // ✅ Rôle de l’utilisateur connecté
 // Redirection si pas connecté
 if (!isset($_SESSION['id'])) {
@@ -21,9 +21,12 @@ if (!isset($_SESSION['id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>evenprod</title>
     <link rel="shortcut icon" href="<?php echo $url_base; ?>monde.svg" />
-    <link href="<?php echo $url_base; ?>assets/bootstrap-5.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="<?php echo $url_base; ?>assets/bootstrap-5.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <link id="pagestyle" href="<?php echo $url_base; ?>assets/css/material-kit.css?v=3.1.0" rel="stylesheet" />
+    
+    
     <script>
     // Durée d'inactivité en millisecondes (3 minutes)
     const INACTIVITY_LIMIT = 3 * 60 * 1000; // 180000 ms
@@ -34,7 +37,7 @@ if (!isset($_SESSION['id'])) {
         clearTimeout(inactivityTimer);
         inactivityTimer = setTimeout(() => {
             // Redirection vers logout.php après 3 minutes d'inactivité
-            window.location.href = "https://gescoud.com/sygep/";
+            window.location.href = "https://evenapp.fr/";
         }, INACTIVITY_LIMIT);
     }
 
@@ -51,14 +54,14 @@ if (!isset($_SESSION['id'])) {
     <nav class="navbar navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="<?php echo $url_base; ?>assets/images/logo2.png" alt="" width="30" height="24">
+                <img src="<?php echo $url_base; ?>assets/images/logo2.png" alt="" width="50" height="30">
             </a>
             <ul class="nav justify-content-end">
 
                 <!-- Accueil visible à tout le monde -->
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
-                        href="<?php echo $url_base; ?>public/appManager/series/home.php">Home</a>
+                        href="<?php echo $url_base; ?>public/appManager/series/home">Home</a>
                 </li>
 
                 <!-- Series (visible admin & manager) -->
@@ -67,11 +70,11 @@ if (!isset($_SESSION['id'])) {
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                         aria-expanded="false">Series</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/add_serie.php">Ajouter</a></li>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/add_serie">Ajouter</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/about-us.php">Lister</a></li>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/about-us">Lister</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
@@ -82,12 +85,12 @@ if (!isset($_SESSION['id'])) {
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                         aria-expanded="false">Acteurs</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/acteur/add_act.php">Ajouter</a>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/acteur/add_act">Ajouter</a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/acteur/liste.php">Lister</a>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/acteur/liste">Lister</a>
                         </li>
                     </ul>
                 </li>
@@ -100,11 +103,11 @@ if (!isset($_SESSION['id'])) {
                         aria-expanded="false">Partenariat</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item"
-                                href="<?php echo $url_base; ?>pages/sponsors/add_spon.php">Ajouter</a></li>
+                                href="<?php echo $url_base; ?>pages/sponsors/add_spon">Ajouter</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/sponsors/listes.php">Lister</a>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>pages/sponsors/listes">Lister</a>
                         </li>
                     </ul>
                 </li>
@@ -117,11 +120,11 @@ if (!isset($_SESSION['id'])) {
                         aria-expanded="false">Utilisateurs</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item"
-                                href="<?php echo $url_base; ?>public/admin/add_user.php">Ajouter</a></li>
+                                href="<?php echo $url_base; ?>public/admin/add_user">Ajouter</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>public/admin/users.php">Lister</a>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>public/admin/users">Lister</a>
                         </li>
                     </ul>
                 </li>
@@ -132,12 +135,12 @@ if (!isset($_SESSION['id'])) {
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                         aria-expanded="false">Compte</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>public/admin/profile.php">Profile</a>
+                        <li><a class="dropdown-item" href="<?php echo $url_base; ?>public/admin/profile">Profile</a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <a class="dropdown-item" href="<?php echo $url_base; ?>index.php?logout=1">Deconnexion</a>
+                        <a class="dropdown-item" href="<?php echo $url_base; ?>index?logout=1">Deconnexion</a>
                     </ul>
                 </li>
             </ul>

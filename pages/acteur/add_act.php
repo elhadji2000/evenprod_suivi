@@ -47,7 +47,7 @@ if (isset($_GET['id'])) {
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="trait_acteur.php" method="post" enctype="multipart/form-data">
+                    <form action="trait_acteur" method="post" enctype="multipart/form-data">
             
             <?php if($acteur): ?>
               <input type="hidden" name="id" value="<?= $acteur['id'] ?>">

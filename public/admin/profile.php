@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['old_password'])) {
             session_destroy();
 
             // Rediriger vers la page de login
-            header("Location: ../../../index.php?passwordChanged=1");
+            header("Location: ../../index.php?passwordChanged=1");
             exit();
         } else {
             $toastMessage = "❌ Erreur lors de la mise à jour.";
@@ -55,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['old_password'])) {
 
 <head>
     <link rel="stylesheet" href="profile_style.css">
+    <link rel="stylesheet" href="<?php echo $url_base; ?>pages/acteur/add.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
@@ -152,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['old_password'])) {
 <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="POST">
+            <form method="POST" class="contact-form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="passwordModalLabel"><i class="bi bi-key-fill"></i> Changer le mot de
                         passe</h5>

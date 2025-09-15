@@ -27,7 +27,7 @@ include '../includes/header.php';
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="trait_serie.php" method="post" enctype="multipart/form-data"
+                    <form action="trait_serie" method="post" enctype="multipart/form-data"
                           class="contactform contact_form" id="contact_form">
                         <?php if($serieId): ?>
                             <input type="hidden" name="serie_id" value="<?= $serieId ?>">

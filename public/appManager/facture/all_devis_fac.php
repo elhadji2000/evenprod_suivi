@@ -23,7 +23,7 @@ $factures = getFacturesBySerieId($connexion, $serieId);
                 </div>
             </div>
             <div class="col-lg-4 text-end">
-                <a href="add_devis.php?id=<?php echo htmlspecialchars($serie['id'])?>" class="btn btn-success">➕ Ajouter
+                <a href="add_devis?id=<?php echo htmlspecialchars($serie['id'])?>" class="btn btn-success">➕ Ajouter
                     un devis</a>
             </div>
         </div>

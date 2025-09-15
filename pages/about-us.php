@@ -7,6 +7,7 @@ if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
     exit;
 }
 ?>
+
 <head>
     <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
@@ -67,12 +68,19 @@ if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
                         <div class="card shadow-sm border-0 mt-4">
                             <div class="row g-0">
                                 <div class="col-lg-4 col-md-6 mt-n3">
-                                    <img src="../uploads/series/<?php echo htmlspecialchars($serie['logo']); ?>"
-                                        class="card-img-fixed" alt="<?php echo htmlspecialchars($serie['titre']); ?>">
+                                    <a href="../public/appManager/series/about.php?id=<?php echo $serie['id']; ?>">
+                                        <img src="../uploads/series/<?php echo htmlspecialchars($serie['logo']); ?>"
+                                            class="card-img-fixed"
+                                            alt="<?php echo htmlspecialchars($serie['titre']); ?>">
+                                    </a>
                                 </div>
                                 <div class="col-lg-8 col-md-6 d-flex align-items-center">
                                     <div class="card-body">
-                                        <h5 class="mb-1"><?php echo htmlspecialchars($serie['titre']); ?></h5>
+                                        <h5 class="mb-1">
+                                            <a href="../public/appManager/series/about.php?id=<?php echo $serie['id']; ?>" class="text-decoration-underline">
+                                            <?php echo htmlspecialchars($serie['titre']); ?>
+                                            </a>
+                                        </h5>
                                         <h6 class="mb-2">
                                             <a href="../public/appManager/series/about.php?id=<?php echo $serie['id']; ?>"
                                                 class="text-primary text-decoration-none">
@@ -145,9 +153,9 @@ if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
                             <div class="col-md-3">
                                 <h4 class="text-primary" id="state3" data-count="24">
                                     <?php echo number_format($totauxtous['total_factures'], 0, ',', ','); ?>
-                                </h'>
-                                <h5>Recettes</h5>
-                                <p>Montant total des factures validées.</p>
+                                    </h'>
+                                    <h5>Recettes</h5>
+                                    <p>Montant total des factures validées.</p>
                             </div>
                         </div>
                     </div>

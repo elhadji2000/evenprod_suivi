@@ -46,7 +46,7 @@ if (isset($_FILES['justificatif']) && $_FILES['justificatif']['error'] == 0) {
     $result = ajouterDepense($serieId, $tournageId, $type, $montant, $description, $justificatif);
 
     if ($result['success']) {
-        header("Location: liste_all.php?id=$serieId");
+        header("Location: liste_all?id=$serieId");
         exit;
     } else {
         echo "Erreur : ".$result['message'];
@@ -77,7 +77,7 @@ include '../../../includes/header.php';
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="add_depense.php?id=<?php echo htmlspecialchars($serie['id'])?>" method="post"
+                    <form action="add_depense?id=<?php echo htmlspecialchars($serie['id'])?>" method="post"
                         enctype="multipart/form-data" class="contactform contact_form" id="contact_form">
 
                         <input type="hidden" name="serie_id" value="<?php echo $serieId; ?>">

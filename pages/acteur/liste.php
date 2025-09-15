@@ -30,7 +30,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <div class="profile-header-info">
                     <h4 class="m-t-sm">Gestion des Acteurs</h4>
                     <p class="m-b-sm">Liste et gestion des acteurs de la plateforme</p>
-                    <a href="add_act.php" class="btn btn-xs btn-primary mb-2">
+                    <a href="add_act" class="btn btn-xs btn-primary mb-2">
                         <i class="bi bi-person-plus"></i> Ajouter un Acteur
                     </a>
                 </div>

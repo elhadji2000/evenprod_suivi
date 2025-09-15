@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id) {
         // Modification
         if (modifierPartenaire($id, $ninea, $nom, $email, $contact, $adresse, $logoFile)) {
-            header("Location: listes.php?success=3");
+            header("Location: listes?success=3");
             exit;
         } else {
             echo "<p style='color:red'>Erreur lors de la modification du partenariat.</p>";
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Ajout
         if (ajouterPartenaire($ninea, $nom, $email, $contact, $adresse, $logoFile)) {
-            header("Location: listes.php?success=2");
+            header("Location: listes?success=2");
             exit;
         } else {
             echo "<p style='color:red'>Erreur lors de l’enregistrement du partenariat.</p>";
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="add_spon.php" method="post" enctype="multipart/form-data"
+                    <form action="add_spon" method="post" enctype="multipart/form-data"
                         class="contactform contact_form" id="contact_form">
 
                         <!-- Champ caché pour l'id (null si ajout) -->

@@ -23,13 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($result === "success") {
-        header("Location: add_user.php?success=1");
+        header("Location: add_user?success=1");
         exit;
     } elseif ($result === "exists") {
-        header("Location: add_user.php?error=exists");
+        header("Location: add_user?error=exists");
         exit;
     } else {
-        header("Location: add_user.php?error=1");
+        header("Location: add_user?error=1");
         exit;
     }
 }
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row flex-row-reverse">
             <div class="col-md-7 col-lg-8 m-15px-tb">
                 <div class="contact-form">
-                    <form action="add_user.php" method="post" enctype="multipart/form-data"
+                    <form action="add_user" method="post" enctype="multipart/form-data"
                         class="contactform contact_form" id="contact_form">
 
                         <!-- Champ caché pour l'id (null si ajout) -->

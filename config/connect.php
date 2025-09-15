@@ -1,10 +1,16 @@
 <?php
 include('fonction.php');
 $error = "";
+echo 'URL appelée : '.$_SERVER['REQUEST_URI'].'<br>';
+echo '<pre>';
+print_r($_POST);
+echo '</pre>';
 
-if (!empty($_GET['email']) && !empty($_GET['mot_de_passe'])) {
-    $username = $_GET['email'];
-    $password = $_GET['mot_de_passe'];
+
+
+if (!empty($_POST['email']) && !empty($_POST['mot_de_passe'])) {
+    $username = $_POST['email'];
+    $password = $_POST['mot_de_passe'];
     $row = login($username, $password);
     if ($row) {
         session_start();
@@ -41,4 +47,7 @@ if (!empty($_GET['email']) && !empty($_GET['mot_de_passe'])) {
         header('Location: ../index.php?error=1');
         exit();
     }
+}
+else{
+    echo"bonjours";
 }

@@ -97,7 +97,7 @@ include '../../../includes/header.php';
         </div>
 
         <div class="contact-form">
-            <form action="add_tourn.php?id_serie=<?= htmlspecialchars($serie['id']) ?><?= $tournageId ? '&id_tournage='.$tournageId : '' ?>" 
+            <form action="add_tourn?id_serie=<?= htmlspecialchars($serie['id']) ?><?= $tournageId ? '&id_tournage='.$tournageId : '' ?>" 
                   method="post" class="contactform contact_form" id="tournageForm">
                 <input type="hidden" name="serie_id" value="<?= $serieId ?>">
 

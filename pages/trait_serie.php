@@ -26,12 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $logo = $newFileName;
             } else {
                 $_SESSION['error'] = "Erreur lors de l'upload de l'image.";
-                header("Location: add_serie.php");
+                header("Location: add_serie");
                 exit;
             }
         } else {
             $_SESSION['error'] = "Format de fichier non autorisé (jpg, jpeg, png, gif).";
-            header("Location: add_serie.php");
+            header("Location: add_serie");
             exit;
         }
     }
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Ajout
         if ($logo === null) {
             $_SESSION['error'] = "Veuillez choisir une image pour la série.";
-            header("Location: add_serie.php");
+            header("Location: add_serie");
             exit;
         }
         $result = ajouterSerie($titre, $type, $budget, $description, $logo);
@@ -51,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result['success']) {
         $_SESSION['success'] = $serieId ? "Série modifiée avec succès." : "Série ajoutée avec succès.";
-        header("Location: add_serie.php?reussi=1&id=$serieId");
+        header("Location: add_serie?reussi=1&id=$serieId");
         exit;
     } else {
         $_SESSION['error'] = $result['message'] ?? "Une erreur est survenue.";
-        header("Location: add_serie.php");
+        header("Location: add_serie");
         exit;
     }
 }
