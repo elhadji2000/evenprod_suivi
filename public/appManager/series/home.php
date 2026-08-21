@@ -1,7 +1,3 @@
-<?php include '../../../config/fonction.php'; 
-$totaux = getTotaux($connexion);
-$totaux2 = getTotauxDepenses($connexion);
-?>
 <?php
 session_start();
 
@@ -10,123 +6,685 @@ if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
     header("Location: ../../../public/admin/profile.php?forceUpdate=1");
     exit;
 }
+
+include '../../../config/fonction.php';
+
+$totaux = getTotaux($connexion);
+$totauxDepenses = getTotauxDepensesGlobal($connexion);
 ?>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - EvenProd</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<?php include '../../../includes/header.php'; 
-?>
 
-<body>
+<?php include '../../../includes/header.php'; ?>
 
-    <div class="container">
-        <div class="header-home">
-            <br>
-            <h1><i class="fas fa-chart-line"></i> Dashboard EvenProd</h1>
-            <div class="header-actions">
-                <!-- Vous pouvez ajouter des boutons d'action ici -->
-            </div>
-        </div>
-        <section class="pt-4 pb-6" id="dashboard">
-            <div class="container">
-                <div class="row g-4 text-center">
+<style>
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-                    <!-- Total Users -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="text-primary mb-2">
-                                    <?php echo number_format($totaux['users'], 0, ',', ','); ?></h5>
-                                <h6 class="card-title">Utilisateurs</h6>
-                                <p class="card-text">Nombre total d'utilisateurs enregistrés.</p>
-                            </div>
-                        </div>
+:root {
+    --primary: #171717;
+    --primary-hover: #000;
+    --accent: #e50914;
+    --accent-hover: #b20710;
+    --background: #f5f6f8;
+    --white: #ffffff;
+    --text: #171717;
+    --muted: #737373;
+    --border: #e5e7eb;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --radius: 18px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .06);
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.dashboard-page {
+    min-height: 100vh;
+    background: var(--background);
+    padding: 25px 0 50px;
+    color: var(--text);
+}
+
+.dashboard-container {
+    max-width: 1500px;
+    margin: auto;
+    padding: 0 25px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 25px 30px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: var(--shadow);
+}
+
+.dashboard-header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.dashboard-header-icon {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    border-radius: 16px;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+}
+
+.dashboard-breadcrumb {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #999;
+    margin-bottom: 5px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -.5px;
+}
+
+.dashboard-header p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.header-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 30px;
+    background: #f4f4f5;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* =========================================================
+   STATS GRID
+========================================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    box-shadow: var(--shadow);
+    transition: .3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent);
+    opacity: 0;
+    transition: .3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .08);
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+.stat-card .stat-icon.primary {
+    background: #f4f4f5;
+    color: var(--primary);
+}
+
+.stat-card .stat-icon.accent {
+    background: #fef2f2;
+    color: var(--accent);
+}
+
+.stat-card .stat-number {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text);
+    margin: 0;
+}
+
+.stat-card .stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    margin: 4px 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-card .stat-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 6px 0 0;
+}
+
+/* =========================================================
+   EXPENSES SECTION
+========================================================= */
+
+.expenses-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.expenses-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+}
+
+.expenses-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.expenses-header-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.expenses-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.expenses-header p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.expenses-total {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 30px;
+    background: var(--primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.expenses-total i {
+    font-size: 13px;
+}
+
+.expenses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 24px;
+}
+
+.expense-item {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: .2s;
+}
+
+.expense-item:hover {
+    border-color: var(--accent);
+    background: #fef2f2;
+}
+
+.expense-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.expense-item-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f4f4f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: var(--muted);
+    transition: .2s;
+}
+
+.expense-item:hover .expense-item-icon {
+    background: var(--accent);
+    color: white;
+}
+
+.expense-item-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.expense-item-value {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.expense-item-value small {
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--muted);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .expenses-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-page {
+        padding: 15px 0 35px;
+    }
+    .dashboard-container {
+        padding: 0 12px;
+    }
+    .dashboard-header {
+        padding: 18px;
+    }
+    .dashboard-header h1 {
+        font-size: 21px;
+    }
+    .dashboard-header-icon {
+        width: 48px;
+        height: 48px;
+        flex-basis: 48px;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .stat-card {
+        padding: 16px 14px;
+    }
+    .stat-card .stat-number {
+        font-size: 22px;
+    }
+    .expenses-grid {
+        grid-template-columns: 1fr;
+        padding: 16px;
+    }
+    .expenses-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .expenses-total {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-header-left {
+        gap: 12px;
+    }
+    .dashboard-header-icon {
+        display: none;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .header-date {
+        width: 100%;
+        justify-content: center;
+    }
+    .expenses-header-left {
+        width: 100%;
+    }
+}
+</style>
+
+<section class="dashboard-page">
+    <div class="dashboard-container">
+
+        <!-- =========================================================
+        HEADER
+        ========================================================= -->
+
+        <header class="dashboard-header">
+            <div class="dashboard-header-left">
+                <div class="dashboard-header-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div>
+                    <div class="dashboard-breadcrumb">
+                        EVENPROD / ADMINISTRATION / DASHBOARD
                     </div>
-
-                    <!-- Total Series -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="text-primary mb-2">
-                                    <?php echo number_format($totaux['series'], 0, ',', ','); ?></h5>
-                                <h6 class="card-title">Séries</h6>
-                                <p class="card-text">Nombre total de séries enregistrées.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Clients -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="text-primary mb-2">
-                                    <?php echo number_format($totaux['clients'], 0, ',', ','); ?></h5>
-                                <h6 class="card-title">Clients</h6>
-                                <p class="card-text">Nombre total de clients enregistrés.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Factures -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="text-primary mb-2">
-                                    <?php echo number_format($totaux['acteurs'], 0, ',', ','); ?></h5>
-                                <h6 class="card-title">Acteurs</h6>
-                                <p class="card-text">Nombre total de Acteurs enregistrer.</p>
-                            </div>
-                        </div>
-                    </div>
-
+                    <h1>Tableau de bord</h1>
+                    <p>Vue d'ensemble des activités et performances de la production</p>
                 </div>
             </div>
-        </section>
-        <section class="pt-4 pb-6" id="count-stats">
-            <div class="container">
-                <section id="count-stats" class="py-5 bg-light">
-                    <div class="container">
-                        <div class="row justify-content-center text-center g-4">
-                            <div class="col-md-3">
-                                <h5 class="text-primary" id="state1" data-count="5234">
-                                    <?php echo number_format($totaux2['cachet'], 0, ',', ','); ?>
-                                </h5>
-                                <h5>Cachets</h5>
-                                <p>Dépenses liées aux cachets et honoraires.</p>
-                            </div>
-                            <div class="col-md-3">
-                                <h5 class="text-primary" id="state2" data-count="3400">
-                                    <?php echo number_format($totaux2['decor'], 0, ',', ','); ?>
-                                </h5>
-                                <h5>Décors</h5>
-                                <p>Frais liés à la décoration et à l’aménagement.</p>
-                            </div>
-                            <div class="col-md-3">
-                                <h5 class="text-primary" id="state3" data-count="24">
-                                    <?php echo number_format($totaux2['transport'], 0, ',', ','); ?>
-                                </h5>
-                                <h5>Transports</h5>
-                                <p>Coûts de déplacement et de logistique.</p>
-                            </div>
-                            <div class="col-md-3">
-                                <h5 class="text-primary" id="state4" data-count="24">
-                                    <?php echo number_format($totaux2['autre'], 0, ',', ','); ?>
-                                </h5>
-                                <h5>Autres</h5>
-                                <p>Dépenses diverses non catégorisées.</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
+            <div class="header-date">
+                <i class="fas fa-calendar-alt"></i>
+                <?= date('d/m/Y') ?>
             </div>
-        </section>
+        </header>
+
+        <!-- =========================================================
+        STATISTIQUES GÉNÉRALES
+        ========================================================= -->
+
+        <div class="stats-grid">
+            <!-- Utilisateurs -->
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4 class="stat-number">
+                    <?= number_format($totaux['users'] ?? 0, 0, ',', ' ') ?>
+                </h4>
+                <p class="stat-label">Utilisateurs</p>
+                <p class="stat-desc">Nombre total d'utilisateurs enregistrés</p>
+            </div>
+
+            <!-- Séries -->
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h4 class="stat-number">
+                    <?= number_format($totaux['series'] ?? 0, 0, ',', ' ') ?>
+                </h4>
+                <p class="stat-label">Séries</p>
+                <p class="stat-desc">Nombre total de séries enregistrées</p>
+            </div>
+
+            <!-- Clients -->
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h4 class="stat-number">
+                    <?= number_format($totaux['clients'] ?? 0, 0, ',', ' ') ?>
+                </h4>
+                <p class="stat-label">Clients</p>
+                <p class="stat-desc">Nombre total de clients enregistrés</p>
+            </div>
+
+            <!-- Acteurs -->
+            <div class="stat-card">
+                <div class="stat-icon accent">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h4 class="stat-number">
+                    <?= number_format($totaux['acteurs'] ?? 0, 0, ',', ' ') ?>
+                </h4>
+                <p class="stat-label">Acteurs</p>
+                <p class="stat-desc">Nombre total d'acteurs enregistrés</p>
+            </div>
+        </div>
+
+        <!-- =========================================================
+        DÉPENSES PAR CATÉGORIE
+        ========================================================= -->
+
+        <div class="expenses-section">
+            <div class="expenses-header">
+                <div class="expenses-header-left">
+                    <div class="expenses-header-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div>
+                        <h2>Dépenses par catégorie</h2>
+                        <p>Répartition des dépenses par type de poste</p>
+                    </div>
+                </div>
+                <div class="expenses-total">
+                    <i class="fas fa-calculator"></i>
+                    <?php
+                        $totalDepenses = ($totauxDepenses['cachet'] ?? 0) +
+                                         ($totauxDepenses['decor'] ?? 0) +
+                                         ($totauxDepenses['transport'] ?? 0) +
+                                         ($totauxDepenses['reception'] ?? 0) +
+                                         ($totauxDepenses['accessoire'] ?? 0) +
+                                         ($totauxDepenses['reglement_acteur'] ?? 0) +
+                                         ($totauxDepenses['hmc'] ?? 0) +
+                                         ($totauxDepenses['carburant'] ?? 0) +
+                                         ($totauxDepenses['pharmacie'] ?? 0) +
+                                         ($totauxDepenses['autre'] ?? 0);
+                        echo number_format($totalDepenses, 0, ',', ' ') . ' FCFA';
+                    ?>
+                </div>
+            </div>
+
+            <div class="expenses-grid">
+                <!-- Cachets -->
+                <!-- <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <span class="expense-item-label">Cachets</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['cachet'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div> -->
+
+                <!-- Décors -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-paint-roller"></i>
+                        </div>
+                        <span class="expense-item-label">Décors</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['decor'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Transport -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <span class="expense-item-label">Transport</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['transport'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Réceptions -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <span class="expense-item-label">Réceptions</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['reception'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Accessoires -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <span class="expense-item-label">Accessoires</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['accessoire'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Règlement Acteurs -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <span class="expense-item-label">Règlement acteurs</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['reglement_acteur'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- HMC -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <span class="expense-item-label">HMC</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['hmc'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Carburant -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-gas-pump"></i>
+                        </div>
+                        <span class="expense-item-label">Carburant</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['carburant'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Pharmacie -->
+                <div class="expense-item">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-medkit"></i>
+                        </div>
+                        <span class="expense-item-label">Pharmacie</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['pharmacie'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+
+                <!-- Autres -->
+                <div class="expense-item" style="grid-column: span 1;">
+                    <div class="expense-item-left">
+                        <div class="expense-item-icon">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                        <span class="expense-item-label">Autres</span>
+                    </div>
+                    <span class="expense-item-value">
+                        <?= number_format($totauxDepenses['autre'] ?? 0, 0, ',', ' ') ?>
+                        <small>FCFA</small>
+                    </span>
+                </div>
+            </div>
+        </div>
+
     </div>
+</section>
 
-</body>
-
-</html>
+<?php include '../../../includes/footer.php'; ?>

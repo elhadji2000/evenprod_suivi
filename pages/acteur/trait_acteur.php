@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // === Gestion du CV ===
-    $cvNewName = $old['cv_file'] ?? null; // ancien CV si update
+    /* $cvNewName = $old['cv_file'] ?? null; // ancien CV si update
     if (isset($_FILES['cv']) && $_FILES['cv']['error'] === 0) {
         $cvTmp = $_FILES['cv']['tmp_name'];
         $cvName = $_FILES['cv']['name'];
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['erroract'] = "Veuillez sélectionner un CV.";
         header("Location: add_act");
         exit;
-    }
+    } */
 
     // === Gestion de la photo ===
     $photoNewName = $old['photo'] ?? null; // ancienne photo si update
