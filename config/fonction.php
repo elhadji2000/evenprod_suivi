@@ -510,7 +510,7 @@ function getActeursByTournage($tournageId)
     global $connexion;
     $tournageId = (int) $tournageId;
 
-    $sql = "SELECT a.id, a.nom, a.prenom, a.date_naissance, a.contact, a.adresse, sa.cachet
+    $sql = "SELECT a.id, a.nom, a.prenom,ta.sequence, a.date_naissance, a.contact, a.adresse, sa.cachet
             FROM acteurs a
             INNER JOIN tournage_acteur ta ON ta.acteur_id = a.id
             LEFT JOIN serie_acteur sa ON sa.acteur_id = a.id

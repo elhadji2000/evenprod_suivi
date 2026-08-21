@@ -1,62 +1,64 @@
 <?php
 include '../../../config/fonction.php';
 
-$id_fact = (int)($_GET['id_fact'] ?? 0);
+$id_fact = (int) ($_GET['id_fact'] ?? 0);
 
 // === AJOUT ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
     $type = mysqli_real_escape_string($connexion, $_POST['type']);
-    $montant = (int)$_POST['montant'];
+    $montant = (int) $_POST['montant'];
 
     // Référence unique
-    $result = mysqli_query($connexion, "SELECT MAX(id) AS max_id FROM paiements");
+    $result = mysqli_query($connexion, 'SELECT MAX(id) AS max_id FROM paiements');
     $row = mysqli_fetch_assoc($result);
     $nextId = ($row['max_id'] ?? 0) + 1;
-    $ref = "PAY-" . date("y") . "-" . str_pad($nextId, 3, "0", STR_PAD_LEFT);
+    $ref = 'PAY-' . date('y') . '-' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
 
     // Upload PDF
     $pdf = null;
     if (!empty($_FILES['pdf']['name'])) {
-        $dir = "../../../uploads/paiements/";
-        if (!is_dir($dir)) mkdir($dir, 0777, true);
-        $pdf = time() . "_" . basename($_FILES['pdf']['name']);
+        $dir = '../../../uploads/paiements/';
+        if (!is_dir($dir))
+            mkdir($dir, 0777, true);
+        $pdf = time() . '_' . basename($_FILES['pdf']['name']);
         move_uploaded_file($_FILES['pdf']['tmp_name'], $dir . $pdf);
     }
 
     mysqli_query($connexion, "INSERT INTO paiements (facture_id, type, montant, reference, piece_jointe)
-        VALUES ($id_fact, '$type', $montant, '$ref', " . ($pdf ? "'$pdf'" : "NULL") . ")");
+        VALUES ($id_fact, '$type', $montant, '$ref', " . ($pdf ? "'$pdf'" : 'NULL') . ')');
     header("Location: versements.php?id_fact=$id_fact&success=1");
     exit;
 }
 
 // === MODIFICATION ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
-    $pid = (int)$_POST['id'];
+    $pid = (int) $_POST['id'];
     $type = mysqli_real_escape_string($connexion, $_POST['type']);
-    $montant = (int)$_POST['montant'];
+    $montant = (int) $_POST['montant'];
 
     $old = mysqli_fetch_assoc(mysqli_query($connexion, "SELECT piece_jointe FROM paiements WHERE id=$pid"));
     $pdf = $old['piece_jointe'];
 
     if (!empty($_FILES['pdf']['name'])) {
-        $dir = "../../../uploads/paiements/";
-        if ($pdf && is_file($dir . $pdf)) unlink($dir . $pdf);
-        $pdf = time() . "_" . basename($_FILES['pdf']['name']);
+        $dir = '../../../uploads/paiements/';
+        if ($pdf && is_file($dir . $pdf))
+            unlink($dir . $pdf);
+        $pdf = time() . '_' . basename($_FILES['pdf']['name']);
         move_uploaded_file($_FILES['pdf']['tmp_name'], $dir . $pdf);
     }
 
     mysqli_query($connexion, "UPDATE paiements SET type='$type', montant=$montant,
-        piece_jointe=" . ($pdf ? "'$pdf'" : "NULL") . " WHERE id=$pid");
+        piece_jointe=" . ($pdf ? "'$pdf'" : 'NULL') . " WHERE id=$pid");
     header("Location: versements.php?id_fact=$id_fact&success=2");
     exit;
 }
 
 // === SUPPRESSION ===
 if (isset($_GET['delete'])) {
-    $pid = (int)$_GET['delete'];
+    $pid = (int) $_GET['delete'];
     $old = mysqli_fetch_assoc(mysqli_query($connexion, "SELECT piece_jointe FROM paiements WHERE id=$pid"));
-    if ($old['piece_jointe'] && is_file("../../../uploads/paiements/" . $old['piece_jointe'])) {
-        unlink("../../../uploads/paiements/" . $old['piece_jointe']);
+    if ($old['piece_jointe'] && is_file('../../../uploads/paiements/' . $old['piece_jointe'])) {
+        unlink('../../../uploads/paiements/' . $old['piece_jointe']);
     }
     mysqli_query($connexion, "DELETE FROM paiements WHERE id=$pid");
     header("Location: versements.php?id_fact=$id_fact&success=3");
@@ -516,6 +518,7 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
         opacity: 0;
         transform: translateY(-30px) scale(.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -745,53 +748,67 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
     .versements-page {
         padding: 15px 0 35px;
     }
+
     .versements-container {
         padding: 0 12px;
     }
+
     .versements-header {
         padding: 18px;
     }
+
     .versements-header h1 {
         font-size: 21px;
     }
+
     .versements-header-icon {
         width: 48px;
         height: 48px;
         flex-basis: 48px;
     }
+
     .facture-info-card {
         grid-template-columns: 1fr 1fr;
         padding: 16px;
         gap: 12px;
     }
+
     .facture-info-item .value {
         font-size: 14px;
     }
+
     .table-card-header {
         flex-direction: column;
         align-items: stretch;
     }
+
     .table-card-header .actions {
         width: 100%;
     }
+
     .btn-add {
         width: 100%;
         justify-content: center;
     }
+
     .table-responsive {
         padding: 0 12px 12px;
     }
+
     .versements-table thead {
         display: none;
     }
+
     .versements-table tbody tr {
         display: block;
         padding: 12px 0;
         border-bottom: 2px solid var(--border);
     }
+
     .versements-table tbody tr:last-child {
         border-bottom: 0;
     }
+
     .versements-table tbody td {
         display: flex;
         align-items: center;
@@ -799,6 +816,7 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
         padding: 6px 0;
         border-bottom: 0;
     }
+
     .versements-table tbody td::before {
         content: attr(data-label);
         font-size: 9px;
@@ -807,16 +825,20 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
         color: var(--muted);
         letter-spacing: 0.3px;
     }
+
     .versements-table tbody td:first-child::before {
         display: none;
     }
+
     .versements-table tbody td:first-child {
         justify-content: flex-start;
         font-weight: 700;
     }
+
     .action-group {
         gap: 4px;
     }
+
     .modal-box {
         width: 98%;
     }
@@ -826,9 +848,11 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
     .versements-header-left {
         gap: 12px;
     }
+
     .versements-header-icon {
         display: none;
     }
+
     .facture-info-card {
         grid-template-columns: 1fr;
     }
@@ -929,9 +953,9 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
             <div class="facture-info-item">
                 <div class="label">Taux de paiement</div>
                 <div class="value warning">
-                    <?php 
-                        $taux = $facture['total'] > 0 ? ($facture['verse'] / $facture['total']) * 100 : 0;
-                        echo number_format($taux, 1, ',', ' ') . '%';
+                    <?php
+                    $taux = $facture['total'] > 0 ? ($facture['verse'] / $facture['total']) * 100 : 0;
+                    echo number_format($taux, 1, ',', ' ') . '%';
                     ?>
                 </div>
             </div>
@@ -981,20 +1005,39 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $i = 1; foreach ($paiements as $v): ?>
+                        <?php $i = 1;
+                        foreach ($paiements as $v): ?>
                         <tr>
                             <td data-label="#">
                                 <span style="font-weight:700; color:var(--muted);">#<?= $i ?></span>
                             </td>
                             <td data-label="Type">
                                 <?php
-                                    $typeClass = match(strtolower($v['type'])) {
-                                        'virement bancaire' => 'virement',
-                                        'chèque', 'cheque' => 'cheque',
-                                        'espèces', 'especes' => 'especes',
-                                        default => 'virement'
-                                    };
-                                    $label = $v['type'] ?? 'Non défini';
+
+                                $type = strtolower(trim($v['type'] ?? ''));
+
+                                switch ($type) {
+                                    case 'virement bancaire':
+                                    case 'virement':
+                                        $typeClass = 'virement';
+                                        break;
+
+                                    case 'chèque':
+                                    case 'cheque':
+                                        $typeClass = 'cheque';
+                                        break;
+
+                                    case 'espèces':
+                                    case 'especes':
+                                    case 'espece':
+                                        $typeClass = 'especes';
+                                        break;
+
+                                    default:
+                                        $typeClass = 'virement';
+                                        break;
+                                };
+                                $label = $v['type'] ?? 'Non défini';
                                 ?>
                                 <span class="badge-type <?= $typeClass ?>">
                                     <?php if ($typeClass === 'virement'): ?><i class="fas fa-university"></i>
@@ -1017,8 +1060,8 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
                             </td>
                             <td data-label="Pièce jointe">
                                 <?php if (!empty($v['piece_jointe'])): ?>
-                                <a href="../../../uploads/paiements/<?= htmlspecialchars($v['piece_jointe']) ?>" 
-                                   class="badge-pdf" target="_blank">
+                                <a href="../../../uploads/paiements/<?= htmlspecialchars($v['piece_jointe']) ?>"
+                                    class="badge-pdf" target="_blank">
                                     <i class="fas fa-file-pdf"></i> Voir PDF
                                 </a>
                                 <?php else: ?>
@@ -1027,21 +1070,21 @@ $facture = getFactureWithPaiements($connexion, $id_fact);
                             </td>
                             <td data-label="Actions" style="text-align:center;">
                                 <div class="action-group">
-                                    <button type="button" class="btn-action edit" 
-                                            onclick="openEditModal(<?= $v['id'] ?>, '<?= addslashes($v['type']) ?>', <?= $v['montant'] ?>, '<?= addslashes($v['piece_jointe'] ?? '') ?>')"
-                                            title="Modifier">
+                                    <button type="button" class="btn-action edit"
+                                        onclick="openEditModal(<?= $v['id'] ?>, '<?= addslashes($v['type']) ?>', <?= $v['montant'] ?>, '<?= addslashes($v['piece_jointe'] ?? '') ?>')"
+                                        title="Modifier">
                                         <i class="fas fa-pen"></i>
                                     </button>
-                                    <a href="?id_fact=<?= $id_fact ?>&delete=<?= $v['id'] ?>" 
-                                       class="btn-action delete" 
-                                       onclick="return confirm('Voulez-vous vraiment supprimer ce versement ?')"
-                                       title="Supprimer">
+                                    <a href="?id_fact=<?= $id_fact ?>&delete=<?= $v['id'] ?>" class="btn-action delete"
+                                        onclick="return confirm('Voulez-vous vraiment supprimer ce versement ?')"
+                                        title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
                             </td>
                         </tr>
-                        <?php $i++; endforeach; ?>
+                        <?php $i++;
+                        endforeach; ?>
                     </tbody>
                 </table>
                 <?php else: ?>
@@ -1100,8 +1143,8 @@ MODAL AJOUT
                     <label for="addMontant" class="modern-label">
                         <i class="fas fa-coins"></i> Montant (FCFA)
                     </label>
-                    <input type="number" name="montant" id="addMontant" class="modern-input-modal" 
-                           min="0" step="100" placeholder="Ex: 50000" required>
+                    <input type="number" name="montant" id="addMontant" class="modern-input-modal" min="0" step="100"
+                        placeholder="Ex: 50000" required>
                 </div>
 
                 <!-- Pièce jointe -->
@@ -1171,8 +1214,8 @@ MODAL MODIFICATION
                     <label for="editMontant" class="modern-label">
                         <i class="fas fa-coins"></i> Montant (FCFA)
                     </label>
-                    <input type="number" name="montant" id="editMontant" class="modern-input-modal" 
-                           min="0" step="100" placeholder="Ex: 50000" required>
+                    <input type="number" name="montant" id="editMontant" class="modern-input-modal" min="0" step="100"
+                        placeholder="Ex: 50000" required>
                 </div>
 
                 <!-- Pièce jointe -->
@@ -1226,9 +1269,14 @@ $(document).ready(function() {
             "pageLength": 10,
             "lengthMenu": [5, 10, 25, 50],
             "responsive": true,
-            "columnDefs": [
-                { "orderable": false, "targets": 0 },
-                { "orderable": false, "targets": 5 }
+            "columnDefs": [{
+                    "orderable": false,
+                    "targets": 0
+                },
+                {
+                    "orderable": false,
+                    "targets": 5
+                }
             ]
         });
     }
@@ -1263,13 +1311,13 @@ function openEditModal(id, type, montant, pieceJointe) {
     document.getElementById('editMontant').value = montant || '';
     document.getElementById('editPdf').value = '';
     document.getElementById('editFileName').textContent = 'Conserver le fichier actuel';
-    
+
     if (pieceJointe) {
         document.getElementById('editFileInfo').textContent = 'Fichier actuel : ' + pieceJointe;
     } else {
         document.getElementById('editFileInfo').textContent = 'Aucun fichier actuel';
     }
-    
+
     document.getElementById('editModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }

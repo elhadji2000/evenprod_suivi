@@ -931,6 +931,7 @@ $(document).on('click', '.voir-acteurs', function(e) {
                         <th style="padding:10px 12px; text-align:left; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--muted);">Acteur</th>
                         <th style="padding:10px 12px; text-align:left; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--muted);">Date naissance</th>
                         <th style="padding:10px 12px; text-align:left; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--muted);">Contact</th>
+                        <th style="padding:10px 12px; text-align:left; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--muted);">Sequence</th>
                         <th style="padding:10px 12px; text-align:right; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--muted);">Cachet</th>
                     </tr>
                 </thead>
@@ -951,6 +952,9 @@ $(document).on('click', '.voir-acteurs', function(e) {
                 <td style="padding:10px 12px; color:var(--muted);">
                     <i class="fas fa-phone" style="font-size:10px; margin-right:4px;"></i>
                     ${a.contact || 'Non renseigné'}
+                </td>
+                 <td style="padding:10px 12px; color:var(--muted);">
+                    ${a.sequence || 'Non'}
                 </td>
                 <td style="padding:10px 12px; text-align:right; font-weight:700; color:var(--accent);">
                     ${Number(a.cachet).toLocaleString('fr-FR')} FCFA
