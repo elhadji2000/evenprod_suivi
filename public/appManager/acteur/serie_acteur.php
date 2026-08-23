@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acteurs2 = $_POST['acteurs'] ?? [];
     $cachets = $_POST['cachet'] ?? [];
     $types_acteur = $_POST['type_acteur'] ?? [];
+    $roles = $_POST['role'] ?? []; // ✅ AJOUT : Récupération des rôles
     $contrats = $_FILES['contrat'] ?? [];
 
     if ($serieId && !empty($acteurs2)) {
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $acteurId = (int)$acteurId;
             $cachet = isset($cachets[$acteurId]) ? floatval($cachets[$acteurId]) : 0;
             $type = mysqli_real_escape_string($connexion, $types_acteur[$acteurId] ?? 'journalier');
+            $role = mysqli_real_escape_string($connexion, $roles[$acteurId] ?? ''); // ✅ AJOUT : Récupération du rôle
 
             // ==========================
             // Gestion du contrat
@@ -56,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // ==========================
             // Insertion acteur dans la série
+            // ✅ AJOUT : champ role
             // ==========================
             $sql = "
                 INSERT INTO serie_acteur (
@@ -63,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     acteur_id,
                     cachet,
                     type_acteur,
+                    role,          -- ✅ AJOUT
                     contrat
                 )
                 VALUES (
@@ -70,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $acteurId,
                     $cachet,
                     '$type',
+                    '$role',       -- ✅ AJOUT
                     " . ($contratFile ? "'$contratFile'" : "NULL") . "
                 )
             ";
@@ -87,12 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $sqlDepense = "
                     INSERT INTO depenses (
                         serie_id,
+                        acteur_id,
                         type_depense,
                         montant,
                         date_depense
                     )
                     VALUES (
                         $serieId,
+                        $acteurId,
                         'reglement_acteur',
                         $cachet,
                         CURDATE()
@@ -373,6 +380,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 .cachet-input {
+    width: 130px;
+}
+
+.role-input {
     width: 130px;
 }
 
@@ -682,6 +693,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .cachet-input {
         width: 100%;
     }
+    .role-input {
+        width: 100%;
+    }
     .contrat-upload {
         flex-wrap: wrap;
     }
@@ -786,6 +800,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <th>Date naissance</th>
                                     <th>Type</th>
                                     <th>Cachet (FCFA)</th>
+                                    <th>Rôle</th>
                                     <th>Contrat</th>
                                 </tr>
                             </thead>
@@ -828,6 +843,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                class="form-control-modern cachet-input" 
                                                placeholder="Montant"
                                                min="0" step="1000"
+                                               data-id="<?= $acteur['id'] ?>"
+                                               disabled>
+                                    </td>
+                                    <td data-label="Rôle">
+                                        <input type="text" 
+                                               name="role[<?= $acteur['id'] ?>]" 
+                                               class="form-control-modern role-input" 
+                                               placeholder="ex: principal"
                                                data-id="<?= $acteur['id'] ?>"
                                                disabled>
                                     </td>
@@ -892,6 +915,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const checkboxes = document.querySelectorAll('.acteur-checkbox');
     const cachetInputs = document.querySelectorAll('.cachet-input');
+    const roleInputs = document.querySelectorAll('.role-input');
     const contratInputs = document.querySelectorAll('.contrat-input');
     const budgetTotal = <?= $budgetSerie ?>;
     const totalCachetsEl = document.getElementById('totalCachets');
@@ -948,18 +972,22 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', function() {
             const id = this.dataset.id;
             const cachetInput = document.querySelector(`.cachet-input[data-id="${id}"]`);
+            const roleInput = document.querySelector(`.role-input[data-id="${id}"]`);
             const contratInput = document.querySelector(`.contrat-input[data-id="${id}"]`);
-            const typeRadio = document.querySelector(`input[name="type_acteur[${id}"]:checked`);
             
             if (cachetInput) {
                 cachetInput.disabled = !this.checked;
                 if (!this.checked) {
                     cachetInput.value = '';
                     cachetInput.placeholder = 'Montant';
-                } else if (typeRadio && typeRadio.value === 'forfaitaire') {
-                    cachetInput.placeholder = 'Cachet forfaitaire';
-                } else {
-                    cachetInput.placeholder = 'Cachet journalier';
+                }
+            }
+            
+            if (roleInput) {
+                roleInput.disabled = !this.checked;
+                if (!this.checked) {
+                    roleInput.value = '';
+                    roleInput.placeholder = 'Rôle (ex: protagoniste)';
                 }
             }
             
@@ -980,26 +1008,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mettre à jour le total lors du changement des cachets
     cachetInputs.forEach(input => {
         input.addEventListener('input', updateTotals);
-    });
-
-    // Gestion du changement de type
-    document.querySelectorAll('input[type="radio"][name^="type_acteur"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const match = this.name.match(/\[(\d+)\]/);
-            if (match) {
-                const id = match[1];
-                const checkbox = document.querySelector(`.acteur-checkbox[data-id="${id}"]`);
-                const cachetInput = document.querySelector(`.cachet-input[data-id="${id}"]`);
-                
-                if (checkbox && checkbox.checked && cachetInput) {
-                    if (this.value === 'forfaitaire') {
-                        cachetInput.placeholder = 'Cachet forfaitaire';
-                    } else {
-                        cachetInput.placeholder = 'Cachet journalier';
-                    }
-                }
-            }
-        });
     });
 
     // Validation avant soumission

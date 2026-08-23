@@ -710,3 +710,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
 
     </div>
 </section>
+
+<?php include '../../includes/footer.php'; ?>

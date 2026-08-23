@@ -5,26 +5,25 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /*
-|--------------------------------------------------------------------------
-| URL de base
-|--------------------------------------------------------------------------
-*/
+ * |--------------------------------------------------------------------------
+ * | URL de base
+ * |--------------------------------------------------------------------------
+ */
 
 // Production
 // $url_base = "https://evenapp.fr/";
 
 // Développement local
-$url_base = "http://localhost/projet_suivi/";
-
+$url_base = 'http://localhost/projet_suivi/';
 
 /*
-|--------------------------------------------------------------------------
-| Vérification de connexion
-|--------------------------------------------------------------------------
-*/
+ * |--------------------------------------------------------------------------
+ * | Vérification de connexion
+ * |--------------------------------------------------------------------------
+ */
 
 if (!isset($_SESSION['id'])) {
-    header("Location: " . $url_base . "index.php?error=2");
+    header('Location: ' . $url_base . 'index.php?error=2');
     exit;
 }
 
@@ -46,411 +45,403 @@ $role = $_SESSION['role'] ?? '';
     <title>EvenProd</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon"
-          href="<?= $url_base ?>monde.svg">
+    <link rel="shortcut icon" href="<?= $url_base ?>monde.svg">
 
     <!-- Bootstrap 5 -->
-    <link
-        href="<?= $url_base ?>assets/bootstrap-5.3.7-dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="<?= $url_base ?>assets/bootstrap-5.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Police Poppins -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
 
     <style>
-
-        /*
+    /*
         |--------------------------------------------------------------------------
         | GLOBAL
         |--------------------------------------------------------------------------
         */
 
-        * {
-            box-sizing: border-box;
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            padding: 0;
+    body {
+        margin: 0;
+        padding: 0;
 
-            font-family: 'Poppins', sans-serif;
+        font-family: 'Poppins', sans-serif;
 
-            background-color: #f6f8fb;
+        background-color: #f6f8fb;
 
-            color: #343a40;
-        }
+        color: #343a40;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | NAVBAR
         |--------------------------------------------------------------------------
         */
 
-        .evenprod-navbar {
+    .evenprod-navbar {
 
-            background: #ffffff;
+        background: #ffffff;
 
-            border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid #e9ecef;
 
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 
-            min-height: 72px;
+        min-height: 72px;
 
-            z-index: 1030;
-        }
+        z-index: 1030;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | LOGO
         |--------------------------------------------------------------------------
         */
 
-        .evenprod-logo {
+    .evenprod-logo {
 
-            display: flex;
+        display: flex;
 
-            align-items: center;
+        align-items: center;
 
-            text-decoration: none;
+        text-decoration: none;
 
-            gap: 10px;
-        }
+        gap: 10px;
+    }
 
-        .evenprod-logo img {
+    .evenprod-logo img {
 
-            width: 48px;
+        width: 48px;
 
-            height: 42px;
+        height: 42px;
 
-            object-fit: contain;
-        }
+        object-fit: contain;
+    }
 
-        .evenprod-logo-text {
+    .evenprod-logo-text {
 
-            display: flex;
+        display: flex;
 
-            flex-direction: column;
+        flex-direction: column;
 
-            line-height: 1.1;
-        }
+        line-height: 1.1;
+    }
 
-        .evenprod-logo-title {
+    .evenprod-logo-title {
 
-            font-size: 20px;
+        font-size: 20px;
 
-            font-weight: 700;
+        font-weight: 700;
 
-            color: #212529;
+        color: #212529;
 
-            letter-spacing: 0.3px;
-        }
+        letter-spacing: 0.3px;
+    }
 
-        .evenprod-logo-subtitle {
+    .evenprod-logo-subtitle {
 
-            font-size: 10px;
+        font-size: 10px;
 
-            color: #8a94a6;
+        color: #8a94a6;
 
-            text-transform: uppercase;
+        text-transform: uppercase;
 
-            letter-spacing: 1.5px;
-        }
+        letter-spacing: 1.5px;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | NAVIGATION
         |--------------------------------------------------------------------------
         */
 
-        .evenprod-navbar .navbar-nav {
+    .evenprod-navbar .navbar-nav {
 
-            gap: 4px;
-        }
+        gap: 4px;
+    }
 
-        .evenprod-navbar .nav-link {
+    .evenprod-navbar .nav-link {
 
-            color: #495057;
+        color: #495057;
 
-            font-size: 14px;
+        font-size: 14px;
 
-            font-weight: 500;
+        font-weight: 500;
 
-            padding: 10px 13px !important;
+        padding: 10px 13px !important;
 
-            border-radius: 8px;
+        border-radius: 8px;
 
-            transition: all 0.2s ease;
+        transition: all 0.2s ease;
 
-            display: flex;
+        display: flex;
 
-            align-items: center;
+        align-items: center;
 
-            gap: 7px;
-        }
+        gap: 7px;
+    }
 
-        .evenprod-navbar .nav-link:hover {
+    .evenprod-navbar .nav-link:hover {
 
-            background-color: #f1f5f9;
+        background-color: #f1f5f9;
 
-            color: #0d6efd;
-        }
+        color: #0d6efd;
+    }
 
-        .evenprod-navbar .nav-link.active {
+    .evenprod-navbar .nav-link.active {
 
-            background-color: #eef5ff;
+        background-color: #eef5ff;
 
-            color: #0d6efd;
-        }
+        color: #0d6efd;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | ICONES NAV
         |--------------------------------------------------------------------------
         */
 
-        .evenprod-navbar .nav-link i {
+    .evenprod-navbar .nav-link i {
 
-            font-size: 14px;
+        font-size: 14px;
 
-            width: 17px;
+        width: 17px;
 
-            text-align: center;
-        }
+        text-align: center;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | DROPDOWN
         |--------------------------------------------------------------------------
         */
 
-        .evenprod-navbar .dropdown-menu {
+    .evenprod-navbar .dropdown-menu {
 
-            border: 1px solid #e9ecef;
+        border: 1px solid #e9ecef;
 
-            border-radius: 10px;
+        border-radius: 10px;
 
-            padding: 8px;
+        padding: 8px;
 
-            min-width: 200px;
+        min-width: 200px;
 
-            margin-top: 8px;
+        margin-top: 8px;
 
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
-        }
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
+    }
 
-        .evenprod-navbar .dropdown-item {
+    .evenprod-navbar .dropdown-item {
 
-            font-size: 13px;
+        font-size: 13px;
 
-            font-weight: 500;
+        font-weight: 500;
 
-            color: #495057;
+        color: #495057;
 
-            padding: 10px 12px;
+        padding: 10px 12px;
 
-            border-radius: 7px;
+        border-radius: 7px;
 
-            transition: all 0.2s ease;
-        }
+        transition: all 0.2s ease;
+    }
 
-        .evenprod-navbar .dropdown-item:hover {
+    .evenprod-navbar .dropdown-item:hover {
 
-            background-color: #f1f5f9;
+        background-color: #f1f5f9;
 
-            color: #0d6efd;
-        }
+        color: #0d6efd;
+    }
 
-        .evenprod-navbar .dropdown-item i {
+    .evenprod-navbar .dropdown-item i {
 
-            width: 20px;
+        width: 20px;
 
-            margin-right: 5px;
+        margin-right: 5px;
 
-            color: #6c757d;
-        }
+        color: #6c757d;
+    }
 
-        .evenprod-navbar .dropdown-divider {
+    .evenprod-navbar .dropdown-divider {
 
-            margin: 6px 0;
+        margin: 6px 0;
 
-            border-color: #eeeeee;
-        }
+        border-color: #eeeeee;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | PROFIL UTILISATEUR
         |--------------------------------------------------------------------------
         */
 
-        .evenprod-user {
+    .evenprod-user {
 
-            display: flex;
+        display: flex;
 
-            align-items: center;
+        align-items: center;
 
-            gap: 9px;
+        gap: 9px;
 
-            padding: 7px 10px !important;
+        padding: 7px 10px !important;
 
-            border-radius: 8px;
-        }
+        border-radius: 8px;
+    }
 
-        .evenprod-user:hover {
+    .evenprod-user:hover {
 
-            background-color: #f1f5f9;
-        }
+        background-color: #f1f5f9;
+    }
 
-        .evenprod-user-icon {
+    .evenprod-user-icon {
 
-            width: 34px;
+        width: 34px;
 
-            height: 34px;
+        height: 34px;
 
-            border-radius: 50%;
+        border-radius: 50%;
 
-            background: #eef5ff;
+        background: #eef5ff;
 
-            color: #0d6efd;
+        color: #0d6efd;
 
-            display: flex;
+        display: flex;
 
-            align-items: center;
+        align-items: center;
 
-            justify-content: center;
+        justify-content: center;
 
-            font-size: 14px;
-        }
+        font-size: 14px;
+    }
 
-        .evenprod-user-info {
+    .evenprod-user-info {
 
-            display: flex;
+        display: flex;
 
-            flex-direction: column;
+        flex-direction: column;
 
-            line-height: 1.2;
-        }
+        line-height: 1.2;
+    }
 
-        .evenprod-user-name {
+    .evenprod-user-name {
 
-            font-size: 12px;
+        font-size: 12px;
 
-            font-weight: 600;
+        font-weight: 600;
 
-            color: #343a40;
-        }
+        color: #343a40;
+    }
 
-        .evenprod-user-role {
+    .evenprod-user-role {
 
-            font-size: 10px;
+        font-size: 10px;
 
-            color: #8a94a6;
+        color: #8a94a6;
 
-            text-transform: capitalize;
-        }
+        text-transform: capitalize;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | BOUTON DECONNEXION
         |--------------------------------------------------------------------------
         */
 
-        .logout-item {
+    .logout-item {
 
-            color: #dc3545 !important;
-        }
+        color: #dc3545 !important;
+    }
 
-        .logout-item:hover {
+    .logout-item:hover {
 
-            background-color: #fff1f2 !important;
+        background-color: #fff1f2 !important;
 
-            color: #dc3545 !important;
-        }
+        color: #dc3545 !important;
+    }
 
-        .logout-item i {
+    .logout-item i {
 
-            color: #dc3545 !important;
-        }
+        color: #dc3545 !important;
+    }
 
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | MOBILE
         |--------------------------------------------------------------------------
         */
 
-        .navbar-toggler {
+    .navbar-toggler {
+
+        border: none;
+
+        padding: 8px;
+
+        box-shadow: none !important;
+    }
+
+    .navbar-toggler:focus {
+
+        box-shadow: none;
+    }
+
+    .navbar-toggler-icon {
+
+        width: 22px;
+
+        height: 22px;
+    }
+
+
+    @media (max-width: 991px) {
+
+        .evenprod-navbar .navbar-collapse {
+
+            padding: 15px 0;
+        }
+
+        .evenprod-navbar .navbar-nav {
+
+            gap: 3px;
+        }
+
+        .evenprod-navbar .nav-link {
+
+            padding: 11px 12px !important;
+        }
+
+        .evenprod-navbar .dropdown-menu {
 
             border: none;
 
-            padding: 8px;
-
-            box-shadow: none !important;
-        }
-
-        .navbar-toggler:focus {
-
             box-shadow: none;
+
+            background-color: #f8f9fa;
+
+            margin-top: 0;
+
+            padding-left: 10px;
         }
 
-        .navbar-toggler-icon {
+        .evenprod-user {
 
-            width: 22px;
-
-            height: 22px;
+            margin-top: 8px;
         }
-
-
-        @media (max-width: 991px) {
-
-            .evenprod-navbar .navbar-collapse {
-
-                padding: 15px 0;
-            }
-
-            .evenprod-navbar .navbar-nav {
-
-                gap: 3px;
-            }
-
-            .evenprod-navbar .nav-link {
-
-                padding: 11px 12px !important;
-            }
-
-            .evenprod-navbar .dropdown-menu {
-
-                border: none;
-
-                box-shadow: none;
-
-                background-color: #f8f9fa;
-
-                margin-top: 0;
-
-                padding-left: 10px;
-            }
-
-            .evenprod-user {
-
-                margin-top: 8px;
-            }
-        }
-
+    }
     </style>
 
 </head>
@@ -459,111 +450,94 @@ $role = $_SESSION['role'] ?? '';
 <body>
 
 
-<!-- ============================================================
+    <!-- ============================================================
      NAVBAR EVENPROD
 ============================================================ -->
 
-<nav class="navbar navbar-expand-lg evenprod-navbar sticky-top">
+    <nav class="navbar navbar-expand-lg evenprod-navbar sticky-top">
 
-    <div class="container-fluid px-4">
+        <div class="container-fluid px-4">
 
 
-        <!-- ====================================================
+            <!-- ====================================================
              LOGO
         ===================================================== -->
 
-        <a class="evenprod-logo"
-           href="<?= $url_base ?>public/appManager/series/home">
+            <a class="evenprod-logo" href="<?= $url_base ?>public/appManager/series/home">
 
-            <img
-                src="<?= $url_base ?>assets/images/logo2.png"
-                alt="EvenProd">
+                <img src="<?= $url_base ?>assets/images/logo2.png" alt="EvenProd">
 
-            <div class="evenprod-logo-text">
+                <div class="evenprod-logo-text">
 
-                <span class="evenprod-logo-title">
-                    EvenProd
-                </span>
+                    <span class="evenprod-logo-title">
+                        EvenProd
+                    </span>
 
-                <span class="evenprod-logo-subtitle">
-                    Production
-                </span>
+                    <span class="evenprod-logo-subtitle">
+                        Production
+                    </span>
 
-            </div>
+                </div>
 
-        </a>
+            </a>
 
 
-        <!-- ====================================================
+            <!-- ====================================================
              BOUTON MOBILE
         ===================================================== -->
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#evenprodNavbar"
-            aria-controls="evenprodNavbar"
-            aria-expanded="false"
-            aria-label="Menu">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#evenprodNavbar"
+                aria-controls="evenprodNavbar" aria-expanded="false" aria-label="Menu">
 
-            <i class="fa-solid fa-bars"></i>
+                <i class="fa-solid fa-bars"></i>
 
-        </button>
+            </button>
 
 
-        <!-- ====================================================
+            <!-- ====================================================
              MENU
         ===================================================== -->
 
-        <div
-            class="collapse navbar-collapse"
-            id="evenprodNavbar">
+            <div class="collapse navbar-collapse" id="evenprodNavbar">
 
 
-            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
 
 
-                <!-- =================================================
+                    <!-- =================================================
                      ACCUEIL
                 ================================================== -->
 
-                <li class="nav-item">
+                    <li class="nav-item">
 
-                    <a
-                        class="nav-link"
-                        href="<?= $url_base ?>public/appManager/series/home">
+                        <a class="nav-link" href="<?= $url_base ?>public/appManager/series/home">
 
-                        <i class="fa-solid fa-house"></i>
+                            <!-- <i class="fa-solid fa-house"></i> -->
 
-                        <span>Accueil</span>
+                            <span>Accueil</span>
 
-                    </a>
+                        </a>
 
-                </li>
+                    </li>
 
 
-                <!-- =================================================
+                    <!-- =================================================
                      SERIES
                 ================================================== -->
 
-                <?php if (
-                    $role === 'admin' ||
-                    $role === 'tournage' ||
-                    $role === 'comptable' ||
-                    $role === 'caisse'
-                ): ?>
+                    <?php if (
+                        $role === 'admin' ||
+                        $role === 'tournage' ||
+                        $role === 'comptable' ||
+                        $role === 'caisse'
+                    ): ?>
 
                     <li class="nav-item dropdown">
 
-                        <a
-                            class="nav-link dropdown-toggle"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
 
-                            <i class="fa-solid fa-film"></i>
+                            <!-- <i class="fa-solid fa-film"></i> -->
 
                             <span>Séries</span>
 
@@ -574,9 +548,7 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>pages/add_serie">
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/add_serie">
 
                                     <i class="fa-solid fa-plus"></i>
 
@@ -589,9 +561,7 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>pages/about-us">
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/about-us">
 
                                     <i class="fa-solid fa-list"></i>
 
@@ -605,28 +575,24 @@ $role = $_SESSION['role'] ?? '';
 
                     </li>
 
-                <?php endif; ?>
+                    <?php endif; ?>
 
 
-                <!-- =================================================
+                    <!-- =================================================
                      ACTEURS
                 ================================================== -->
 
-                <?php if (
-                    $role === 'admin' ||
-                    $role === 'tournage'
-                ): ?>
+                    <?php if (
+                        $role === 'admin' ||
+                        $role === 'tournage'
+                    ): ?>
 
                     <li class="nav-item dropdown">
 
-                        <a
-                            class="nav-link dropdown-toggle"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
 
-                            <i class="fa-solid fa-users"></i>
+                            <!-- <i class="fa-solid fa-users"></i> -->
 
                             <span>Acteurs</span>
 
@@ -637,9 +603,7 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>pages/acteur/add_act">
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/acteur/add_act">
 
                                     <i class="fa-solid fa-user-plus"></i>
 
@@ -652,9 +616,7 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>pages/acteur/liste">
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/acteur/liste">
 
                                     <i class="fa-solid fa-users"></i>
 
@@ -668,28 +630,24 @@ $role = $_SESSION['role'] ?? '';
 
                     </li>
 
-                <?php endif; ?>
+                    <?php endif; ?>
 
 
-                <!-- =================================================
+                    <!-- =================================================
                      PARTENARIAT
                 ================================================== -->
 
-                <?php if (
-                    $role === 'admin' ||
-                    $role === 'comptable'
-                ): ?>
+                    <?php if (
+                        $role === 'admin' ||
+                        $role === 'comptable'
+                    ): ?>
 
                     <li class="nav-item dropdown">
 
-                        <a
-                            class="nav-link dropdown-toggle"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
 
-                            <i class="fa-solid fa-handshake"></i>
+                            <!-- <i class="fa-solid fa-handshake"></i> -->
 
                             <span>Partenariat</span>
 
@@ -700,56 +658,90 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>pages/sponsors/add_spon">
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/sponsors/add_spon">
 
                                     <i class="fa-solid fa-plus"></i>
 
                                     Ajouter
-
                                 </a>
-
                             </li>
-
-
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>pages/sponsors/listes">
-
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/sponsors/listes">
                                     <i class="fa-solid fa-list"></i>
-
                                     Liste des partenaires
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
+                    <!-- =================================================
+                        SALARIÉS EVENPROD
+                        ================================================== -->
+
+                    <?php if (
+                        $role === 'admin' ||
+                        $role === 'comptable'
+                    ): ?>
+
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <!-- <i class="fa-solid fa-user-tie"></i> -->
+                            <span>Salariés</span>
+                        </a>
+
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <!-- Ajouter un salarié -->
+                            <li>
+
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/salarie/add_salarie">
+
+                                    <i class="fa-solid fa-user-plus"></i>
+
+                                    Ajouter un salarié
 
                                 </a>
 
                             </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
 
+                            <!-- Liste des salariés -->
+                            <li>
+
+                                <a class="dropdown-item" href="<?= $url_base ?>pages/salarie/liste">
+
+                                    <i class="fa-solid fa-users"></i>
+
+                                    Liste des salariés
+
+                                </a>
+
+                            </li>
                         </ul>
 
                     </li>
 
-                <?php endif; ?>
+                    <?php endif; ?>
 
 
-                <!-- =================================================
+                    <!-- =================================================
                      UTILISATEURS
                 ================================================== -->
 
-                <?php if ($role === 'admin'): ?>
+                    <?php if ($role === 'admin'): ?>
 
                     <li class="nav-item dropdown">
 
-                        <a
-                            class="nav-link dropdown-toggle"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
 
-                            <i class="fa-solid fa-user-gear"></i>
+                            <!-- <i class="fa-solid fa-user-gear"></i> -->
 
                             <span>Utilisateurs</span>
 
@@ -760,9 +752,7 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>public/admin/add_user">
+                                <a class="dropdown-item" href="<?= $url_base ?>public/admin/add_user">
 
                                     <i class="fa-solid fa-user-plus"></i>
 
@@ -775,9 +765,7 @@ $role = $_SESSION['role'] ?? '';
 
                             <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="<?= $url_base ?>public/admin/users">
+                                <a class="dropdown-item" href="<?= $url_base ?>public/admin/users">
 
                                     <i class="fa-solid fa-users"></i>
 
@@ -791,141 +779,131 @@ $role = $_SESSION['role'] ?? '';
 
                     </li>
 
-                <?php endif; ?>
+                    <?php endif; ?>
 
 
-                <!-- =================================================
+                    <!-- =================================================
                      COMPTE
                 ================================================== -->
 
-                <li class="nav-item dropdown ms-lg-2">
+                    <li class="nav-item dropdown ms-lg-2">
 
-                    <a
-                        class="nav-link dropdown-toggle evenprod-user"
-                        href="#"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                        <a class="nav-link dropdown-toggle evenprod-user" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
 
 
-                        <span class="evenprod-user-icon">
-
-                            <i class="fa-solid fa-user"></i>
-
-                        </span>
-
-
-                        <span class="evenprod-user-info">
-
-                            <span class="evenprod-user-name">
-                                Mon compte
-                            </span>
-
-                            <span class="evenprod-user-role">
-                                <?= htmlspecialchars($role) ?>
-                            </span>
-
-                        </span>
-
-                    </a>
-
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-
-                        <li>
-
-                            <a
-                                class="dropdown-item"
-                                href="<?= $url_base ?>public/admin/profile">
+                            <span class="evenprod-user-icon">
 
                                 <i class="fa-solid fa-user"></i>
 
-                                Mon profil
-
-                            </a>
-
-                        </li>
+                            </span>
 
 
-                        <li>
+                            <span class="evenprod-user-info">
 
-                            <hr class="dropdown-divider">
+                                <span class="evenprod-user-name">
+                                    Mon compte
+                                </span>
 
-                        </li>
+                                <span class="evenprod-user-role">
+                                    <?= htmlspecialchars($role) ?>
+                                </span>
 
+                            </span>
 
-                        <li>
-
-                            <a
-                                class="dropdown-item logout-item"
-                                href="<?= $url_base ?>index.php?logout=1">
-
-                                <i class="fa-solid fa-right-from-bracket"></i>
-
-                                Déconnexion
-
-                            </a>
-
-                        </li>
-
-                    </ul>
-
-                </li>
+                        </a>
 
 
-            </ul>
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+
+                                <a class="dropdown-item" href="<?= $url_base ?>public/admin/profile">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    Mon profil
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <hr class="dropdown-divider">
+
+                            </li>
+
+
+                            <li>
+
+                                <a class="dropdown-item logout-item" href="<?= $url_base ?>index.php?logout=1">
+
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                                    Déconnexion
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                </ul>
+
+            </div>
 
         </div>
 
-    </div>
-
-</nav>
+    </nav>
 
 
-<!-- ============================================================
+    <!-- ============================================================
      BOOTSTRAP JS
 ============================================================ -->
 
-<script src="<?= $url_base ?>assets/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= $url_base ?>assets/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
 
 
-<!-- ============================================================
+    <!-- ============================================================
      GESTION INACTIVITE
 ============================================================ -->
 
-<script>
+    <script>
+    const INACTIVITY_LIMIT = 3 * 60 * 1000;
 
-const INACTIVITY_LIMIT = 3 * 60 * 1000;
-
-let inactivityTimer;
-
-
-function resetTimer() {
-
-    clearTimeout(inactivityTimer);
-
-    inactivityTimer = setTimeout(function () {
-
-        window.location.href = "<?= $url_base ?>index.php?logout=1";
-
-    }, INACTIVITY_LIMIT);
-
-}
+    let inactivityTimer;
 
 
-window.addEventListener("load", resetTimer);
+    function resetTimer() {
 
-document.addEventListener("mousemove", resetTimer);
+        clearTimeout(inactivityTimer);
 
-document.addEventListener("keypress", resetTimer);
+        inactivityTimer = setTimeout(function() {
 
-document.addEventListener("scroll", resetTimer);
+            window.location.href = "<?= $url_base ?>index.php?logout=1";
 
-document.addEventListener("click", resetTimer);
+        }, INACTIVITY_LIMIT);
 
-document.addEventListener("touchstart", resetTimer);
+    }
 
-</script>
+
+    window.addEventListener("load", resetTimer);
+
+    document.addEventListener("mousemove", resetTimer);
+
+    document.addEventListener("keypress", resetTimer);
+
+    document.addEventListener("scroll", resetTimer);
+
+    document.addEventListener("click", resetTimer);
+
+    document.addEventListener("touchstart", resetTimer);
+    </script>
 
 
 </body>

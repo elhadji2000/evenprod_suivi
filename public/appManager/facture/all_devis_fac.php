@@ -554,10 +554,12 @@ $totalGlobal = $totalDevis + $totalFactures;
         flex-direction: column;
         align-items: flex-start;
     }
+
     .header-actions {
         width: 100%;
         flex-wrap: wrap;
     }
+
     .btn-add {
         flex: 1;
         justify-content: center;
@@ -568,44 +570,56 @@ $totalGlobal = $totalDevis + $totalFactures;
     .factures-page {
         padding: 15px 0 35px;
     }
+
     .factures-container {
         padding: 0 12px;
     }
+
     .factures-header {
         padding: 18px;
     }
+
     .factures-header h1 {
         font-size: 21px;
     }
+
     .factures-header-avatar {
         width: 56px;
         height: 56px;
         flex-basis: 56px;
     }
+
     .stats-overview {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
     }
+
     .stat-overview-card {
         padding: 14px 16px;
     }
+
     .stat-overview-card .value {
         font-size: 17px;
     }
+
     .table-responsive {
         padding: 0 12px 12px;
     }
+
     .factures-table thead {
         display: none;
     }
+
     .factures-table tbody tr {
         display: block;
         padding: 12px 0;
         border-bottom: 2px solid var(--border);
     }
+
     .factures-table tbody tr:last-child {
         border-bottom: 0;
     }
+
     .factures-table tbody td {
         display: flex;
         align-items: center;
@@ -614,6 +628,7 @@ $totalGlobal = $totalDevis + $totalFactures;
         border-bottom: 0;
         flex-wrap: wrap;
     }
+
     .factures-table tbody td::before {
         content: attr(data-label);
         font-size: 9px;
@@ -622,13 +637,16 @@ $totalGlobal = $totalDevis + $totalFactures;
         color: var(--muted);
         letter-spacing: 0.3px;
     }
+
     .factures-table tbody td:first-child::before {
         display: none;
     }
+
     .factures-table tbody td:first-child {
         justify-content: flex-start;
         font-weight: 700;
     }
+
     .action-group {
         gap: 4px;
     }
@@ -638,19 +656,24 @@ $totalGlobal = $totalDevis + $totalFactures;
     .factures-header-left {
         gap: 12px;
     }
+
     .factures-header-avatar {
         display: none;
     }
+
     .header-actions {
         flex-direction: column;
     }
+
     .btn-add {
         width: 100%;
     }
+
     .header-count {
         width: 100%;
         justify-content: center;
     }
+
     .stats-overview {
         grid-template-columns: 1fr;
     }
@@ -668,7 +691,8 @@ $totalGlobal = $totalDevis + $totalFactures;
             <div class="factures-header-left">
                 <div class="factures-header-avatar">
                     <?php if (!empty($serie['logo']) && file_exists('../../../uploads/series/' . $serie['logo'])): ?>
-                    <img src="../../../uploads/series/<?= htmlspecialchars($serie['logo']) ?>" alt="<?= htmlspecialchars($serie['titre']) ?>">
+                    <img src="../../../uploads/series/<?= htmlspecialchars($serie['logo']) ?>"
+                        alt="<?= htmlspecialchars($serie['titre']) ?>">
                     <?php else: ?>
                     <div class="factures-header-avatar-placeholder">
                         <i class="fas fa-film"></i>
@@ -752,7 +776,8 @@ $totalGlobal = $totalDevis + $totalFactures;
                 <div class="value warning"><?= number_format($totalDevis, 0, ',', ' ') ?> FCFA</div>
             </div>
             <div class="stat-overview-card">
-                <div class="label"><i class="fas fa-file-invoice" style="color:var(--success);"></i> Total factures</div>
+                <div class="label"><i class="fas fa-file-invoice" style="color:var(--success);"></i> Total factures
+                </div>
                 <div class="value success"><?= number_format($totalFactures, 0, ',', ' ') ?> FCFA</div>
             </div>
             <div class="stat-overview-card">
@@ -802,11 +827,13 @@ $totalGlobal = $totalDevis + $totalFactures;
                                 </span>
                             </td>
                             <td data-label="Client">
-                                <i class="fas fa-building" style="color:var(--muted); font-size:11px; margin-right:4px;"></i>
+                                <i class="fas fa-building"
+                                    style="color:var(--muted); font-size:11px; margin-right:4px;"></i>
                                 <?= htmlspecialchars($row['client_nom']) ?>
                             </td>
                             <td data-label="Date">
-                                <i class="fas fa-calendar-alt" style="color:var(--muted); font-size:11px; margin-right:4px;"></i>
+                                <i class="fas fa-calendar-alt"
+                                    style="color:var(--muted); font-size:11px; margin-right:4px;"></i>
                                 <?= date('d/m/Y', strtotime($row['date_facture'])) ?>
                             </td>
                             <td data-label="Montant">
@@ -839,29 +866,29 @@ $totalGlobal = $totalDevis + $totalFactures;
                             <td data-label="Actions" style="text-align:center;">
                                 <div class="action-group">
                                     <!-- PDF -->
-                                    <a href="facture_pdf.php?id=<?= $row['id'] ?>" 
-                                       class="btn-action view" 
-                                       target="_blank"
-                                       title="Voir PDF">
+                                    <a href="facture_pdf.php?id=<?= $row['id'] ?>" class="btn-action view"
+                                        target="_blank" title="Voir PDF">
                                         <i class="fas fa-file-pdf"></i>
                                     </a>
 
                                     <!-- Valider (uniquement pour les devis) -->
-                                    <?php if ($row['type'] == "devis"): ?>
-                                    <button type="button" 
-                                            class="btn-action validate" 
-                                            onclick="validerDevis(<?= $row['id'] ?>, this)"
-                                            title="Valider le devis">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <?php endif; ?>
+                                    <?php if (strtolower($row['type']) === 'devis'): ?>
 
+                                    <a href="valider_devis.php?id=<?= (int)$row['id'] ?>&serie_id=<?= (int)$serieId ?>"
+                                        class="btn-action validate" title="Valider le devis"
+                                        onclick="return confirm('Voulez-vous vraiment valider ce devis ? Il deviendra une facture.');">
+
+                                        <i class="fas fa-check"></i>
+
+                                    </a>
+
+                                    <?php endif; ?>
                                     <!-- Supprimer (uniquement pour les devis) -->
                                     <?php if ($row['type'] == "devis"): ?>
-                                    <a href="<?= $url_base ?>public/appManager/delete.php?table=factures&id=<?= htmlspecialchars($row['id']) ?>&serie_id=<?= $serieId ?>&redirect=<?= $url_base ?>public/appManager/facture/all_devis_fac.php?id=<?= $serieId ?>" 
-                                       class="btn-action delete" 
-                                       onclick="return confirm('Voulez-vous vraiment supprimer ce devis ?')"
-                                       title="Supprimer">
+                                    <a href="<?= $url_base ?>public/appManager/delete.php?table=factures&id=<?= htmlspecialchars($row['id']) ?>&serie_id=<?= $serieId ?>&redirect=<?= $url_base ?>public/appManager/facture/all_devis_fac.php?id=<?= $serieId ?>"
+                                        class="btn-action delete"
+                                        onclick="return confirm('Voulez-vous vraiment supprimer ce devis ?')"
+                                        title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     <?php else: ?>
@@ -878,7 +905,8 @@ $totalGlobal = $totalDevis + $totalFactures;
                     <i class="fas fa-file-invoice"></i>
                     <h3>Aucun document</h3>
                     <p>Aucun devis ou facture n'est encore enregistré pour cette série.</p>
-                    <a href="add_devis?id=<?= htmlspecialchars($serie['id'] ?? 0) ?>" class="btn-add" style="display:inline-flex;">
+                    <a href="add_devis?id=<?= htmlspecialchars($serie['id'] ?? 0) ?>" class="btn-add"
+                        style="display:inline-flex;">
                         <i class="fas fa-plus"></i>
                         Créer le premier devis
                     </a>
@@ -908,41 +936,108 @@ $(document).ready(function() {
             "pageLength": 10,
             "lengthMenu": [5, 10, 25, 50],
             "responsive": true,
-            "columnDefs": [
-                { "orderable": false, "targets": 7 }
-            ]
+            "columnDefs": [{
+                "orderable": false,
+                "targets": 7
+            }]
         });
     }
 });
 
 // Fonction pour valider un devis
-function validerDevis(id, el) {
-    if (confirm("Voulez-vous vraiment valider ce devis ? Il deviendra une facture.", id)) {
-        fetch("valider_devis.php", {
-                method: "post",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "id=" + id
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Afficher un toast personnalisé
-                    showToast("Devis validé avec succès !", "var(--success)");
-                    
-                    // Recharger la page après un court délai
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                } else {
-                    alert("Erreur : " + (data.message || "Une erreur est survenue."));
-                }
-            })
-            .catch(err => {
-                alert("Erreur serveur : " + err);
-            });
+function validerDevis(button) {
+
+    const id = parseInt(button.dataset.id, 10);
+
+    console.log("ID du devis envoyé :", id);
+
+    if (!id || id <= 0) {
+        alert("Impossible de récupérer l'identifiant du devis.");
+        return;
     }
+
+    if (!confirm("Voulez-vous vraiment valider ce devis ? Il deviendra une facture.")) {
+        return;
+    }
+
+    const originalContent = button.innerHTML;
+
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    // Création du formulaire
+    const formData = new FormData();
+
+    formData.append("id", id);
+
+    console.log("FormData ID :", formData.get("id"));
+
+    fetch("./valider_devis.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+
+            console.log("HTTP :", response.status);
+
+            return response.text();
+        })
+        .then(text => {
+
+            console.log("Réponse PHP :", text);
+
+            let data;
+
+            try {
+                data = JSON.parse(text);
+            } catch (error) {
+
+                throw new Error(
+                    "Le serveur n'a pas retourné du JSON valide.\n\n" +
+                    text
+                );
+            }
+
+            return data;
+        })
+        .then(data => {
+
+            console.log("Résultat :", data);
+
+            if (data.success) {
+
+                showToast(
+                    data.message || "Devis validé avec succès !",
+                    "var(--success)"
+                );
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+
+            } else {
+
+                alert(
+                    data.message ||
+                    "Impossible de valider le devis."
+                );
+
+                button.disabled = false;
+                button.innerHTML = originalContent;
+            }
+        })
+        .catch(error => {
+
+            console.error("Erreur validation :", error);
+
+            alert(
+                "Erreur lors de la validation :\n\n" +
+                error.message
+            );
+
+            button.disabled = false;
+            button.innerHTML = originalContent;
+        });
 }
 
 // Fonction Toast
@@ -967,7 +1062,7 @@ function showToast(message, bgColor) {
     setTimeout(() => {
         toast.style.opacity = 1;
     }, 100);
-    
+
     setTimeout(() => {
         toast.style.opacity = 0;
         setTimeout(() => toast.remove(), 500);

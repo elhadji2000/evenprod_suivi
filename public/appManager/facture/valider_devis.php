@@ -1,64 +1,95 @@
 <?php
-header('Content-Type: application/json');
+
 include '../../../config/fonction.php';
 
-// Récupérer l'ID depuis POST ou GET (pour plus de flexibilité)
-$id = isset($_POST['id']) ? intval($_POST['id']) : (isset($_GET['id']) ? intval($_GET['id']) : 0);
 
-// Log pour déboguer
-error_log("Tentative de validation du devis ID: " . $id);
+// =====================================================
+// PARAMÈTRES
+// =====================================================
 
-if ($id > 0) {
-    // Vérifier d'abord si la facture existe
-    $checkSql = "SELECT id, type FROM factures WHERE id = $id";
-    $checkResult = $connexion->query($checkSql);
-    
-    if ($checkResult && $checkResult->num_rows > 0) {
-        $facture = $checkResult->fetch_assoc();
-        
-        // Vérifier si c'est déjà une facture
-        if ($facture['type'] == 'Facture') {
-            echo json_encode([
-                "success" => false, 
-                "message" => "Ce document est déjà une facture."
-            ]);
-            exit;
-        }
-        
-        // Mise à jour type + date_validation
-        $dateValidation = date('Y-m-d');
-        $sql = "UPDATE factures 
-                SET type = 'Facture', date_validation = '$dateValidation' 
-                WHERE id = $id AND type != 'Facture'";
-        
-        if ($connexion->query($sql)) {
-            if ($connexion->affected_rows > 0) {
-                echo json_encode([
-                    "success" => true,
-                    "message" => "Devis validé avec succès !"
-                ]);
-            } else {
-                echo json_encode([
-                    "success" => false,
-                    "message" => "Aucune modification effectuée. Le devis a peut-être déjà été validé."
-                ]);
-            }
-        } else {
-            echo json_encode([
-                "success" => false, 
-                "message" => "Erreur SQL : " . $connexion->error
-            ]);
-        }
-    } else {
-        echo json_encode([
-            "success" => false, 
-            "message" => "Aucun devis trouvé avec l'ID : " . $id
-        ]);
-    }
-} else {
-    echo json_encode([
-        "success" => false, 
-        "message" => "ID invalide ou manquant. ID reçu : " . ($id ?: 'vide')
-    ]);
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+
+$serieId = isset($_GET['serie_id'])
+    ? (int) $_GET['serie_id']
+    : 0;
+
+
+// =====================================================
+// URL DE RETOUR
+// =====================================================
+
+$redirect = "all_devis_fac.php?id=" . $serieId;
+
+
+// =====================================================
+// ID INVALIDE
+// =====================================================
+
+if ($id <= 0) {
+
+    header("Location: $redirect&error=invalid_id");
+    exit;
 }
-?>
+
+
+// =====================================================
+// RECHERCHER LE DEVIS
+// =====================================================
+
+$sql = "
+    SELECT id, type
+    FROM factures
+    WHERE id = $id
+    LIMIT 1
+";
+
+$result = mysqli_query($connexion, $sql);
+
+if (!$result || mysqli_num_rows($result) === 0) {
+
+    header("Location: $redirect&error=not_found");
+    exit;
+}
+
+$facture = mysqli_fetch_assoc($result);
+
+
+// =====================================================
+// VÉRIFIER LE TYPE
+// =====================================================
+
+if (strtolower(trim($facture['type'])) !== 'devis') {
+
+    header("Location: $redirect&error=already_validated");
+    exit;
+}
+
+
+// =====================================================
+// VALIDATION
+// =====================================================
+
+$dateValidation = date('Y-m-d H:i:s');
+
+$sqlUpdate = "
+    UPDATE factures
+    SET
+        type = 'Facture',
+        date_validation = '$dateValidation'
+    WHERE id = $id
+      AND LOWER(TRIM(type)) = 'devis'
+";
+
+if (mysqli_query($connexion, $sqlUpdate)) {
+
+    header("Location: $redirect&success=validated");
+    exit;
+}
+
+
+// =====================================================
+// ERREUR
+// =====================================================
+
+header("Location: $redirect&error=sql");
+exit;

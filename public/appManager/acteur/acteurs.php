@@ -416,6 +416,31 @@ $acteurs = getActeursBySerieId($id);
     text-decoration: underline;
 }
 
+/* Badge pour le type d'acteur */
+.badge-type-detail {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-type-detail.forfaitaire {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-type-detail.journalier {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-type-detail.null {
+    background: #f4f4f5;
+    color: #737373;
+}
+
 .details-actions {
     margin-top: 16px;
     padding-top: 16px;
@@ -725,27 +750,29 @@ $acteurs = getActeursBySerieId($id);
                 <div class="actors-grid">
                     <?php foreach ($acteurs as $acteur): ?>
                     <div class="actor-card" 
-                         data-id="<?= htmlspecialchars($acteur['serie_acteur'] ?? $acteur['id']) ?>"
-                         data-nom="<?= htmlspecialchars($acteur['nom']) ?>"
-                         data-prenom="<?= htmlspecialchars($acteur['prenom']) ?>"
+                         data-id="<?= htmlspecialchars($acteur['serie_acteur_id'] ?? $acteur['id'] ?? 0) ?>"
+                         data-nom="<?= htmlspecialchars($acteur['nom'] ?? '') ?>"
+                         data-prenom="<?= htmlspecialchars($acteur['prenom'] ?? '') ?>"
                          data-date="<?= htmlspecialchars($acteur['date_naissance'] ?? 'Non renseignée') ?>"
                          data-adresse="<?= htmlspecialchars($acteur['adresse'] ?? 'Non renseignée') ?>"
                          data-contact="<?= htmlspecialchars($acteur['contact'] ?? 'Non renseigné') ?>"
                          data-cachet="<?= number_format($acteur['cachet'] ?? 0, 0, ',', ' ') ?>"
+                         data-type="<?= htmlspecialchars($acteur['type_acteur'] ?? 'Non défini') ?>"
+                         data-role="<?= htmlspecialchars($acteur['role'] ?? 'Non défini') ?>"
                          data-photo="<?= htmlspecialchars($acteur['photo'] ?? '') ?>"
                          data-contrat="<?= htmlspecialchars($acteur['contrat'] ?? '') ?>"
                          onclick="selectActor(this)">
                         
                         <div class="actor-card-avatar">
                             <?php if (!empty($acteur['photo']) && file_exists('../../../uploads/photos/' . $acteur['photo'])): ?>
-                            <img src="../../../uploads/photos/<?= htmlspecialchars($acteur['photo']) ?>" alt="<?= htmlspecialchars($acteur['prenom']) ?>">
+                            <img src="../../../uploads/photos/<?= htmlspecialchars($acteur['photo']) ?>" alt="<?= htmlspecialchars($acteur['prenom'] ?? '') ?>">
                             <?php else: ?>
                             <div class="actor-card-avatar-placeholder">
                                 <i class="fas fa-user"></i>
                             </div>
                             <?php endif; ?>
                         </div>
-                        <h4 class="actor-card-name"><?= htmlspecialchars($acteur['prenom'] . ' ' . $acteur['nom']) ?></h4>
+                        <h4 class="actor-card-name"><?= htmlspecialchars(($acteur['prenom'] ?? '') . ' ' . ($acteur['nom'] ?? '')) ?></h4>
                         <p class="actor-card-role">
                             <i class="fas fa-phone" style="font-size:10px;"></i>
                             <?= htmlspecialchars($acteur['contact'] ?? 'Non renseigné') ?>
@@ -809,6 +836,14 @@ $acteurs = getActeursBySerieId($id);
                             <span class="label"><i class="fas fa-coins"></i> Cachet</span>
                             <span class="value" id="detailCachet">---</span>
                         </div>
+                        <div class="details-row">
+                            <span class="label"><i class="fas fa-tag"></i> Type</span>
+                            <span class="value" id="detailType">---</span>
+                        </div>
+                        <div class="details-row">
+                            <span class="label"><i class="fas fa-user-tag"></i> Rôle</span>
+                            <span class="value" id="detailRole">---</span>
+                        </div>
                         <div class="details-row" id="detailcontratRow" style="display:none;">
                             <span class="label"><i class="fas fa-file-pdf"></i> Contrat</span>
                             <span class="value"><a href="#" id="detailcontratLink" target="_blank">Télécharger</a></span>
@@ -846,6 +881,8 @@ function selectActor(element) {
     const adresse = element.dataset.adresse;
     const contact = element.dataset.contact;
     const cachet = element.dataset.cachet;
+    const type = element.dataset.type;
+    const role = element.dataset.role;
     const photo = element.dataset.photo;
     const contrat = element.dataset.contrat;
 
@@ -864,6 +901,35 @@ function selectActor(element) {
     document.getElementById('detailAdresse').textContent = adresse || 'Non renseignée';
     document.getElementById('detailTel').textContent = contact || 'Non renseigné';
     document.getElementById('detailCachet').textContent = cachet + ' FCFA';
+
+    // ✅ Affichage du type avec badge
+    const typeEl = document.getElementById('detailType');
+    if (type && type !== 'Non défini') {
+        const typeLower = type.toLowerCase();
+        let badgeClass = 'badge-type-detail';
+        if (typeLower === 'forfaitaire') {
+            badgeClass += ' forfaitaire';
+        } else if (typeLower === 'journalier') {
+            badgeClass += ' journalier';
+        } else {
+            badgeClass += ' null';
+        }
+        typeEl.innerHTML = `<span class="${badgeClass}">${type}</span>`;
+    } else {
+        typeEl.innerHTML = '<span class="badge-type-detail null">Non défini</span>';
+    }
+
+    // ✅ Affichage du rôle
+    const roleEl = document.getElementById('detailRole');
+    if (role && role !== 'Non défini' && role.trim() !== '') {
+        roleEl.textContent = role;
+        roleEl.style.color = 'var(--text)';
+        roleEl.style.fontWeight = '600';
+    } else {
+        roleEl.textContent = 'Non défini';
+        roleEl.style.color = 'var(--muted)';
+        roleEl.style.fontWeight = '400';
+    }
 
     // Gestion du contrat
     const contratRow = document.getElementById('detailcontratRow');

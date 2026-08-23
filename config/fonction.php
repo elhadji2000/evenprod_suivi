@@ -401,7 +401,7 @@ function getActeursBySerieId($serieId)
     $serieId = (int) $serieId;
 
     $sql = "
-        SELECT a.*, sa.id AS serie_acteur,type_acteur,contrat, sa.cachet
+        SELECT a.*, sa.id AS serie_acteur,type_acteur,contrat, sa.cachet, sa.type_acteur, sa.role
         FROM acteurs a
         INNER JOIN serie_acteur sa ON a.id = sa.acteur_id
         INNER JOIN series s ON s.id = sa.serie_id
@@ -579,7 +579,6 @@ function ajouterTournage(
         $reference
     );
 
-
     // =========================================================
     // 1. Ajouter le tournage
     // =========================================================
@@ -598,7 +597,6 @@ function ajouterTournage(
     ";
 
     if (!mysqli_query($connexion, $sqlTournage)) {
-
         return [
             'success' => false,
             'message' =>
@@ -607,38 +605,28 @@ function ajouterTournage(
         ];
     }
 
-
     $tournageId = mysqli_insert_id($connexion);
-
 
     // =========================================================
     // 2. Ajouter les acteurs du tournage
     // =========================================================
 
-    $totalCachet = 0;
-
-
     foreach ($acteursIds as $acteurId) {
-
         $acteurId = (int) $acteurId;
 
-
         // -----------------------------------------------------
-        // Nombre de séquences jouées par l'acteur
-        // -----------------------------------------------------
-        // C'est simplement un entier.
-        // Cela ne sert PAS au calcul du cachet.
+        // Nombre de séquences jouées
         // -----------------------------------------------------
 
         $sequence = isset($sequences[$acteurId])
             ? (int) $sequences[$acteurId]
             : 0;
 
+        // Empêcher une valeur négative
         $sequence = max(0, $sequence);
 
-
         // =====================================================
-        // Récupérer les informations de l'acteur pour la série
+        // Récupérer les informations de l'acteur dans la série
         // =====================================================
 
         $sqlActeurSerie = "
@@ -656,9 +644,7 @@ function ajouterTournage(
             $sqlActeurSerie
         );
 
-
         if (!$res) {
-
             return [
                 'success' => false,
                 'message' =>
@@ -667,46 +653,24 @@ function ajouterTournage(
             ];
         }
 
-
         $row = mysqli_fetch_assoc($res);
 
-
         if (!$row) {
-
             return [
                 'success' => false,
                 'message' =>
-                    "L'acteur ID $acteurId n'est pas associé à cette série."
+                    "L'acteur ID $acteurId "
+                    . "n'est pas associé à cette série."
             ];
         }
-
 
         $cachet = isset($row['cachet'])
             ? (float) $row['cachet']
             : 0;
 
-
         $typeActeur = strtolower(
             trim($row['type_acteur'] ?? '')
         );
-
-
-        // =====================================================
-        // Calcul du total des cachets
-        // =====================================================
-        //
-        // IMPORTANT :
-        // uniquement les acteurs "forfaiteur"
-        //
-        // La valeur sequence n'intervient PAS ici.
-        //
-        // =====================================================
-
-        if ($typeActeur === 'journalier') {
-
-            $totalCachet += $cachet;
-        }
-
 
         // =====================================================
         // Ajouter l'acteur au tournage
@@ -725,9 +689,7 @@ function ajouterTournage(
             )
         ";
 
-
         if (!mysqli_query($connexion, $sqlTA)) {
-
             return [
                 'success' => false,
                 'message' =>
@@ -735,51 +697,47 @@ function ajouterTournage(
                     . mysqli_error($connexion)
             ];
         }
-    }
 
+        // =====================================================
+        // CRÉER UNE DÉPENSE POUR CHAQUE ACTEUR JOURNALIER
+        // =====================================================
 
-    // =========================================================
-    // 3. Ajouter la dépense de cachet
-    // =========================================================
-    //
-    // Uniquement si au moins un acteur est forfaiteur.
-    //
-    // =========================================================
+        if (
+            $typeActeur === 'journalier' &&
+            $cachet > 0
+        ) {
+            $sqlDepense = "
+                INSERT INTO depenses (
+                    serie_id,
+                    tournage_id,
+                    acteur_id,
+                    type_depense,
+                    montant,
+                    date_depense
+                )
+                VALUES (
+                    $serieId,
+                    $tournageId,
+                    $acteurId,
+                    'reglement_acteur',
+                    $cachet,
+                    '$date'
+                )
+            ";
 
-    if ($totalCachet > 0) {
-
-        $sqlDepense = "
-            INSERT INTO depenses (
-                serie_id,
-                tournage_id,
-                type_depense,
-                montant,
-                date_depense
-            )
-            VALUES (
-                $serieId,
-                $tournageId,
-                'cachet',
-                $totalCachet,
-                '$date'
-            )
-        ";
-
-
-        if (!mysqli_query($connexion, $sqlDepense)) {
-
-            return [
-                'success' => false,
-                'message' =>
-                    'Erreur insertion dépense : '
-                    . mysqli_error($connexion)
-            ];
+            if (!mysqli_query($connexion, $sqlDepense)) {
+                return [
+                    'success' => false,
+                    'message' =>
+                        'Erreur insertion dépense acteur : '
+                        . mysqli_error($connexion)
+                ];
+            }
         }
     }
 
-
     // =========================================================
-    // 4. Retour
+    // 3. Retour
     // =========================================================
 
     return [
@@ -848,24 +806,95 @@ function modifierTournage($tournageId, $serieId, $date, $reference, $acteursIds)
 function getDepensesBySerie($serieId)
 {
     global $connexion;
+
     $serieId = (int) $serieId;
 
-    $sql = "SELECT d.id, d.libelle, d.type_depense, d.date_depense, d.montant, d.justificatif,
-                   t.reference AS tournage_reference
-            FROM depenses d
-            LEFT JOIN tournages t ON d.tournage_id = t.id
-            WHERE d.serie_id = $serieId
-            ORDER BY d.id DESC";
+    $sql = "
+        SELECT 
+            d.id,
+            d.libelle,
+            d.type_depense,
+            d.date_depense,
+            d.montant,
+            d.justificatif,
+            d.acteur_id,
+
+            t.reference AS tournage_reference,
+
+            /*
+             * BÉNÉFICIAIRE
+             * Si acteur_id existe :
+             * prénom + nom de l'acteur
+             * Sinon :
+             * beneficiaire enregistré dans depenses
+             */
+            CASE
+                WHEN d.acteur_id IS NOT NULL
+                     AND atr.id IS NOT NULL
+                THEN TRIM(
+                    CONCAT(
+                        COALESCE(atr.prenom, ''),
+                        ' ',
+                        COALESCE(atr.nom, '')
+                    )
+                )
+
+                ELSE COALESCE(
+                    d.beneficiaire,
+                    ''
+                )
+            END AS beneficiaire,
+
+
+            /*
+             * TÉLÉPHONE DU BÉNÉFICIAIRE
+             * Si acteur_id existe :
+             * contact de l'acteur
+             * Sinon :
+             * telephone_beneficiaire enregistré dans depenses
+             */
+            CASE
+                WHEN d.acteur_id IS NOT NULL
+                     AND atr.id IS NOT NULL
+                THEN COALESCE(
+                    atr.contact,
+                    ''
+                )
+
+                ELSE COALESCE(
+                    d.telephone_beneficiaire,
+                    ''
+                )
+            END AS telephone_beneficiaire
+
+
+        FROM depenses d
+
+        LEFT JOIN tournages t
+            ON d.tournage_id = t.id
+
+        LEFT JOIN acteurs atr
+            ON atr.id = d.acteur_id
+
+        WHERE d.serie_id = $serieId
+
+        ORDER BY d.id DESC
+    ";
 
     $result = mysqli_query($connexion, $sql);
+
     $depenses = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $depenses[] = $row;
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $depenses[] = $row;
+        }
     }
+
     return $depenses;
 }
 
-function ajouterDepense($serieId, $tournageId, $type, $montant, $description, $justificatif = null)
+function ajouterDepense($serieId, $tournageId, $type, $montant, $description, $beneficiaire, $telephone_beneficiaire, $justificatif = null)
 {
     global $connexion;
 
@@ -874,10 +903,12 @@ function ajouterDepense($serieId, $tournageId, $type, $montant, $description, $j
     $type = mysqli_real_escape_string($connexion, $type);
     $montant = floatval($montant);
     $description = mysqli_real_escape_string($connexion, $description);
+    $beneficiaire = mysqli_real_escape_string($connexion, $beneficiaire);
+    $telephone_beneficiaire = mysqli_real_escape_string($connexion, $telephone_beneficiaire);
     $justificatif = $justificatif ? "'" . mysqli_real_escape_string($connexion, $justificatif) . "'" : 'NULL';
 
-    $sql = "INSERT INTO depenses (serie_id, tournage_id, type_depense, montant, libelle, justificatif, date_depense)
-            VALUES ($serieId, $tournageId, '$type', $montant, '$description', $justificatif, NOW())";
+    $sql = "INSERT INTO depenses (serie_id, tournage_id, type_depense, beneficiaire, telephone_beneficiaire, montant, libelle, justificatif, date_depense)
+            VALUES ($serieId, $tournageId, '$type', '$beneficiaire', '$telephone_beneficiaire', $montant, '$description', $justificatif, NOW())";
 
     if (!mysqli_query($connexion, $sql)) {
         return ['success' => false, 'message' => mysqli_error($connexion)];
@@ -1994,5 +2025,313 @@ function addActeursToSerieWithType($serieId, $acteurs, $cachets, $types)
                 VALUES ($serieId, $acteurId, $cachet, '$type')";
         mysqli_query($connexion, $sql);
     }
+}
+
+/**
+ * Récupère un salarié par son ID
+ */
+function getSalarieById($connexion, $id)
+{
+    $stmt = $connexion->prepare("
+        SELECT *
+        FROM salaries
+        WHERE id = ?
+        LIMIT 1
+    ");
+
+    if (!$stmt) {
+        return null;
+    }
+
+    $stmt->bind_param("i", $id);
+
+    if (!$stmt->execute()) {
+        $stmt->close();
+        return null;
+    }
+
+    $result = $stmt->get_result();
+
+    $salarie = $result->fetch_assoc();
+
+    $stmt->close();
+
+    return $salarie ?: null;
+}
+
+/**
+ * Ajoute un nouveau salarié
+ */
+function ajouterSalarie($nom, $prenom, $telephone, $email, $adresse, $date_naissance, $fonction, $date_embauche, $type_contrat, $salaire, $statut, $photoFile, $contratFile) {
+    // Vérification existence
+    global $connexion;
+    $stmt = $connexion->prepare("SELECT id FROM salaries WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        return "exists";
+    }
+
+    // Upload photo
+    $photo = null;
+    if ($photoFile && $photoFile['error'] === UPLOAD_ERR_OK) {
+        $photo = uploadFile($photoFile, 'uploads/salaries/');
+    }
+
+    // Upload contrat
+    $contrat = null;
+    if ($contratFile && $contratFile['error'] === UPLOAD_ERR_OK) {
+        $contrat = uploadFile($contratFile, 'uploads/contrats/');
+    }
+
+    $stmt = $connexion->prepare("
+        INSERT INTO salaries 
+        (nom, prenom, telephone, email, adresse, date_naissance, fonction, date_embauche, type_contrat, salaire, statut, photo, contrat, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ");
+
+    return $stmt->execute([
+        $nom, $prenom, $telephone, $email, $adresse, $date_naissance,
+        $fonction, $date_embauche, $type_contrat, $salaire, $statut,
+        $photo, $contrat
+    ]) ? "success" : "error";
+}
+
+/**
+ * Modifie un salarié existant
+ */
+function modifierSalarie($id, $nom, $prenom, $telephone, $email, $adresse, $date_naissance, $fonction, $date_embauche, $type_contrat, $salaire, $statut, $photoFile, $contratFile) {
+    global $connexion;
+    // Récupérer l'ancien salarié
+    $old = getSalarieById($connexion, $id);
+    if (!$old) return "error";
+
+    // Upload nouvelle photo
+    $photo = $old['photo'];
+    if ($photoFile && $photoFile['error'] === UPLOAD_ERR_OK) {
+        $photo = uploadFile($photoFile, 'uploads/salaries/');
+        if ($old['photo'] && file_exists('uploads/salaries/' . $old['photo'])) {
+            unlink('uploads/salaries/' . $old['photo']);
+        }
+    }
+
+    // Upload nouveau contrat
+    $contrat = $old['contrat'];
+    if ($contratFile && $contratFile['error'] === UPLOAD_ERR_OK) {
+        $contrat = uploadFile($contratFile, 'uploads/contrats/');
+        if ($old['contrat'] && file_exists('uploads/contrats/' . $old['contrat'])) {
+            unlink('uploads/contrats/' . $old['contrat']);
+        }
+    }
+
+    $stmt = $connexion->prepare("
+        UPDATE salaries SET
+            nom = ?, prenom = ?, telephone = ?, email = ?,
+            adresse = ?, date_naissance = ?, fonction = ?,
+            date_embauche = ?, type_contrat = ?, salaire = ?,
+            statut = ?, photo = ?, contrat = ?,
+            updated_at = NOW()
+        WHERE id = ?
+    ");
+
+    return $stmt->execute([
+        $nom, $prenom, $telephone, $email, $adresse, $date_naissance,
+        $fonction, $date_embauche, $type_contrat, $salaire, $statut,
+        $photo, $contrat, $id
+    ]) ? "success" : "error";
+}
+
+/**
+ * Fonction utilitaire pour uploader un fichier
+ */
+function uploadFile($file, $targetDir) {
+    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = uniqid() . '.' . $ext;
+    $targetPath = $targetDir . $filename;
+
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true);
+    }
+
+    if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+        return $filename;
+    }
+    return null;
+}
+
+/**
+ * Récupère la liste des salariés avec filtres et pagination
+ */
+function getSalariesFiltres($search = '', $statut = '', $contrat = '', $fonction = '', $limit = 15, $offset = 0) {
+    global $connexion;
+
+    $conditions = [];
+    $params = [];
+    $types = "";
+
+    if ($search) {
+        $conditions[] = "(nom LIKE ? OR prenom LIKE ? OR email LIKE ? OR telephone LIKE ? OR fonction LIKE ?)";
+        $searchParam = '%' . $search . '%';
+        $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
+        $types .= "sssss";
+    }
+
+    if ($statut) {
+        $conditions[] = "statut = ?";
+        $params[] = $statut;
+        $types .= "s";
+    }
+
+    if ($contrat) {
+        $conditions[] = "type_contrat = ?";
+        $params[] = $contrat;
+        $types .= "s";
+    }
+
+    if ($fonction) {
+        $conditions[] = "fonction = ?";
+        $params[] = $fonction;
+        $types .= "s";
+    }
+
+    $whereClause = !empty($conditions) ? "WHERE " . implode(" AND ", $conditions) : "";
+
+    // Récupérer le total
+    $countStmt = $connexion->prepare("SELECT COUNT(*) as total FROM salaries $whereClause");
+    
+    if (!empty($params)) {
+        $countStmt->bind_param($types, ...$params);
+    }
+    
+    $countStmt->execute();
+    $countResult = $countStmt->get_result();
+    $row = $countResult->fetch_assoc();
+    $total = $row['total'];
+
+    // Récupérer les données
+    $query = "SELECT * FROM salaries $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    $stmt = $connexion->prepare($query);
+
+    // Ajouter les paramètres de limite
+    $allParams = array_merge($params, [$limit, $offset]);
+    $typesAll = $types . "ii";
+    
+    if (!empty($allParams)) {
+        $stmt->bind_param($typesAll, ...$allParams);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_all(MYSQLI_ASSOC);
+
+    return [
+        'total' => $total,
+        'data' => $data
+    ];
+}
+
+/**
+ * Récupère les fonctions uniques avec leur nombre
+ */
+function getSalariesFonctions() {
+    global $connexion;
+    $result = $connexion->query("
+        SELECT fonction, COUNT(*) as count 
+        FROM salaries 
+        WHERE statut = 'actif' 
+        GROUP BY fonction 
+        ORDER BY count DESC
+    ");
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+/**
+ * Récupère les statistiques des salariés
+ */
+function getSalariesStats() {
+    global $connexion;
+
+    $stats = [];
+
+    // Total
+    $result = $connexion->query("SELECT COUNT(*) as total FROM salaries");
+    $row = $result->fetch_assoc();
+    $stats['total'] = $row['total'];
+
+    // Par statut
+    foreach (['actif', 'inactif', 'en_conge'] as $status) {
+        $stmt = $connexion->prepare("SELECT COUNT(*) as count FROM salaries WHERE statut = ?");
+        $stmt->bind_param("s", $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stats[$status] = $row['count'];
+    }
+
+    // Masse salariale (salaires des actifs)
+    $result = $connexion->query("SELECT SUM(salaire) as total FROM salaries WHERE statut = 'actif'");
+    $row = $result->fetch_assoc();
+    $stats['masse_salariale'] = (float)($row['total'] ?? 0);
+
+    return $stats;
+}
+
+/**
+ * Supprime un salarié
+ */
+function deleteSalarie($id) {
+    global $connexion;
+
+    // Récupérer les fichiers à supprimer
+    $stmt = $connexion->prepare("SELECT photo, contrat FROM salaries WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $salarie = $result->fetch_assoc();
+
+    if ($salarie) {
+        // Supprimer les fichiers
+        if ($salarie['photo'] && file_exists('uploads/salaries/' . $salarie['photo'])) {
+            unlink('uploads/salaries/' . $salarie['photo']);
+        }
+        if ($salarie['contrat'] && file_exists('uploads/contrats/' . $salarie['contrat'])) {
+            unlink('uploads/contrats/' . $salarie['contrat']);
+        }
+    }
+
+    $stmt = $connexion->prepare("DELETE FROM salaries WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
+}
+
+/**
+ * Supprime plusieurs salariés en masse
+ */
+function deleteSalariesBulk($ids) {
+    global $connexion;
+
+    if (empty($ids)) return false;
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $types = str_repeat('i', count($ids));
+    
+    // Récupérer les fichiers
+    $stmt = $connexion->prepare("SELECT photo, contrat FROM salaries WHERE id IN ($placeholders)");
+    $stmt->bind_param($types, ...$ids);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $salaries = $result->fetch_all(MYSQLI_ASSOC);
+
+    foreach ($salaries as $salarie) {
+        if ($salarie['photo'] && file_exists('uploads/salaries/' . $salarie['photo'])) {
+            unlink('uploads/salaries/' . $salarie['photo']);
+        }
+        if ($salarie['contrat'] && file_exists('uploads/contrats/' . $salarie['contrat'])) {
+            unlink('uploads/contrats/' . $salarie['contrat']);
+        }
+    }
+
+    $stmt = $connexion->prepare("DELETE FROM salaries WHERE id IN ($placeholders)");
+    $stmt->bind_param($types, ...$ids);
+    return $stmt->execute();
 }
 ?>

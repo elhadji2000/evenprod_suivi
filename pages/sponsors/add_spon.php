@@ -666,7 +666,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <span>*</span>
                                     </label>
                                     <input type="text" id="contact" name="contact" class="modern-input" 
-                                           placeholder="Ex : 77 000 00 00" required
+                                           placeholder="Ex : 221784413400" required
                                            value="<?= htmlspecialchars($partenaire['contact'] ?? '') ?>">
                                 </div>
 

@@ -904,7 +904,7 @@ input[type="date"] {
                                     <div class="input-wrapper">
                                         <i class="fas fa-phone"></i>
                                         <input type="text" id="contact" name="contact" class="modern-input"
-                                            placeholder="Ex : 77 000 00 00" required
+                                            placeholder="Ex : 221784413400" required maxlength="12" minlength="12"
                                             value="<?= htmlspecialchars($acteur['contact'] ?? '') ?>">
                                     </div>
                                 </div>
@@ -1221,3 +1221,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
+<?php include '../../includes/footer.php'; ?>

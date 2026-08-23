@@ -16,8 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $serieId = $_POST['serie_id'];
     $tournageId = $_POST['tournage_id'] ?? '';
     $type = $_POST['type'];
-    $montant = $_POST['montant'];
     $description = $_POST['description'];
+
+    $beneficiaire = trim($_POST['beneficiaire'] ?? '');
+    $telephone_beneficiaire = trim($_POST['telephone_beneficiaire'] ?? '');
+    $montant = floatval($_POST['montant'] ?? 0);
 
     // Upload du justificatif si présent
     $justificatif = null;
@@ -37,13 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $result = ajouterDepense($serieId, $tournageId, $type, $montant, $description, $justificatif);
+    $result = ajouterDepense($serieId, $tournageId, $type, $montant, $description, $beneficiaire, $telephone_beneficiaire, $justificatif);
 
     if ($result['success']) {
         header("Location: liste_all?id=$serieId");
         exit;
     } else {
-        echo "Erreur : " . $result['message'];
+        echo 'Erreur : ' . $result['message'];
     }
 }
 ?>
@@ -555,9 +558,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flex-direction: column;
         align-items: flex-start;
     }
+
     .depense-layout {
         grid-template-columns: 1fr;
     }
+
     .sidebar {
         position: static;
     }
@@ -567,35 +572,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .depense-page {
         padding: 15px 0 35px;
     }
+
     .depense-container {
         padding: 0 12px;
     }
+
     .depense-header {
         padding: 18px;
     }
+
     .depense-header h1 {
         font-size: 21px;
     }
+
     .depense-header-icon {
         width: 48px;
         height: 48px;
         flex-basis: 48px;
     }
+
     .form-grid {
         grid-template-columns: 1fr;
         gap: 16px;
     }
+
     .card-header,
     .card-body {
         padding: 16px;
     }
+
     .form-actions {
         flex-direction: column-reverse;
         align-items: stretch;
     }
+
     .btn {
         width: 100%;
     }
+
     .file-upload-label .file-name {
         max-width: 100px;
     }
@@ -605,6 +619,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .depense-header-left {
         gap: 12px;
     }
+
     .depense-header-icon {
         display: none;
     }
@@ -666,7 +681,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="card-body">
-                        <form action="add_depense?id=<?= htmlspecialchars($serie['id']) ?>" method="post" enctype="multipart/form-data" id="depenseForm">
+                        <form action="add_depense?id=<?= htmlspecialchars($serie['id']) ?>" method="post"
+                            enctype="multipart/form-data" id="depenseForm">
 
                             <input type="hidden" name="serie_id" value="<?= $serieId ?>">
 
@@ -703,8 +719,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         Montant
                                         <span>*</span>
                                     </label>
-                                    <input type="number" id="montant" name="montant" class="modern-input" 
-                                           placeholder="Ex : 50000" min="0" step="100" required>
+                                    <input type="number" id="montant" name="montant" class="modern-input"
+                                        placeholder="Ex : 50000" min="0" step="100" required>
                                 </div>
 
                                 <!-- Tournage -->
@@ -716,13 +732,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="select-wrapper">
                                         <select id="tournage_id" name="tournage_id" class="modern-select">
                                             <option value="">-- Aucun --</option>
-                                            <?php foreach($tournages as $t): ?>
+                                            <?php foreach ($tournages as $t): ?>
                                             <option value="<?= $t['id'] ?>">
                                                 <?= htmlspecialchars($t['reference']) ?>
                                             </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
+                                </div>
+
+                                <!-- Bénéficiaire -->
+                                <div class="form-group">
+                                    <label for="beneficiaire">
+                                        <i class="fas fa-user label-icon"></i>
+                                        Bénéficiaire
+                                        <span>*</span>
+                                    </label>
+
+                                    <input type="text" id="beneficiaire" name="beneficiaire" class="modern-input"
+                                        placeholder="Ex : Madiop Diop" maxlength="150" required>
+                                </div>
+
+                                <!-- Téléphone du bénéficiaire -->
+                                <div class="form-group">
+                                    <label for="telephone_beneficiaire">
+                                        <i class="fas fa-phone label-icon"></i>
+                                        Téléphone du bénéficiaire
+                                        <span>*</span>
+                                    </label>
+
+                                    <input type="tel" id="telephone_beneficiaire" name="telephone_beneficiaire"
+                                        class="modern-input" placeholder="Ex : 221784413400" maxlength="12" minlength="12" required>
                                 </div>
 
                                 <!-- Justificatif -->
@@ -732,7 +772,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         Justificatif (PDF)
                                     </label>
                                     <div class="file-upload-wrapper">
-                                        <input type="file" id="justificatif" name="justificatif" accept="application/pdf">
+                                        <input type="file" id="justificatif" name="justificatif"
+                                            accept="application/pdf">
                                         <div class="file-upload-label">
                                             <span class="file-info">
                                                 <i class="fas fa-cloud-upload-alt"></i>
@@ -750,8 +791,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         Libellé / Description
                                         <span>*</span>
                                     </label>
-                                    <textarea id="description" name="description" class="modern-textarea" 
-                                              placeholder="Décrivez brièvement la dépense..." required></textarea>
+                                    <textarea id="description" name="description" class="modern-textarea"
+                                        placeholder="Décrivez brièvement la dépense..." required></textarea>
                                 </div>
 
                             </div>
@@ -791,7 +832,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="side-info-row">
                             <span class="label">Budget total</span>
-                            <span class="value accent"><?= number_format($serie['budget'] ?? 0, 0, ',', ' ') ?> FCFA</span>
+                            <span class="value accent"><?= number_format($serie['budget'] ?? 0, 0, ',', ' ') ?>
+                                FCFA</span>
                         </div>
                         <div class="side-info-row">
                             <span class="label">Dépenses totales</span>
@@ -799,7 +841,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="side-info-row">
                             <span class="label">Budget restant</span>
-                            <span class="value success"><?= number_format(($serie['budget'] ?? 0) - $totalDepenses, 0, ',', ' ') ?> FCFA</span>
+                            <span
+                                class="value success"><?= number_format(($serie['budget'] ?? 0) - $totalDepenses, 0, ',', ' ') ?>
+                                FCFA</span>
                         </div>
                     </div>
                 </div>
@@ -857,6 +901,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = document.getElementById('type').value;
             const montant = document.getElementById('montant').value;
             const description = document.getElementById('description').value.trim();
+            const beneficiaire = document.getElementById('beneficiaire').value.trim();
 
             if (!type) {
                 e.preventDefault();
@@ -873,6 +918,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!description) {
                 e.preventDefault();
                 alert('Veuillez saisir une description.');
+                return;
+            }
+             if (!beneficiaire) {
+                e.preventDefault();
+                alert('Veuillez saisir un beneficiaire.');
                 return;
             }
 

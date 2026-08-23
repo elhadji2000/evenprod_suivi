@@ -2979,3 +2979,5 @@ document.addEventListener(
 
 
 <?php endif; ?>
+
+<?php include '../../includes/footer.php'; ?>

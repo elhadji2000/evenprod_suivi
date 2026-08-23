@@ -11,6 +11,10 @@ $total = 0;
 foreach ($depenses as $d) {
     $total += $d['montant'];
 }
+
+// Récupérer la liste des tournages pour le filtre
+$tournages = getTournagesBySerieId($serieId);
+
 ?>
 
 <?php include '../../../includes/header.php'; ?>
@@ -19,6 +23,7 @@ foreach ($depenses as $d) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
 </head>
 
 <style>
@@ -47,6 +52,10 @@ foreach ($depenses as $d) {
 /* =========================================================
    PAGE
 ========================================================= */
+
+* {
+    font-size: 12px !important;
+}
 
 .depenses-page {
     min-height: 100vh;
@@ -120,7 +129,7 @@ foreach ($depenses as $d) {
 
 .depenses-header h1 {
     margin: 0;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 900;
     letter-spacing: -.5px;
 }
@@ -128,7 +137,7 @@ foreach ($depenses as $d) {
 .depenses-header p {
     margin: 5px 0 0;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .header-actions {
@@ -138,15 +147,15 @@ foreach ($depenses as $d) {
 }
 
 .btn-add {
-    height: 48px;
-    padding: 0 24px;
+    height: 40px;
+    padding: 0 20px;
     border-radius: 12px;
     border: 0;
     background: var(--accent);
     color: white;
     display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     font-size: 12px;
     font-weight: 800;
     text-decoration: none;
@@ -165,7 +174,7 @@ foreach ($depenses as $d) {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 14px;
+    padding: 8px 14px;
     border-radius: 30px;
     background: #f4f4f5;
     font-size: 12px;
@@ -187,7 +196,7 @@ foreach ($depenses as $d) {
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 18px 20px;
+    padding: 16px 18px;
     box-shadow: var(--shadow);
     transition: .3s;
 }
@@ -206,7 +215,7 @@ foreach ($depenses as $d) {
 }
 
 .stat-overview-card .value {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
     margin: 4px 0 0;
 }
@@ -239,6 +248,86 @@ foreach ($depenses as $d) {
 }
 
 /* =========================================================
+   FILTRES
+========================================================= */
+
+.filters-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.filters-section .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filters-section .filter-group label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.filters-section .filter-group input,
+.filters-section .filter-group select {
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: 12px;
+    outline: none;
+    transition: .2s;
+    background: #fafafa;
+}
+
+.filters-section .filter-group input:focus,
+.filters-section .filter-group select:focus {
+    border-color: var(--accent);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(229, 9, 20, .1);
+}
+
+.filters-section .filter-group input[type="date"] {
+    min-width: 130px;
+}
+
+.filters-section .filter-group select {
+    min-width: 150px;
+}
+
+.filters-section .btn-filter-reset {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filters-section .btn-filter-reset:hover {
+    background: #f4f4f5;
+    color: var(--text);
+}
+
+/* =========================================================
    TABLE CARD
 ========================================================= */
 
@@ -252,20 +341,22 @@ foreach ($depenses as $d) {
 }
 
 .table-card-header {
-    padding: 18px 24px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .table-card-header h2 {
     margin: 0;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 900;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .table-card-header h2 i {
@@ -279,7 +370,7 @@ foreach ($depenses as $d) {
 }
 
 .table-responsive {
-    padding: 0 24px 24px;
+    padding: 0 20px 20px;
     overflow-x: auto;
 }
 
@@ -291,17 +382,18 @@ foreach ($depenses as $d) {
 .dataTables_wrapper .dataTables_filter,
 .dataTables_wrapper .dataTables_info,
 .dataTables_wrapper .dataTables_paginate {
-    font-size: 12px;
+    font-size: 12px !important;
     color: var(--text);
 }
 
 .dataTables_wrapper .dataTables_filter input {
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 6px 12px;
+    border-radius: 8px;
+    padding: 4px 10px;
     font-size: 12px;
     outline: none;
     transition: .2s;
+    height: 32px;
 }
 
 .dataTables_wrapper .dataTables_filter input:focus {
@@ -311,16 +403,54 @@ foreach ($depenses as $d) {
 
 .dataTables_wrapper .dataTables_length select {
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 6px 12px;
+    border-radius: 8px;
+    padding: 4px 10px;
     font-size: 12px;
     outline: none;
+    height: 32px;
 }
+
+/* Boutons export DataTables */
+.dt-buttons {
+    display: flex !important;
+    gap: 8px !important;
+}
+
+.dt-buttons .dt-button {
+    background: var(--success) !important;
+    color: white !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: .2s !important;
+    font-family: inherit !important;
+    height: 32px !important;
+}
+
+.dt-buttons .dt-button:hover {
+    background: #15803d !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3) !important;
+}
+
+.dt-buttons .dt-button i {
+    font-size: 13px !important;
+}
+
+/* =========================================================
+   TABLEAU - TOUT EN 12px MAX
+========================================================= */
 
 .depenses-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 12px !important;
 }
 
 .depenses-table thead {
@@ -329,9 +459,9 @@ foreach ($depenses as $d) {
 }
 
 .depenses-table thead th {
-    padding: 14px 16px;
+    padding: 10px 12px;
     text-align: left;
-    font-size: 10px;
+    font-size: 11px !important;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -352,8 +482,16 @@ foreach ($depenses as $d) {
 }
 
 .depenses-table tbody td {
-    padding: 12px 16px;
+    padding: 8px 12px;
     vertical-align: middle;
+    font-size: 12px !important;
+}
+
+.depenses-table tbody td span,
+.depenses-table tbody td a,
+.depenses-table tbody td em,
+.depenses-table tbody td strong {
+    font-size: 12px !important;
 }
 
 /* =========================================================
@@ -363,10 +501,10 @@ foreach ($depenses as $d) {
 .badge-type {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 10px;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 16px;
+    font-size: 10px !important;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -430,7 +568,7 @@ foreach ($depenses as $d) {
     border-radius: 12px;
     background: #eff6ff;
     color: var(--info);
-    font-size: 10px;
+    font-size: 11px !important;
     font-weight: 700;
     text-decoration: none;
     transition: .2s;
@@ -452,14 +590,14 @@ foreach ($depenses as $d) {
 }
 
 .btn-action {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     border: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 12px;
     text-decoration: none;
     transition: .2s;
     cursor: pointer;
@@ -492,20 +630,22 @@ foreach ($depenses as $d) {
 }
 
 .categories-header {
-    padding: 18px 24px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .categories-header h3 {
     margin: 0;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 900;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .categories-header h3 i {
@@ -515,15 +655,15 @@ foreach ($depenses as $d) {
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    padding: 20px 24px;
+    gap: 10px;
+    padding: 16px 20px;
 }
 
 .category-item {
     background: #fafafa;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 14px;
+    border-radius: 10px;
+    padding: 10px 12px;
     text-align: center;
     transition: .2s;
 }
@@ -534,7 +674,7 @@ foreach ($depenses as $d) {
 }
 
 .category-item .icon {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 4px;
     display: block;
     color: var(--muted);
@@ -550,7 +690,7 @@ foreach ($depenses as $d) {
 }
 
 .category-item .value {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
     color: var(--text);
 }
@@ -567,25 +707,25 @@ foreach ($depenses as $d) {
 
 .empty-state {
     text-align: center;
-    padding: 50px 20px;
+    padding: 40px 20px;
     color: var(--muted);
 }
 
 .empty-state i {
-    font-size: 48px;
+    font-size: 40px;
     color: #d4d4d8;
     margin-bottom: 16px;
 }
 
 .empty-state h3 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 900;
     color: var(--text);
     margin-bottom: 8px;
 }
 
 .empty-state p {
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 20px;
 }
 
@@ -597,9 +737,9 @@ foreach ($depenses as $d) {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 12px 16px;
     margin-bottom: 20px;
-    border-radius: 13px;
+    border-radius: 12px;
     font-size: 12px;
     font-weight: 600;
 }
@@ -617,10 +757,10 @@ foreach ($depenses as $d) {
 }
 
 .alert-icon {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-    border-radius: 9px;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -680,13 +820,13 @@ foreach ($depenses as $d) {
     }
 
     .depenses-header h1 {
-        font-size: 21px;
+        font-size: 18px;
     }
 
     .depenses-header-avatar {
-        width: 56px;
-        height: 56px;
-        flex-basis: 56px;
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
     }
 
     .stats-overview {
@@ -695,11 +835,28 @@ foreach ($depenses as $d) {
     }
 
     .stat-overview-card {
-        padding: 14px 16px;
+        padding: 12px 14px;
     }
 
     .stat-overview-card .value {
-        font-size: 17px;
+        font-size: 16px;
+    }
+
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px;
+    }
+
+    .filters-section .filter-group {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .filters-section .filter-group input,
+    .filters-section .filter-group select {
+        flex: 1;
+        min-width: unset;
     }
 
     .table-responsive {
@@ -726,6 +883,7 @@ foreach ($depenses as $d) {
         justify-content: space-between;
         padding: 6px 0;
         border-bottom: 0;
+        font-size: 12px !important;
     }
 
     .depenses-table tbody td::before {
@@ -749,10 +907,6 @@ foreach ($depenses as $d) {
     .categories-grid {
         grid-template-columns: repeat(2, 1fr);
         padding: 12px 16px;
-    }
-
-    .action-group {
-        gap: 4px;
     }
 }
 
@@ -894,6 +1048,35 @@ foreach ($depenses as $d) {
         </div>
 
         <!-- =========================================================
+        FILTRES
+        ========================================================= -->
+
+        <div class="filters-section">
+            <div class="filter-group">
+                <label><i class="fas fa-calendar-start"></i> Date début</label>
+                <input type="date" id="dateDebut" value="">
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-calendar-end"></i> Date fin</label>
+                <input type="date" id="dateFin" value="">
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-video"></i> Tournage</label>
+                <select id="tournageFilter">
+                    <option value="">Tous les tournages</option>
+                    <?php foreach ($tournages as $tournage): ?>
+                    <option value="<?= htmlspecialchars($tournage['reference']) ?>">
+                        <?= htmlspecialchars($tournage['reference']) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <button class="btn-filter-reset" id="resetFilters">
+                <i class="fas fa-times"></i> Réinitialiser
+            </button>
+        </div>
+
+        <!-- =========================================================
         TABLE DES DÉPENSES
         ========================================================= -->
 
@@ -903,7 +1086,8 @@ foreach ($depenses as $d) {
                     <i class="fas fa-list"></i>
                     Liste des dépenses
                 </h2>
-                <span><?= count($depenses) ?> enregistrée<?= count($depenses) > 1 ? 's' : '' ?></span>
+                <span id="compteurDepenses"><?= count($depenses) ?>
+                    enregistrée<?= count($depenses) > 1 ? 's' : '' ?></span>
             </div>
 
             <div class="table-responsive">
@@ -912,6 +1096,8 @@ foreach ($depenses as $d) {
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Bénéficiaire</th>
+                            <th>Téléphone</th>
                             <th>Libellé</th>
                             <th>Type</th>
                             <th>Date</th>
@@ -928,65 +1114,36 @@ foreach ($depenses as $d) {
                             <td data-label="#">
                                 <span style="font-weight:700; color:var(--muted);">#<?= $i ?></span>
                             </td>
+                            <td data-label="Bénéficiaire">
+                                <?= !empty($row['beneficiaire']) ? htmlspecialchars($row['beneficiaire']) : '<em style="color:var(--muted);">NULL</em>' ?>
+                            </td>
+                            <td data-label="Téléphone">
+                                <?= !empty($row['telephone_beneficiaire']) ? htmlspecialchars($row['telephone_beneficiaire']) : '<em style="color:var(--muted);">NULL</em>' ?>
+                            </td>
                             <td data-label="Libellé">
-                                <?= !empty($row['libelle']) ? htmlspecialchars($row['libelle']) : '<em style="color:var(--muted);">Aucun</em>' ?>
+                                <?= !empty($row['libelle']) ? htmlspecialchars($row['libelle']) : '<em style="color:var(--muted);">NULL</em>' ?>
                             </td>
                             <td data-label="Type">
                                 <?php
                                 $type = strtolower($row['type_depense'] ?? '');
-
-                                switch ($type) {
-                                    case 'cachet':
-                                        $typeClass = 'cachet';
-                                        break;
-
-                                    case 'decor':
-                                    case 'decors':
-                                        $typeClass = 'decor';
-                                        break;
-
-                                    case 'transport':
-                                        $typeClass = 'transport';
-                                        break;
-
-                                    case 'reception':
-                                        $typeClass = 'reception';
-                                        break;
-
-                                    case 'accessoire':
-                                    case 'accessoires':
-                                        $typeClass = 'accessoire';
-                                        break;
-
-                                    case 'reglement_acteur':
-                                    case 'reglement acteur':
-                                        $typeClass = 'reglement_acteur';
-                                        break;
-
-                                    case 'hmc':
-                                        $typeClass = 'hmc';
-                                        break;
-
-                                    case 'carburant':
-                                        $typeClass = 'carburant';
-                                        break;
-
-                                    case 'pharmacie':
-                                        $typeClass = 'pharmacie';
-                                        break;
-
-                                    default:
-                                        $typeClass = 'autre';
-                                        break;
+                                $typeClass = 'autre';
+                                $typeClasses = [
+                                    'cachet' => 'cachet',
+                                    'decor' => 'decor',
+                                    'decors' => 'decor',
+                                    'transport' => 'transport',
+                                    'reception' => 'reception',
+                                    'accessoire' => 'accessoire',
+                                    'accessoires' => 'accessoire',
+                                    'reglement_acteur' => 'reglement_acteur',
+                                    'reglement acteur' => 'reglement_acteur',
+                                    'hmc' => 'hmc',
+                                    'carburant' => 'carburant',
+                                    'pharmacie' => 'pharmacie'
+                                ];
+                                if (isset($typeClasses[$type])) {
+                                    $typeClass = $typeClasses[$type];
                                 }
-
-                                $label = ucfirst(
-                                    str_replace(
-                                        '_',
-                                        ' ',
-                                        $row['type_depense'] ?? 'Autre'
-                                    )
-                                );
                                 $label = ucfirst(str_replace('_', ' ', $row['type_depense'] ?? 'Autre'));
                                 ?>
                                 <span class="badge-type <?= $typeClass ?>">
@@ -1000,13 +1157,13 @@ foreach ($depenses as $d) {
                                 <?= date('d/m/Y', strtotime($row['date_depense'])) ?>
                             </td>
                             <td data-label="Montant">
-                                <span style="font-weight:700; color:var(--danger);">
+                                <span style="font-weight:700; color:var(--danger); font-size:12px;">
                                     <?= number_format($row['montant'], 0, ',', ' ') ?> FCFA
                                 </span>
                             </td>
                             <td data-label="Tournage">
                                 <?php if (!empty($row['tournage_reference'])): ?>
-                                <span style="font-weight:600; font-size:11px;">
+                                <span style="font-weight:600; font-size:12px;">
                                     <i class="fas fa-video" style="color:var(--muted);"></i>
                                     <?= htmlspecialchars($row['tournage_reference']) ?>
                                 </span>
@@ -1109,22 +1266,149 @@ SCRIPTS
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
 <script>
 $(document).ready(function() {
     if ($('#depenseTable tbody tr').length > 0) {
-        $('#depenseTable').DataTable({
+        var table = $('#depenseTable').DataTable({
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
             },
             "pageLength": 10,
-            "lengthMenu": [5, 10, 25, 50],
+            "lengthMenu": [5, 10, 25, 50, 100],
             "responsive": true,
             "columnDefs": [{
                 "orderable": false,
-                "targets": 7
+                "targets": [0, 9]
+            }],
+            "dom": 'Bfrtip',
+            "buttons": [{
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-excel"></i> Exporter Excel',
+                className: 'btn-success',
+
+                exportOptions: {
+                    columns: [1, 2, 3, 4, 5, 6, 7],
+
+                    format: {
+                        body: function(data, row, column, node) {
+
+                            var clean = $('<div>').html(data).text().trim();
+
+                            // Supprimer FCFA
+                            clean = clean.replace(/FCFA/gi, '').trim();
+
+                            // Nettoyer les espaces insécables
+                            clean = clean.replace(/\u00A0/g, ' ');
+
+                            // Montant
+                            if (column === 6) {
+                                clean = clean.replace(/\s/g, '');
+                                clean = clean.replace(/[^\d.,-]/g, '');
+                            }
+
+                            return clean;
+                        }
+                    }
+                },
+
+                customizeData: function(data) {
+
+                    // =====================================================
+                    // EN-TÊTES EXACTEMENT COMME DEMANDÉS PAR LA BANQUE
+                    // =====================================================
+
+                    data.header = [
+                        'Customer Name',
+                        'Telephone Number',
+                        'Amount',
+                        'Reason for Payment',
+                        'National ID',
+                        'Reference'
+                    ];
+
+                    // =====================================================
+                    // RECONSTRUIRE LES LIGNES
+                    // =====================================================
+
+                    data.body = data.body.map(function(row) {
+
+                        return [
+                            row[0], // Customer Name
+                            row[1], // Telephone Number
+                            row[5], // Amount
+                            row[3], // Reason for Payment
+                            '', // National ID
+                            '' // Reference
+                        ];
+
+                    });
+                },
+
+                title: null,
+
+                filename: 'depenses_paie_<?= htmlspecialchars($serie['id'] ?? '') ?>_<?= date('Y-m-d') ?>'
             }]
         });
+
+        // Déplacer les boutons d'export dans l'en-tête
+        $('.dt-buttons').appendTo('.table-card-header');
+
+        // =========================================================
+        // FILTRES PERSONNALISÉS
+        // =========================================================
+
+        // Filtre par date
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var dateDebut = $('#dateDebut').val();
+            var dateFin = $('#dateFin').val();
+            var dateCell = data[5];
+
+            var dateMatch = dateCell.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+            if (!dateMatch) return true;
+
+            var day = dateMatch[1];
+            var month = dateMatch[2];
+            var year = dateMatch[3];
+            var dateObj = year + '-' + month + '-' + day;
+
+            if (dateDebut && dateObj < dateDebut) return false;
+            if (dateFin && dateObj > dateFin) return false;
+            return true;
+        });
+
+        // Filtre par tournage
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var tournage = $('#tournageFilter').val();
+            if (!tournage) return true;
+
+            var tournageCell = data[7];
+            return tournageCell.includes(tournage);
+        });
+
+        // Appliquer les filtres
+        function applyFilters() {
+            table.draw();
+            var count = table.rows({
+                filter: 'applied'
+            }).count();
+            $('#compteurDepenses').text(count + ' enregistrée' + (count > 1 ? 's' : ''));
+        }
+
+        $('#dateDebut, #dateFin, #tournageFilter').on('change', applyFilters);
+
+        // Reset des filtres
+        $('#resetFilters').on('click', function() {
+            $('#dateDebut').val('');
+            $('#dateFin').val('');
+            $('#tournageFilter').val('');
+            applyFilters();
+        });
+
     }
 });
 </script>
