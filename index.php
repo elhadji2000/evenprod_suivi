@@ -8,10 +8,9 @@ if (isset($_GET['logout'])) {
 
     // Détruire la session
     session_destroy();
- 
 
     // Rediriger vers la page de connexion sans paramètre
-    header("Location: index.php");
+    header('Location: index.php');
     exit;
 }
 session_unset();
@@ -126,9 +125,54 @@ session_destroy();
 
         <!-- Message d'erreur -->
         <?php if (isset($_GET['error']) && $_GET['error'] == 1): ?>
-        <div class="alert alert-danger text-center" role="alert">
+        <div class="alert alert-danger text-center" role="alert" style="font-size:11px !important;">
             <i class="bi bi-exclamation-triangle-fill"></i> Identifiant ou mot de passe incorrect.
         </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['reset_success'])): ?>
+
+        <div class="alert alert-success text-center" style="font-size:11px !important;">
+            <i class="bi bi-check-circle-fill"></i>
+            Un nouveau mot de passe vous a été envoyé par email.
+        </div>
+
+        <?php endif; ?>
+
+
+        <?php if (isset($_GET['reset_error'])): ?>
+
+        <?php if ($_GET['reset_error'] === 'not_found'): ?>
+
+        <div class="alert alert-danger text-center" style="font-size:11px !important;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Aucun compte n'est associé à cette adresse email.
+        </div>
+
+        <?php elseif ($_GET['reset_error'] === 'mail'): ?>
+
+        <div class="alert alert-danger text-center" style="font-size:11px !important;">
+            <i class="bi bi-envelope-x-fill"></i>
+            Le mot de passe a été réinitialisé, mais l'envoi du mail a échoué.
+            Veuillez contacter l'administrateur.
+        </div>
+
+        <?php elseif ($_GET['reset_error'] === 'email'): ?>
+
+        <div class="alert alert-danger text-center" style="font-size:11px !important;">
+            <i class="bi bi-envelope-exclamation-fill"></i>
+            Veuillez fournir une adresse email valide.
+        </div>
+
+        <?php else: ?>
+
+        <div class="alert alert-danger text-center" style="font-size:11px !important;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Une erreur est survenue. Veuillez réessayer.
+        </div>
+
+        <?php endif; ?>
+
         <?php endif; ?>
 
         <form method="post" action="config/connect">
@@ -150,9 +194,97 @@ session_destroy();
         </form>
 
         <div class="forgot-password">
-            <a href="#">Mot de passe oublié ?</a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                Mot de passe oublié ?
+            </a>
         </div>
     </div>
+
+
+    <!-- Modal Mot de passe oublié -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">
+                        <i class="bi bi-key-fill me-2"></i>
+                        Mot de passe oublié
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer">
+                    </button>
+                </div>
+
+                <form method="post" action="config/mot_de_passe_oublie">
+
+                    <div class="modal-body" style="font-size:11px !important;">
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+
+                            <strong>Réinitialisation du mot de passe</strong>
+
+                            <p class="mb-0 mt-2">
+                                Si vous cliquez sur <strong>Valider</strong>,
+                                un nouveau mot de passe de réinitialisation
+                                vous sera envoyé par email.
+                            </p>
+
+                            <p class="mb-0 mt-2">
+                                Vous pourrez ensuite utiliser ce mot de passe
+                                pour vous connecter et modifier votre mot de passe.
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="email_reset" class="form-label fw-bold">
+                                Adresse email
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-envelope-fill"></i>
+                                </span>
+
+                                <input type="email" name="email" id="email_reset" class="form-control"
+                                    placeholder="exemple@email.com" required>
+
+                            </div>
+
+                            <div class="form-text">
+                                Utilisez l'adresse email associée à votre compte Evenprod.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Annuler
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send-fill me-1"></i>
+                            Valider
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+    <script src="assets/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

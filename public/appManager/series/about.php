@@ -2,10 +2,10 @@
 session_start();
 
 // Redirection si l'utilisateur n'a pas mis à jour son mot de passe
-if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
+/* if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
     header("Location: ../../../public/admin/profile.php?forceUpdate=1");
     exit;
-}
+} */
 
 include '../../../includes/header.php';
 include '../../../config/fonction.php';
@@ -615,14 +615,14 @@ $permissions = [
                     <i class="fas fa-pen"></i>
                     Modifier
                 </a>
-                <?php if ($role === 'admin'): ?>
+                <!-- <?php if ($role === 'admin'): ?>
                 <a href="<?= $url_base ?>public/appManager/delete.php?table=series&id=<?= htmlspecialchars($serie['id']) ?>&redirect=<?= $url_base ?>pages/series_list"
                    class="btn-action delete"
                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette série ? Cette action est irréversible.')">
                     <i class="fas fa-trash"></i>
                     Supprimer
                 </a>
-                <?php endif; ?>
+                <?php endif; ?> -->
             </div>
         </header>
 

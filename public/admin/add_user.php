@@ -1031,7 +1031,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="input-wrapper">
                                         <i class="fas fa-phone"></i>
                                         <input type="tel" id="telephone" name="telephone" class="modern-input"
-                                            placeholder="Ex : 77 000 00 00" required
+                                            placeholder="Ex : 221784413400" required maxlength="12" minlength="12"
                                             value="<?= htmlspecialchars($user['telephone'] ?? '') ?>">
                                     </div>
                                 </div>

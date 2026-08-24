@@ -69,6 +69,10 @@ $role = $_SESSION['role'] ?? '';
         box-sizing: border-box;
     }
 
+    * {
+        font-size: 12px !important;
+    }
+
     body {
         margin: 0;
         padding: 0;

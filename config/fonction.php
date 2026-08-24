@@ -1231,62 +1231,440 @@ function deleteActeurBySerie($acteurId, $serieId)
 
 function ajouterUser($nom, $prenom, $email, $telephone, $role, $photoFile)
 {
-    global $connexion;  // connexion MySQLi
+    global $connexion;
 
-    // --- 1. Vérifier si l'utilisateur existe déjà ---
-    $stmt = mysqli_prepare($connexion, 'SELECT id FROM users WHERE email = ?');
+    // =========================================================
+    // 1. Vérifier si l'utilisateur existe déjà
+    // =========================================================
+
+    $stmt = mysqli_prepare(
+        $connexion,
+        'SELECT id FROM users WHERE email = ?'
+    );
+
     if (!$stmt) {
-        return 'error';  // erreur de préparation
+        return 'error';
     }
+
     mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
 
     if (mysqli_stmt_num_rows($stmt) > 0) {
         mysqli_stmt_close($stmt);
-        return 'exists';  // déjà dans la base
+        return 'exists';
     }
+
     mysqli_stmt_close($stmt);
 
-    // --- 2. Gestion de l'upload du profil ---
+
+    // =========================================================
+    // 2. Gestion de la photo
+    // =========================================================
+
     $photo = null;
+
     if (!empty($photoFile) && $photoFile['error'] === 0) {
-        $ext = strtolower(pathinfo($photoFile['name'], PATHINFO_EXTENSION));
+
+        $ext = strtolower(
+            pathinfo($photoFile['name'], PATHINFO_EXTENSION)
+        );
+
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
 
         if (in_array($ext, $allowed)) {
+
             $uploadDir = __DIR__ . '/../uploads/profile/';
+
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            $photoName = 'profil_' . uniqid() . '.' . $ext;  // éviter doublons
+
+            $photoName = 'profil_' . uniqid() . '.' . $ext;
+
             $destination = $uploadDir . $photoName;
 
-            if (move_uploaded_file($photoFile['tmp_name'], $destination)) {
+            if (move_uploaded_file(
+                $photoFile['tmp_name'],
+                $destination
+            )) {
                 $photo = $photoName;
             }
         }
     }
 
-    // --- 3. Générer un mot de passe par défaut avec SHA1 ---
-    $password = sha1('Evenprod2025');
 
-    // --- 4. Insertion dans la base ---
+    // =========================================================
+    // 3. Générer un mot de passe aléatoire
+    // =========================================================
+
+    $motDePasseClair = genererMotDePasse(12);
+
+
+    // =========================================================
+    // 4. Hachage SHA1
+    // =========================================================
+
+    $password = sha1($motDePasseClair);
+
+
+    // =========================================================
+    // 5. Insertion dans la base
+    // =========================================================
+
     $stmt = mysqli_prepare(
         $connexion,
-        'INSERT INTO users (nom, prenom, email, telephone, role, profile, mot_de_passe) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO users 
+        (nom, prenom, email, telephone, role, profile, mot_de_passe)
+        VALUES (?, ?, ?, ?, ?, ?, ?)'
     );
+
     if (!$stmt) {
-        return 'error';  // erreur de préparation
+        return 'error';
     }
 
-    mysqli_stmt_bind_param($stmt, 'sssssss', $nom, $prenom, $email, $telephone, $role, $photo, $password);
+    mysqli_stmt_bind_param(
+        $stmt,
+        'sssssss',
+        $nom,
+        $prenom,
+        $email,
+        $telephone,
+        $role,
+        $photo,
+        $password
+    );
+
     $success = mysqli_stmt_execute($stmt);
 
     mysqli_stmt_close($stmt);
 
-    return $success ? 'success' : 'error';
+
+    // =========================================================
+    // 6. Envoyer le mail après création
+    // =========================================================
+
+    if ($success) {
+
+        $mailEnvoye = envoyerMailIdentifiants(
+            $email,
+            $nom,
+            $prenom,
+            $motDePasseClair
+        );
+
+        if ($mailEnvoye) {
+            return 'success';
+        }
+
+        // Compte créé mais email non envoyé
+        return 'mail_error';
+    }
+
+
+    return 'error';
+}
+
+function genererMotDePasse($longueur = 12)
+{
+    $caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789@#$%';
+
+    $motDePasse = '';
+
+    $max = strlen($caracteres) - 1;
+
+    for ($i = 0; $i < $longueur; $i++) {
+        $motDePasse .= $caracteres[random_int(0, $max)];
+    }
+
+    return $motDePasse;
+}
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+function envoyerMailIdentifiants($email, $nom, $prenom, $motDePasse)
+{
+    $mail = new PHPMailer(true);
+
+    try {
+
+        // ============================================
+        // Configuration SMTP
+        // ============================================
+
+        $mail->isSMTP();
+
+        $mail->Host = 'smtp.gmail.com';
+
+        $mail->SMTPAuth = true;
+
+        // Votre adresse Gmail
+        $mail->Username = 'diopelhadjimadiop@gmail.com';
+
+        // Mot de passe d'application Gmail
+        $mail->Password = 'xfuy gpeo oisv gvya';
+
+        // TLS
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+
+        // Port SMTP Gmail
+        $mail->Port = 587;
+
+
+        // ============================================
+        // Expéditeur
+        // ============================================
+
+        $mail->setFrom(
+            'diopelhadjimadiop@gmail.com',
+            'Evenprod'
+        );
+
+
+        // ============================================
+        // Destinataire
+        // ============================================
+
+        $mail->addAddress(
+            $email,
+            $prenom . ' ' . $nom
+        );
+
+
+        // ============================================
+        // Contenu
+        // ============================================
+
+        $mail->isHTML(true);
+
+        $mail->CharSet = 'UTF-8';
+
+        $mail->Subject = 'Création de votre compte Evenprod';
+
+
+        $mail->Body = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Compte Evenprod</title>
+        </head>
+
+        <body style="font-family: Arial, sans-serif;">
+
+            <h2>Bienvenue sur Evenprod</h2>
+
+            <p>
+                Bonjour <strong>' .
+                htmlspecialchars($prenom . ' ' . $nom) .
+                '</strong>,
+            </p>
+
+            <p>
+                Votre compte utilisateur Evenprod a été créé avec succès.
+            </p>
+
+            <p>
+                Voici vos identifiants de connexion :
+            </p>
+
+            <table
+                cellpadding="10"
+                cellspacing="0"
+                border="1"
+                style="border-collapse: collapse;"
+            >
+
+                <tr>
+                    <td>
+                        <strong>Email</strong>
+                    </td>
+
+                    <td>' .
+                        htmlspecialchars($email) .
+                    '</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Mot de passe</strong>
+                    </td>
+
+                    <td>
+                        <strong>' .
+                            htmlspecialchars($motDePasse) .
+                        '</strong>
+                    </td>
+                </tr>
+
+            </table>
+
+            <p>
+                Pour des raisons de sécurité, nous vous recommandons
+                de modifier votre mot de passe après votre première
+                connexion.
+            </p>
+
+            <p>
+                Cordialement,<br>
+                <strong>Équipe Evenprod</strong>
+            </p>
+
+        </body>
+        </html>
+        ';
+
+
+        // Version texte pour les clients qui ne supportent pas HTML
+        $mail->AltBody =
+            "Bonjour $prenom $nom,\n\n" .
+            "Votre compte Evenprod a été créé.\n\n" .
+            "Email : $email\n" .
+            "Mot de passe : $motDePasse\n\n" .
+            "Nous vous recommandons de modifier votre mot de passe après votre première connexion.";
+
+
+        // ============================================
+        // Envoi
+        // ============================================
+
+        $mail->send();
+
+        return true;
+
+    } catch (Exception $e) {
+
+        // Pour le développement
+        error_log(
+            "Erreur PHPMailer : " . $mail->ErrorInfo
+        );
+
+        return false;
+    }
+}
+
+function envoyerMailMotDePasseReset($email, $nom, $prenom, $motDePasse)
+{
+    $mail = new PHPMailer(true);
+
+    try {
+
+        // SMTP
+        $mail->isSMTP();
+
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+
+        $mail->Username = 'diopelhadjimadiop@gmail.com';
+        $mail->Password = 'xfuy gpeo oisv gvya';
+
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        // Expéditeur
+        $mail->setFrom(
+            'diopelhadjimadiop@gmail.com',
+            'Evenprod'
+        );
+
+        // Destinataire
+        $mail->addAddress(
+            $email,
+            $prenom . ' ' . $nom
+        );
+
+        // Contenu
+        $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+
+        $mail->Subject = 'Réinitialisation de votre mot de passe Evenprod';
+
+        $mail->Body = '
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+            <meta charset="UTF-8">
+        </head>
+
+        <body style="font-family: Arial, sans-serif;">
+
+            <h2>Réinitialisation du mot de passe</h2>
+
+            <p>
+                Bonjour <strong>' .
+                htmlspecialchars($prenom . ' ' . $nom) .
+                '</strong>,
+            </p>
+
+            <p>
+                Une demande de réinitialisation de votre mot de passe
+                Evenprod a été effectuée.
+            </p>
+
+            <p>
+                Voici votre nouveau mot de passe :
+            </p>
+
+            <div style="
+                background:#f1f1f1;
+                padding:15px;
+                font-size:20px;
+                font-weight:bold;
+                text-align:center;
+                letter-spacing:2px;
+            ">
+                ' . htmlspecialchars($motDePasse) . '
+            </div>
+
+            <p style="margin-top:20px;">
+                Utilisez ce mot de passe pour vous connecter à votre compte.
+            </p>
+
+            <p>
+                Après votre connexion, nous vous recommandons de modifier
+                ce mot de passe.
+            </p>
+
+            <p>
+                Si vous n\'êtes pas à l\'origine de cette demande,
+                veuillez contacter l\'administrateur Evenprod.
+            </p>
+
+            <p>
+                Cordialement,<br>
+                <strong>Équipe Evenprod</strong>
+            </p>
+
+        </body>
+
+        </html>
+        ';
+
+        $mail->AltBody =
+            "Bonjour $prenom $nom,\n\n" .
+            "Votre mot de passe Evenprod a été réinitialisé.\n\n" .
+            "Nouveau mot de passe : $motDePasse\n\n" .
+            "Connectez-vous puis modifiez votre mot de passe.\n\n" .
+            "Équipe Evenprod";
+
+        $mail->send();
+
+        return true;
+
+    } catch (Exception $e) {
+
+        error_log(
+            "Erreur PHPMailer réinitialisation : " .
+            $mail->ErrorInfo
+        );
+
+        return false;
+    }
 }
 
 function modifierUser($id, $nom, $prenom, $email, $telephone, $role, $photoFile)

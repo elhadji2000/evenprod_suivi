@@ -2,10 +2,10 @@
 session_start();
 
 // Redirection si l'utilisateur n'a pas mis à jour son mot de passe
-if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
+/* if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
     header("Location: ../../../public/admin/profile.php?forceUpdate=1");
     exit;
-}
+} */
 
 include '../../../config/fonction.php';
 
