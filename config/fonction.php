@@ -1,14 +1,13 @@
 <?php
 
+$url_base = "http://localhost/projet_suivi/"; 
+//$url_base = "https://evenapp.fr/";
 // Connectez-vous à votre base de données MySQL
-function connexionBD()
+ function connexionBD()
 {
-    $host = 'localhost';  // Host distant
-    // $user = "u893234126_ep_user";
+    $host = 'localhost';
     $user = 'root';
-    // $pass = "Pw@Ep@2025";
     $pass = '';
-    // $db   = "u893234126_sygep";
     $db = 'evenprod_db';
 
     $connexion = mysqli_connect($host, $user, $pass, $db);
@@ -20,6 +19,23 @@ function connexionBD()
     mysqli_set_charset($connexion, 'utf8mb4');
     return $connexion;
 }
+
+/* function connexionBD()
+{
+    $host = "localhost"; // Host distant
+    $user = "u893234126_userep";
+    $pass = "Pw@Ep@2025";
+    $db   = "u893234126_bdep";
+
+    $connexion = mysqli_connect($host, $user, $pass, $db);
+
+    if (!$connexion) {
+        die("Erreur : Impossible de se connecter à la base distante. " . mysqli_connect_error());
+    }
+
+    mysqli_set_charset($connexion, "utf8mb4");
+    return $connexion;
+} */
 
 $connexion = connexionBD();
 

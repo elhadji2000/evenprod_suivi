@@ -78,10 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: add_act");
             exit;
         }
-    } elseif ($id === 0) {
-        $_SESSION['erroract'] = "Veuillez sélectionner une photo.";
-        header("Location: add_act");
-        exit;
     }
 
     // === Insert ou Update ===

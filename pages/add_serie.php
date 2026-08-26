@@ -17,12 +17,10 @@ include '../includes/header.php';
 
 ?>
 
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 
 <style>
-
 /* =========================================================
    VARIABLES
 ========================================================= */
@@ -44,7 +42,7 @@ include '../includes/header.php';
     --warning: #f59e0b;
 
     --radius: 18px;
-    --shadow: 0 10px 30px rgba(0,0,0,.06);
+    --shadow: 0 10px 30px rgba(0, 0, 0, .06);
 }
 
 
@@ -257,7 +255,7 @@ include '../includes/header.php';
     position: relative;
 }
 
-.input-box > i {
+.input-box>i {
     position: absolute;
 
     left: 14px;
@@ -296,7 +294,7 @@ include '../includes/header.php';
     background: #fff;
     border-color: #a1a1aa;
 
-    box-shadow: 0 0 0 3px rgba(0,0,0,.04);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, .04);
 }
 
 textarea.form-control-modern {
@@ -527,7 +525,7 @@ textarea.description-field {
 
 .budget-item:focus-within {
     border-color: #a1a1aa;
-    box-shadow: 0 0 0 3px rgba(0,0,0,.03);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, .03);
 }
 
 .budget-icon {
@@ -633,7 +631,7 @@ textarea.description-field {
     align-items: center;
     justify-content: center;
 
-    background: rgba(255,255,255,.1);
+    background: rgba(255, 255, 255, .1);
 
     border-radius: 10px;
 }
@@ -734,7 +732,7 @@ textarea.description-field {
 
     transform: translateY(-1px);
 
-    box-shadow: 0 8px 20px rgba(0,0,0,.12);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
 }
 
 
@@ -988,7 +986,7 @@ textarea.description-field {
 
     padding: 15px;
 
-    box-shadow: 0 15px 40px rgba(0,0,0,.15);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .15);
 
     display: flex;
     align-items: center;
@@ -1066,7 +1064,7 @@ textarea.description-field {
         gap: 20px;
     }
 
-    .sidebar > * {
+    .sidebar>* {
         margin-bottom: 0;
     }
 
@@ -1193,176 +1191,160 @@ textarea.description-field {
     }
 
 }
-
 </style>
 
 
 <section class="serie-page">
 
-<div class="serie-container">
+    <div class="serie-container">
 
 
-<!-- =========================================================
+        <!-- =========================================================
      HEADER
 ========================================================= -->
 
-<header class="serie-header">
+        <header class="serie-header">
 
-    <div class="serie-header-left">
+            <div class="serie-header-left">
 
-        <div class="serie-header-icon">
-            <i class="fas fa-film"></i>
-        </div>
+                <div class="serie-header-icon">
+                    <i class="fas fa-film"></i>
+                </div>
 
-        <div>
+                <div>
 
-            <div class="breadcrumb">
-                EVENPROD / PRODUCTIONS / SÉRIES
-            </div>
+                    <div class="breadcrumb">
+                        EVENPROD / PRODUCTIONS / SÉRIES
+                    </div>
 
-            <h1>
-                <?= $serieId ? 'Modifier la série' : 'Nouvelle série' ?>
-            </h1>
+                    <h1>
+                        <?= $serieId ? 'Modifier la série' : 'Nouvelle série' ?>
+                    </h1>
 
-            <p>
-                <?= $serieId
+                    <p>
+                        <?= $serieId
                     ? 'Modifiez les informations de votre production.'
                     : 'Configurez votre nouvelle série et son budget prévisionnel.'
                 ?>
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="header-status <?= $serieId ? 'edit' : 'new' ?>">
-
-        <i class="fas <?= $serieId ? 'fa-edit' : 'fa-plus-circle' ?>"></i>
-
-        <?= $serieId ? 'Mode modification' : 'Nouvelle production' ?>
-
-    </div>
-
-</header>
-
-
-
-<!-- =========================================================
-     FORM + SIDEBAR
-========================================================= -->
-
-<div class="serie-layout">
-
-
-<!-- =========================================================
-     COLONNE PRINCIPALE
-========================================================= -->
-
-<main>
-
-
-<form action="trait_serie"
-      method="post"
-      enctype="multipart/form-data"
-      id="serieForm">
-
-
-<?php if ($serieId): ?>
-
-    <input type="hidden"
-           name="serie_id"
-           value="<?= htmlspecialchars($serieId) ?>">
-
-<?php endif; ?>
-
-
-<!-- =========================================================
-     INFORMATIONS
-========================================================= -->
-
-<section class="form-card">
-
-    <div class="card-header">
-
-        <div class="card-header-icon">
-            <i class="fas fa-film"></i>
-        </div>
-
-        <div>
-
-            <h2>Informations de la série</h2>
-
-            <p>
-                Les informations principales de votre production
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="card-body">
-
-        <div class="form-grid">
-
-
-            <!-- TITRE -->
-
-            <div class="form-group">
-
-                <label for="titre">
-                    Titre de la série <span>*</span>
-                </label>
-
-                <div class="input-box">
-
-                    <i class="fas fa-heading"></i>
-
-                    <input
-                        type="text"
-                        id="titre"
-                        name="titre"
-                        class="form-control-modern"
-                        placeholder="Ex : Les Héritiers"
-                        value="<?= htmlspecialchars($serie['titre'] ?? '') ?>"
-                        required
-                    >
+                    </p>
 
                 </div>
 
             </div>
 
 
+            <div class="header-status <?= $serieId ? 'edit' : 'new' ?>">
 
-            <!-- TYPE -->
+                <i class="fas <?= $serieId ? 'fa-edit' : 'fa-plus-circle' ?>"></i>
 
-            <div class="form-group">
+                <?= $serieId ? 'Mode modification' : 'Nouvelle production' ?>
 
-                <label for="type">
-                    Type de production <span>*</span>
-                </label>
+            </div>
 
-                <div class="input-box">
+        </header>
 
-                    <i class="fas fa-layer-group"></i>
 
-                    <select
-                        id="type"
-                        name="type"
-                        class="form-control-modern"
-                        required
-                    >
 
-                        <option value="">
-                            Sélectionnez un type
-                        </option>
+        <!-- =========================================================
+     FORM + SIDEBAR
+========================================================= -->
 
-                        <?php
+        <div class="serie-layout">
+
+
+            <!-- =========================================================
+     COLONNE PRINCIPALE
+========================================================= -->
+
+            <main>
+
+
+                <form action="trait_serie" method="post" enctype="multipart/form-data" id="serieForm">
+
+
+                    <?php if ($serieId): ?>
+
+                    <input type="hidden" name="serie_id" value="<?= htmlspecialchars($serieId) ?>">
+
+                    <?php endif; ?>
+
+
+                    <!-- =========================================================
+     INFORMATIONS
+========================================================= -->
+
+                    <section class="form-card">
+
+                        <div class="card-header">
+
+                            <div class="card-header-icon">
+                                <i class="fas fa-film"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>Informations de la série</h2>
+
+                                <p>
+                                    Les informations principales de votre production
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+                            <div class="form-grid">
+
+
+                                <!-- TITRE -->
+
+                                <div class="form-group">
+
+                                    <label for="titre">
+                                        Titre de la série <span>*</span>
+                                    </label>
+
+                                    <div class="input-box">
+
+                                        <i class="fas fa-heading"></i>
+
+                                        <input type="text" id="titre" name="titre" class="form-control-modern"
+                                            placeholder="Ex : Les Héritiers"
+                                            value="<?= htmlspecialchars($serie['titre'] ?? '') ?>" required>
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <!-- TYPE -->
+
+                                <div class="form-group">
+
+                                    <label for="type">
+                                        Type de production <span>*</span>
+                                    </label>
+
+                                    <div class="input-box">
+
+                                        <i class="fas fa-layer-group"></i>
+
+                                        <select id="type" name="type" class="form-control-modern" required>
+
+                                            <option value="">
+                                                Sélectionnez un type
+                                            </option>
+
+                                            <?php
 
                         $types = [
                             'Film',
-                            'Série TV',
+                            'Production',
+                            'Emission TV',
                             'Documentaire'
                         ];
 
@@ -1375,939 +1357,848 @@ textarea.description-field {
 
                         ?>
 
-                            <option
-                                value="<?= htmlspecialchars($t) ?>"
-                                <?= $selected ?>
-                            >
-                                <?= htmlspecialchars($t) ?>
-                            </option>
+                                            <option value="<?= htmlspecialchars($t) ?>" <?= $selected ?>>
+                                                <?= htmlspecialchars($t) ?>
+                                            </option>
 
-                        <?php endforeach; ?>
+                                            <?php endforeach; ?>
 
-                    </select>
+                                        </select>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- DESCRIPTION -->
+                                <!-- DESCRIPTION -->
 
-            <div class="form-group full">
+                                <div class="form-group full">
 
-                <label for="description">
-                    Synopsis / présentation <span>*</span>
-                </label>
+                                    <label for="description">
+                                        Synopsis / présentation <span>*</span>
+                                    </label>
 
-                <textarea
-                    id="description"
-                    name="description"
-                    class="form-control-modern description-field"
-                    maxlength="2000"
-                    placeholder="Présentez brièvement l'histoire, l'univers et le concept de la série..."
-                    required
-                ><?= htmlspecialchars($serie['description'] ?? '') ?></textarea>
+                                    <textarea id="description" name="description"
+                                        class="form-control-modern description-field" maxlength="2000"
+                                        placeholder="Présentez brièvement l'histoire, l'univers et le concept de la série..."
+                                        required><?= htmlspecialchars($serie['description'] ?? '') ?></textarea>
 
-                <div class="textarea-footer">
+                                    <div class="textarea-footer">
 
-                    <span>
-                        <i class="fas fa-align-left"></i>
-                        Présentation de la production
-                    </span>
+                                        <span>
+                                            <i class="fas fa-align-left"></i>
+                                            Présentation de la production
+                                        </span>
 
-                    <span id="descriptionCount">
-                        0 caractère
-                    </span>
+                                        <span id="descriptionCount">
+                                            0 caractère
+                                        </span>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
-        </div>
+                            </div>
 
-    </div>
+                        </div>
 
-</section>
+                    </section>
 
 
 
-<!-- =========================================================
+                    <!-- =========================================================
      IDENTITE VISUELLE
 ========================================================= -->
 
-<section class="form-card">
+                    <section class="form-card">
 
-    <div class="card-header">
+                        <div class="card-header">
 
-        <div class="card-header-icon">
-            <i class="fas fa-image"></i>
-        </div>
+                            <div class="card-header-icon">
+                                <i class="fas fa-image"></i>
+                            </div>
 
-        <div>
+                            <div>
 
-            <h2>Identité visuelle</h2>
+                                <h2>Identité visuelle</h2>
 
-            <p>
-                Ajoutez l'affiche officielle de votre série
-            </p>
+                                <p>
+                                    Ajoutez l'affiche officielle de votre série
+                                </p>
 
-        </div>
+                            </div>
 
-    </div>
-
-
-    <div class="card-body">
+                        </div>
 
 
-        <input
-            type="file"
-            id="photo"
-            name="photo"
-            accept="image/png,image/jpeg,image/jpg"
-            <?= $serieId ? '' : 'required' ?>
-            hidden
-        >
+                        <div class="card-body">
 
 
-        <div class="upload-wrapper">
+                            <input type="file" id="photo" name="photo" accept="image/png,image/jpeg,image/jpg" hidden>
 
 
-            <!-- PREVIEW -->
+                            <div class="upload-wrapper">
 
-            <div class="poster-preview"
-                 id="posterPreview">
 
-                <?php if (!empty($serie['logo'])): ?>
+                                <!-- PREVIEW -->
 
-                    <img
-                        src="../uploads/series/<?= htmlspecialchars($serie['logo']) ?>"
-                        alt="<?= htmlspecialchars($serie['titre'] ?? 'Affiche') ?>"
-                    >
+                                <div class="poster-preview" id="posterPreview">
 
-                <?php else: ?>
+                                    <?php if (!empty($serie['logo'])): ?>
 
-                    <div class="poster-placeholder">
+                                    <img src="../uploads/series/<?= htmlspecialchars($serie['logo']) ?>"
+                                        alt="<?= htmlspecialchars($serie['titre'] ?? 'Affiche') ?>">
 
-                        <i class="fas fa-film"></i>
+                                    <?php else: ?>
 
-                        <span>
-                            Aperçu de l'affiche
-                        </span>
+                                    <div class="poster-placeholder">
 
-                    </div>
+                                        <i class="fas fa-film"></i>
 
-                <?php endif; ?>
+                                        <span>
+                                            Aperçu de l'affiche
+                                        </span>
 
-            </div>
+                                    </div>
+
+                                    <?php endif; ?>
+
+                                </div>
 
 
 
-            <!-- UPLOAD -->
+                                <!-- UPLOAD -->
 
-            <label for="photo"
-                   class="upload-content">
+                                <label for="photo" class="upload-content">
 
-                <div class="upload-icon">
+                                    <div class="upload-icon">
 
-                    <i class="fas fa-cloud-upload-alt"></i>
+                                        <i class="fas fa-cloud-upload-alt"></i>
 
-                </div>
+                                    </div>
 
-                <strong>
-                    Ajouter l'affiche de la série
-                </strong>
+                                    <strong>
+                                        Ajouter l'affiche de la série
+                                    </strong>
 
-                <span>
-                    Cliquez ici pour sélectionner une image
-                </span>
+                                    <span>
+                                        Cliquez ici pour sélectionner une image
+                                    </span>
 
-                <small class="file-name"
-                       id="file-name">
+                                    <small class="file-name" id="file-name">
 
-                    <?= !empty($serie['logo'])
+                                        <?= !empty($serie['logo'])
                         ? htmlspecialchars($serie['logo'])
                         : 'Aucun fichier sélectionné'
                     ?>
 
-                </small>
+                                    </small>
 
-            </label>
-
-
-        </div>
-
-    </div>
-
-</section>
+                                </label>
 
 
+                            </div>
 
-<!-- =========================================================
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- =========================================================
      BUDGET
 ========================================================= -->
 
-<section class="form-card">
+                    <section class="form-card">
 
-    <div class="card-header">
+                        <div class="card-header">
 
-        <div class="card-header-icon">
+                            <div class="card-header-icon">
 
-            <i class="fas fa-wallet"></i>
+                                <i class="fas fa-wallet"></i>
 
-        </div>
+                            </div>
 
-        <div>
+                            <div>
 
-            <h2>Budget prévisionnel</h2>
+                                <h2>Budget prévisionnel</h2>
 
-            <p>
-                Définissez les dépenses prévues pour la production
-            </p>
+                                <p>
+                                    Définissez les dépenses prévues pour la production
+                                </p>
 
-        </div>
+                            </div>
 
-    </div>
+                        </div>
 
 
-    <div class="card-body">
+                        <div class="card-body">
 
 
-        <div class="budget-intro">
+                            <div class="budget-intro">
 
-            <div class="budget-intro-icon">
+                                <div class="budget-intro-icon">
 
-                <i class="fas fa-calculator"></i>
+                                    <i class="fas fa-calculator"></i>
 
-            </div>
+                                </div>
 
-            <div>
+                                <div>
 
-                <strong>
-                    Budget automatique
-                </strong>
+                                    <strong>
+                                        Budget automatique
+                                    </strong>
 
-                <p>
-                    Le montant total est calculé automatiquement
-                    à partir des différents postes.
-                </p>
+                                    <p>
+                                        Le montant total est calculé automatiquement
+                                        à partir des différents postes.
+                                    </p>
 
-            </div>
+                                </div>
 
-        </div>
+                            </div>
 
 
 
-        <div class="budget-grid">
+                            <div class="budget-grid">
 
 
-            <!-- TRANSPORT -->
+                                <!-- TRANSPORT -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-car"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-car"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Transport
-                    </label>
+                                        <label>
+                                            Transport
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="transport"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['transport'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="transport" class="budget-input" min="0" step="1"
+                                                placeholder="0"
+                                                value="<?= htmlspecialchars($serie['transport'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- DECORS -->
+                                <!-- DECORS -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-paint-roller"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-paint-roller"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Décors
-                    </label>
+                                        <label>
+                                            Décors
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="decors"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['decors'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="decors" class="budget-input" min="0" step="1"
+                                                placeholder="0" value="<?= htmlspecialchars($serie['decors'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- ACTEURS -->
+                                <!-- ACTEURS -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-users"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Règlement acteurs
-                    </label>
+                                        <label>
+                                            Règlement acteurs
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="reglement_acteurs"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['reglement_acteurs'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="reglement_acteurs" class="budget-input" min="0"
+                                                step="1" placeholder="0"
+                                                value="<?= htmlspecialchars($serie['reglement_acteurs'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- ACCESSOIRES -->
+                                <!-- ACCESSOIRES -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-toolbox"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-toolbox"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Accessoires
-                    </label>
+                                        <label>
+                                            Accessoires
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="accessoires"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['accessoires'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="accessoires" class="budget-input" min="0"
+                                                step="1" placeholder="0"
+                                                value="<?= htmlspecialchars($serie['accessoires'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- HMC -->
+                                <!-- HMC -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-magic"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-magic"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        HMC
-                    </label>
+                                        <label>
+                                            HMC
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="hmc"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['hmc'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="hmc" class="budget-input" min="0" step="1"
+                                                placeholder="0" value="<?= htmlspecialchars($serie['hmc'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- CARBURANT -->
+                                <!-- CARBURANT -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-gas-pump"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-gas-pump"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Carburant
-                    </label>
+                                        <label>
+                                            Carburant
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="carburant"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['carburant'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="carburant" class="budget-input" min="0" step="1"
+                                                placeholder="0"
+                                                value="<?= htmlspecialchars($serie['carburant'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- PHARMACIE -->
+                                <!-- PHARMACIE -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-first-aid"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-first-aid"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Pharmacie
-                    </label>
+                                        <label>
+                                            Pharmacie
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="pharmacie"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['pharmacie'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="pharmacie" class="budget-input" min="0" step="1"
+                                                placeholder="0"
+                                                value="<?= htmlspecialchars($serie['pharmacie'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- RECEPTIONS -->
+                                <!-- RECEPTIONS -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-utensils"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-utensils"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Réceptions
-                    </label>
+                                        <label>
+                                            Réceptions
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="receptions"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['receptions'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="receptions" class="budget-input" min="0" step="1"
+                                                placeholder="0"
+                                                value="<?= htmlspecialchars($serie['receptions'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
 
-            <!-- AUTRES -->
+                                <!-- AUTRES -->
 
-            <div class="budget-item">
+                                <div class="budget-item">
 
-                <div class="budget-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
+                                    <div class="budget-icon">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
 
-                <div class="budget-info">
+                                    <div class="budget-info">
 
-                    <label>
-                        Autres achats
-                    </label>
+                                        <label>
+                                            Autres achats
+                                        </label>
 
-                    <div class="money-input">
+                                        <div class="money-input">
 
-                        <input
-                            type="number"
-                            name="autres_achats"
-                            class="budget-input"
-                            min="0"
-                            step="1"
-                            placeholder="0"
-                            value="<?= htmlspecialchars($serie['autres_achats'] ?? 0) ?>"
-                        >
+                                            <input type="number" name="autres_achats" class="budget-input" min="0"
+                                                step="1" placeholder="0"
+                                                value="<?= htmlspecialchars($serie['autres_achats'] ?? 0) ?>">
 
-                        <span>FCFA</span>
+                                            <span>FCFA</span>
 
-                    </div>
+                                        </div>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
-        </div>
+                            </div>
 
 
 
-        <!-- TOTAL -->
+                            <!-- TOTAL -->
 
-        <div class="budget-total">
+                            <div class="budget-total">
 
-            <div class="total-left">
+                                <div class="total-left">
 
-                <div class="total-icon">
+                                    <div class="total-icon">
 
-                    <i class="fas fa-calculator"></i>
+                                        <i class="fas fa-calculator"></i>
 
-                </div>
+                                    </div>
 
-                <div>
+                                    <div>
 
-                    <span class="total-label">
-                        Budget prévisionnel total
-                    </span>
+                                        <span class="total-label">
+                                            Budget prévisionnel total
+                                        </span>
 
-                    <span class="total-description">
-                        Somme de tous les postes
-                    </span>
+                                        <span class="total-description">
+                                            Somme de tous les postes
+                                        </span>
 
-                </div>
+                                    </div>
 
-            </div>
+                                </div>
 
 
-            <div class="total-value">
+                                <div class="total-value">
 
-                <span id="budgetTotalDisplay">
-                    0
-                </span>
+                                    <span id="budgetTotalDisplay">
+                                        0
+                                    </span>
 
-                <small>
-                    FCFA
-                </small>
+                                    <small>
+                                        FCFA
+                                    </small>
 
-            </div>
+                                </div>
 
-        </div>
+                            </div>
 
 
-        <input
-            type="hidden"
-            id="budget_total"
-            name="budget"
-            value="<?= htmlspecialchars($serie['budget'] ?? 0) ?>"
-        >
+                            <input type="hidden" id="budget_total" name="budget"
+                                value="<?= htmlspecialchars($serie['budget'] ?? 0) ?>">
 
 
-    </div>
+                        </div>
 
-</section>
+                    </section>
 
 
 
-<!-- =========================================================
+                    <!-- =========================================================
      ACTIONS
 ========================================================= -->
 
-<div class="form-actions">
+                    <div class="form-actions">
 
-    <a href="javascript:history.back()"
-       class="btn btn-cancel">
+                        <a href="javascript:history.back()" class="btn btn-cancel">
 
-        <i class="fas fa-arrow-left"></i>
+                            <i class="fas fa-arrow-left"></i>
 
-        Annuler
+                            Annuler
 
-    </a>
+                        </a>
 
 
-    <button
-        type="submit"
-        class="btn btn-submit"
-        id="submitBtn"
-    >
+                        <button type="submit" class="btn btn-submit" id="submitBtn">
 
-        <i class="fas <?= $serieId ? 'fa-save' : 'fa-plus' ?>"></i>
+                            <i class="fas <?= $serieId ? 'fa-save' : 'fa-plus' ?>"></i>
 
-        <span>
-            <?= $serieId
+                            <span>
+                                <?= $serieId
                 ? 'Enregistrer les modifications'
                 : 'Créer la série'
             ?>
-        </span>
+                            </span>
 
-    </button>
+                        </button>
 
-</div>
-
-
-</form>
-
-</main>
+                    </div>
 
 
+                </form>
 
-<!-- =========================================================
+            </main>
+
+
+
+            <!-- =========================================================
      SIDEBAR
 ========================================================= -->
 
-<aside class="sidebar">
+            <aside class="sidebar">
 
 
-    <!-- =====================================================
+                <!-- =====================================================
          APERÇU
     ====================================================== -->
 
-    <div class="preview-card">
+                <div class="preview-card">
 
-        <div class="preview-header">
+                    <div class="preview-header">
 
-            <h3>
-                <i class="fas fa-eye"></i>
-                Aperçu de la série
-            </h3>
+                        <h3>
+                            <i class="fas fa-eye"></i>
+                            Aperçu de la série
+                        </h3>
 
-            <p>
-                Mise à jour en temps réel
-            </p>
+                        <p>
+                            Mise à jour en temps réel
+                        </p>
 
-        </div>
-
-
-        <div class="preview-poster"
-             id="previewPoster">
-
-            <?php if (!empty($serie['logo'])): ?>
-
-                <img
-                    src="../uploads/series/<?= htmlspecialchars($serie['logo']) ?>"
-                    alt="Affiche"
-                >
-
-            <?php else: ?>
-
-                <div class="preview-poster-placeholder">
-
-                    <i class="fas fa-film"></i>
-
-                </div>
-
-            <?php endif; ?>
-
-        </div>
+                    </div>
 
 
-        <div class="preview-content">
+                    <div class="preview-poster" id="previewPoster">
 
-            <h2 class="preview-title"
-                id="previewTitle">
+                        <?php if (!empty($serie['logo'])): ?>
 
-                <?= htmlspecialchars(
+                        <img src="../uploads/series/<?= htmlspecialchars($serie['logo']) ?>" alt="Affiche">
+
+                        <?php else: ?>
+
+                        <div class="preview-poster-placeholder">
+
+                            <i class="fas fa-film"></i>
+
+                        </div>
+
+                        <?php endif; ?>
+
+                    </div>
+
+
+                    <div class="preview-content">
+
+                        <h2 class="preview-title" id="previewTitle">
+
+                            <?= htmlspecialchars(
                     $serie['titre'] ?? 'Votre série'
                 ) ?>
 
-            </h2>
+                        </h2>
 
 
-            <span class="preview-type"
-                  id="previewType">
+                        <span class="preview-type" id="previewType">
 
-                <?= htmlspecialchars(
+                            <?= htmlspecialchars(
                     $serie['type'] ?? 'Série TV'
                 ) ?>
 
-            </span>
+                        </span>
 
 
-            <div class="preview-budget">
+                        <div class="preview-budget">
 
-                <span class="preview-budget-label">
-                    Budget prévisionnel
-                </span>
+                            <span class="preview-budget-label">
+                                Budget prévisionnel
+                            </span>
 
-                <div class="preview-budget-value">
+                            <div class="preview-budget-value">
 
-                    <span id="previewBudget">
-                        0
-                    </span>
+                                <span id="previewBudget">
+                                    0
+                                </span>
 
-                    <small>
-                        FCFA
-                    </small>
+                                <small>
+                                    FCFA
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-        </div>
-
-    </div>
 
 
-
-    <!-- =====================================================
+                <!-- =====================================================
          RESUME BUDGET
     ====================================================== -->
 
-    <div class="form-card summary-card">
+                <div class="form-card summary-card">
 
-        <div class="summary-title">
+                    <div class="summary-title">
 
-            <i class="fas fa-chart-pie"></i>
+                        <i class="fas fa-chart-pie"></i>
 
-            Répartition du budget
+                        Répartition du budget
 
-        </div>
-
-
-        <div class="summary-list">
+                    </div>
 
 
-            <div class="summary-row">
-
-                <span>Transport</span>
-
-                <strong data-summary="transport">
-                    0
-                </strong>
-
-            </div>
+                    <div class="summary-list">
 
 
-            <div class="summary-row">
+                        <div class="summary-row">
 
-                <span>Décors</span>
+                            <span>Transport</span>
 
-                <strong data-summary="decors">
-                    0
-                </strong>
+                            <strong data-summary="transport">
+                                0
+                            </strong>
 
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>Acteurs</span>
-
-                <strong data-summary="reglement_acteurs">
-                    0
-                </strong>
-
-            </div>
+                        </div>
 
 
-            <div class="summary-row">
+                        <div class="summary-row">
 
-                <span>Accessoires</span>
+                            <span>Décors</span>
 
-                <strong data-summary="accessoires">
-                    0
-                </strong>
+                            <strong data-summary="decors">
+                                0
+                            </strong>
 
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>HMC</span>
-
-                <strong data-summary="hmc">
-                    0
-                </strong>
-
-            </div>
+                        </div>
 
 
-            <div class="summary-row">
+                        <div class="summary-row">
 
-                <span>Carburant</span>
+                            <span>Acteurs</span>
 
-                <strong data-summary="carburant">
-                    0
-                </strong>
+                            <strong data-summary="reglement_acteurs">
+                                0
+                            </strong>
 
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>Pharmacie</span>
-
-                <strong data-summary="pharmacie">
-                    0
-                </strong>
-
-            </div>
+                        </div>
 
 
-            <div class="summary-row">
+                        <div class="summary-row">
 
-                <span>Réceptions</span>
+                            <span>Accessoires</span>
 
-                <strong data-summary="receptions">
-                    0
-                </strong>
+                            <strong data-summary="accessoires">
+                                0
+                            </strong>
 
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>Autres achats</span>
-
-                <strong data-summary="autres_achats">
-                    0
-                </strong>
-
-            </div>
+                        </div>
 
 
-        </div>
+                        <div class="summary-row">
+
+                            <span>HMC</span>
+
+                            <strong data-summary="hmc">
+                                0
+                            </strong>
+
+                        </div>
 
 
-        <div class="summary-total">
+                        <div class="summary-row">
 
-            <span>
-                TOTAL
-            </span>
+                            <span>Carburant</span>
 
-            <strong>
-                <span id="summaryTotal">
-                    0
-                </span>
-                FCFA
-            </strong>
+                            <strong data-summary="carburant">
+                                0
+                            </strong>
 
-        </div>
-
-    </div>
+                        </div>
 
 
+                        <div class="summary-row">
 
-    <!-- =====================================================
+                            <span>Pharmacie</span>
+
+                            <strong data-summary="pharmacie">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>Réceptions</span>
+
+                            <strong data-summary="receptions">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>Autres achats</span>
+
+                            <strong data-summary="autres_achats">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="summary-total">
+
+                        <span>
+                            TOTAL
+                        </span>
+
+                        <strong>
+                            <span id="summaryTotal">
+                                0
+                            </span>
+                            FCFA
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =====================================================
          CONSEIL
     ====================================================== -->
 
-    <div class="tip-card">
+                <div class="tip-card">
 
-        <div class="tip-card-header">
+                    <div class="tip-card-header">
 
-            <i class="fas fa-lightbulb"></i>
+                        <i class="fas fa-lightbulb"></i>
 
-            <strong>
-                Conseil de production
-            </strong>
+                        <strong>
+                            Conseil de production
+                        </strong>
+
+                    </div>
+
+
+                    <p>
+
+                        Commencez par définir clairement le titre,
+                        le concept et la description de la série.
+                        Vous pourrez ensuite gérer les acteurs,
+                        épisodes, équipes et dépenses depuis
+                        la fiche de production.
+
+                    </p>
+
+                </div>
+
+
+            </aside>
+
 
         </div>
 
-
-        <p>
-
-            Commencez par définir clairement le titre,
-            le concept et la description de la série.
-            Vous pourrez ensuite gérer les acteurs,
-            épisodes, équipes et dépenses depuis
-            la fiche de production.
-
-        </p>
-
     </div>
-
-
-</aside>
-
-
-</div>
-
-</div>
 
 </section>
 
 
 
 <script>
-
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
 
 
     /* =====================================================
@@ -2459,7 +2350,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let total = 0;
 
 
-        budgetInputs.forEach(function (input) {
+        budgetInputs.forEach(function(input) {
 
             let value =
                 parseFloat(input.value) || 0;
@@ -2513,7 +2404,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    budgetInputs.forEach(function (input) {
+    budgetInputs.forEach(function(input) {
 
         input.addEventListener(
             'input',
@@ -2540,7 +2431,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         photoInput.addEventListener(
             'change',
-            function () {
+            function() {
 
                 if (
                     !this.files ||
@@ -2569,7 +2460,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 reader.onload =
-                    function (event) {
+                    function(event) {
 
                         const html = `
                             <img
@@ -2604,7 +2495,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         form.addEventListener(
             'submit',
-            function (event) {
+            function(event) {
 
                 /*
                  * Recalcul avant envoi
@@ -2756,7 +2647,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(toast);
 
 
-    setTimeout(function () {
+    setTimeout(function() {
 
         toast.classList.add('show');
 
@@ -2771,7 +2662,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         closeButton.addEventListener(
             'click',
-            function () {
+            function() {
 
                 toast.classList.remove('show');
 
@@ -2786,7 +2677,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    setTimeout(function () {
+    setTimeout(function() {
 
         toast.classList.remove('show');
 
@@ -2802,7 +2693,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
-
 </script>
 
 <?php include '../includes/footer.php'; ?>

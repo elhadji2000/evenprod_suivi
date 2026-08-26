@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
  */
 
 // Production
-// $url_base = "https://evenapp.fr/";
+//$url_base = "https://evenapp.fr/"; 
 
 // Développement local
 $url_base = 'http://localhost/projet_suivi/';
@@ -588,7 +588,7 @@ $role = $_SESSION['role'] ?? '';
 
                     <?php if (
                         $role === 'admin' ||
-                        $role === 'tournage'
+                        $role === 'secretaire'
                     ): ?>
 
                     <li class="nav-item dropdown">

@@ -720,12 +720,12 @@ $permissions = [
             <div class="stat-card">
                 <h4 class="stat-number">
                     <?php 
-                        $solde = ($serie['budget'] ?? 0) - ($totauxtous['total_depenses'] ?? 0) + ($totauxtous['total_factures'] ?? 0);
+                        $solde = ($totauxtous['total_factures'] ?? 0) - ($totauxtous['total_depenses'] ?? 0);
                         echo number_format($solde, 0, ',', ' ');
                     ?>
                 </h4>
                 <p class="stat-label">Solde</p>
-                <p class="stat-desc">Budget - Dépenses + Recettes</p>
+                <p class="stat-desc">Recettes - Dépenses</p>
             </div>
         </div>
 

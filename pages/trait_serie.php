@@ -5,7 +5,7 @@ session_start();
 include '../config/fonction.php';
 
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     header('Location: add_serie');
     exit;
 }
@@ -246,18 +246,6 @@ if ($serieId) {
 */
 
 else {
-
-    if ($logo === null) {
-
-        $_SESSION['error'] =
-            'Veuillez choisir une image pour la série.';
-
-        header('Location: add_serie');
-
-        exit;
-    }
-
-
     $result = ajouterSerie(
         $titre,
         $type,

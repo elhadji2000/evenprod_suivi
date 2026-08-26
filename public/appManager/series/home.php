@@ -2,15 +2,16 @@
 session_start();
 
 // Redirection si l'utilisateur n'a pas mis à jour son mot de passe
-/* if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
-    header("Location: ../../../public/admin/profile.php?forceUpdate=1");
+if (!isset($_SESSION['updated']) || !$_SESSION['updated']) {
+    header('Location: ../../../public/admin/profile.php?forceUpdate=1');
     exit;
-} */
+}
 
 include '../../../config/fonction.php';
 
 $totaux = getTotaux($connexion);
 $totauxDepenses = getTotauxDepensesGlobal($connexion);
+$role = $_SESSION['role'] ?? '';
 ?>
 
 <head>
@@ -353,6 +354,7 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .expenses-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -369,39 +371,49 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
     .dashboard-page {
         padding: 15px 0 35px;
     }
+
     .dashboard-container {
         padding: 0 12px;
     }
+
     .dashboard-header {
         padding: 18px;
     }
+
     .dashboard-header h1 {
         font-size: 21px;
     }
+
     .dashboard-header-icon {
         width: 48px;
         height: 48px;
         flex-basis: 48px;
     }
+
     .stats-grid {
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
+
     .stat-card {
         padding: 16px 14px;
     }
+
     .stat-card .stat-number {
         font-size: 22px;
     }
+
     .expenses-grid {
         grid-template-columns: 1fr;
         padding: 16px;
     }
+
     .expenses-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
     }
+
     .expenses-total {
         width: 100%;
         justify-content: center;
@@ -412,16 +424,20 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
     .dashboard-header-left {
         gap: 12px;
     }
+
     .dashboard-header-icon {
         display: none;
     }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
+
     .header-date {
         width: 100%;
         justify-content: center;
     }
+
     .expenses-header-left {
         width: 100%;
     }
@@ -511,6 +527,7 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
         <!-- =========================================================
         DÉPENSES PAR CATÉGORIE
         ========================================================= -->
+        <?php if ($role === 'admin'): ?>
 
         <div class="expenses-section">
             <div class="expenses-header">
@@ -526,17 +543,17 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
                 <div class="expenses-total">
                     <i class="fas fa-calculator"></i>
                     <?php
-                        $totalDepenses = ($totauxDepenses['cachet'] ?? 0) +
-                                         ($totauxDepenses['decor'] ?? 0) +
-                                         ($totauxDepenses['transport'] ?? 0) +
-                                         ($totauxDepenses['reception'] ?? 0) +
-                                         ($totauxDepenses['accessoire'] ?? 0) +
-                                         ($totauxDepenses['reglement_acteur'] ?? 0) +
-                                         ($totauxDepenses['hmc'] ?? 0) +
-                                         ($totauxDepenses['carburant'] ?? 0) +
-                                         ($totauxDepenses['pharmacie'] ?? 0) +
-                                         ($totauxDepenses['autre'] ?? 0);
-                        echo number_format($totalDepenses, 0, ',', ' ') . ' FCFA';
+                    $totalDepenses = ($totauxDepenses['cachet'] ?? 0)
+                        + ($totauxDepenses['decor'] ?? 0)
+                        + ($totauxDepenses['transport'] ?? 0)
+                        + ($totauxDepenses['reception'] ?? 0)
+                        + ($totauxDepenses['accessoire'] ?? 0)
+                        + ($totauxDepenses['reglement_acteur'] ?? 0)
+                        + ($totauxDepenses['hmc'] ?? 0)
+                        + ($totauxDepenses['carburant'] ?? 0)
+                        + ($totauxDepenses['pharmacie'] ?? 0)
+                        + ($totauxDepenses['autre'] ?? 0);
+                    echo number_format($totalDepenses, 0, ',', ' ') . ' FCFA';
                     ?>
                 </div>
             </div>
@@ -653,7 +670,6 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
                         <small>FCFA</small>
                     </span>
                 </div>
-
                 <!-- Pharmacie -->
                 <div class="expense-item">
                     <div class="expense-item-left">
@@ -667,7 +683,6 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
                         <small>FCFA</small>
                     </span>
                 </div>
-
                 <!-- Autres -->
                 <div class="expense-item" style="grid-column: span 1;">
                     <div class="expense-item-left">
@@ -683,6 +698,7 @@ $totauxDepenses = getTotauxDepensesGlobal($connexion);
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
     </div>
 </section>

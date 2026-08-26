@@ -1047,9 +1047,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <select id="role" name="role" class="modern-select" required>
                                             <option value="">-- Sélectionnez un rôle --</option>
                                             <option value="admin" <?= (isset($user['role']) && $user['role'] == 'admin') ? 'selected' : '' ?>>Admin</option>
-                                            <option value="comptable" <?= (isset($user['role']) && $user['role'] == 'comptable') ? 'selected' : '' ?>>Comptable</option>
-                                            <option value="caisse" <?= (isset($user['role']) && $user['role'] == 'caisse') ? 'selected' : '' ?>>Caisse</option>
-                                            <option value="tournage" <?= (isset($user['role']) && $user['role'] == 'tournage') ? 'selected' : '' ?>>Tournage</option>
+                                            <option value="secretaire" <?= (isset($user['role']) && $user['role'] == 'secretaire') ? 'selected' : '' ?>>Secretaire</option>
                                         </select>
                                     </div>
                                 </div>

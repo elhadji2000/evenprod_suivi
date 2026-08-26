@@ -7,7 +7,7 @@ include '../../../config/fonction.php'; // connexion etc
 $facture_id = $_GET['id'] ?? 0;
 $facture = getFactureDetails($connexion, $facture_id);
 //$url_base = "https://gescoud.com/sygep/";
-$url_base = "http://localhost/projet_suivi/"; 
+//$url_base = "http://localhost/projet_suivi/"; 
 
 if (!$facture) exit('Facture introuvable');
 

@@ -1,12 +1,6 @@
 <?php
 include('fonction.php');
 $error = "";
-echo 'URL appelée : '.$_SERVER['REQUEST_URI'].'<br>';
-echo '<pre>';
-print_r($_POST);
-echo '</pre>';
-
-
 
 if (!empty($_POST['email']) && !empty($_POST['mot_de_passe'])) {
     $username = $_POST['email'];
@@ -25,7 +19,7 @@ if (!empty($_POST['email']) && !empty($_POST['mot_de_passe'])) {
             header('Location: ../public/appManager/series/home.php');
             exit();
         } 
-        else if ($row['role'] == 'tournage') {
+        else if ($row['role'] == 'secretaire') {
            header('Location: ../public/appManager/series/home.php');
             exit();
         }

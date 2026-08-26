@@ -1,6 +1,7 @@
-<?php
+<?php 
 
 include '../../config/fonction.php';
+// Redirection si l'utilisateur n'a pas mis à jour son mot de passe
 
 /*
 |--------------------------------------------------------------------------
@@ -2424,7 +2425,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             </a>
 
 
-            <a
+           <!--  <a
                 href="#"
                 id="delete-link"
                 class="detail-btn btn-delete"
@@ -2439,7 +2440,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                 Supprimer
 
-            </a>
+            </a> -->
 
 
         </div>
@@ -2539,8 +2540,7 @@ document.addEventListener(
             document.getElementById('edit-link');
 
 
-        const deleteLink =
-            document.getElementById('delete-link');
+       /* const deleteLink = document.getElementById('delete-link');*/
 
 
         const urlBase =
@@ -2743,7 +2743,7 @@ document.addEventListener(
 
                         /* =====================================
                            SUPPRESSION
-                        ===================================== */
+                        ===================================== 
 
                         deleteLink.href =
                             urlBase +
@@ -2754,7 +2754,7 @@ document.addEventListener(
                             '&redirect=' +
                             encodeURIComponent(
                                 redirectUrl
-                            );
+                            );*/
 
 
 

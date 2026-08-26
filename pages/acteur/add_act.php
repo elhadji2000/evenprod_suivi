@@ -19,7 +19,7 @@ $lastSerie = getLastSerie();
 $acteur = null;
 
 if (isset($_GET['id']) && !empty($_GET['id'])) {
-  $acteur = getActeurById($_GET['id']);
+    $acteur = getActeurById($_GET['id']);
 }
 
 ?>
@@ -680,12 +680,14 @@ input[type="date"] {
     .actor-layout {
         grid-template-columns: 1fr;
     }
+
     .sidebar {
         position: static;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
+
     .sidebar>* {
         margin-bottom: 0;
     }
@@ -695,42 +697,53 @@ input[type="date"] {
     .actor-page {
         padding: 15px 0 35px;
     }
+
     .actor-container {
         padding: 0 12px;
     }
+
     .actor-header {
         padding: 18px;
         flex-direction: column;
         align-items: flex-start;
     }
+
     .actor-header h1 {
         font-size: 21px;
     }
+
     .actor-header-icon {
         width: 48px;
         height: 48px;
         flex-basis: 48px;
     }
+
     .form-grid {
         grid-template-columns: 1fr;
     }
+
     .card-header,
     .card-body {
         padding: 18px;
     }
+
     .photo-section {
         grid-template-columns: 1fr;
     }
+
     .photo-preview {
         margin: auto;
     }
+
     .sidebar {
         grid-template-columns: 1fr;
     }
+
     .form-actions {
         flex-direction: column-reverse;
         align-items: stretch;
     }
+
     .btn {
         width: 100%;
     }
@@ -740,12 +753,15 @@ input[type="date"] {
     .actor-header-left {
         gap: 12px;
     }
+
     .actor-header-icon {
         display: none;
     }
+
     .card-header {
         gap: 10px;
     }
+
     .card-header-icon {
         width: 36px;
         height: 36px;
@@ -771,7 +787,7 @@ input[type="date"] {
                         EVENPROD / PRODUCTIONS / ACTEURS
                     </div>
                     <h1>
-                        <?= $acteur ? 'Modifier l\'acteur' : 'Nouvel acteur' ?>
+                        <?= $acteur ? "Modifier l'acteur" : 'Nouvel acteur' ?>
                     </h1>
                     <p>
                         <?= $acteur ? 'Modifiez les informations de cet acteur.' : 'Ajoutez un nouveau talent à votre maison de production.' ?>
@@ -947,7 +963,8 @@ input[type="date"] {
 
                                 <div class="photo-preview" id="photoPreview">
                                     <?php if (!empty($acteur['photo'])): ?>
-                                    <img src="../../uploads/photos/<?= htmlspecialchars($acteur['photo']) ?>" alt="Photo de <?= htmlspecialchars(($acteur['prenom'] ?? '') . ' ' . ($acteur['nom'] ?? '')) ?>">
+                                    <img src="../../uploads/photos/<?= htmlspecialchars($acteur['photo']) ?>"
+                                        alt="Photo de <?= htmlspecialchars(($acteur['prenom'] ?? '') . ' ' . ($acteur['nom'] ?? '')) ?>">
                                     <?php else: ?>
                                     <div class="photo-placeholder">
                                         <i class="fas fa-user"></i>
@@ -964,7 +981,7 @@ input[type="date"] {
                                     <span>Cliquez ici pour sélectionner une image</span>
                                 </label>
 
-                                <input type="file" id="photo" name="photo" accept="image/*" <?= $acteur ? '' : 'required' ?> hidden>
+                                <input type="file" id="photo" name="photo" accept="image/*" hidden>
 
                             </div>
                         </div>
@@ -983,7 +1000,7 @@ input[type="date"] {
                         <button type="submit" class="btn btn-submit" id="submitBtn">
                             <i class="fas <?= $acteur ? 'fa-save' : 'fa-user-plus' ?>"></i>
                             <span>
-                                <?= $acteur ? 'Enregistrer les modifications' : 'Enregistrer l\'acteur' ?>
+                                <?= $acteur ? 'Enregistrer les modifications' : "Enregistrer l'acteur" ?>
                             </span>
                         </button>
                     </div>
@@ -1026,7 +1043,7 @@ input[type="date"] {
                         </div>
 
                         <h2 class="actor-preview-name" id="previewName">
-                            <?= htmlspecialchars(trim(($acteur['prenom'] ?? '') . ' ' . ($acteur['nom'] ?? '')) ?: 'Nom de l\'acteur') ?>
+                            <?= htmlspecialchars(trim(($acteur['prenom'] ?? '') . ' ' . ($acteur['nom'] ?? '')) ?: "Nom de l'acteur") ?>
                         </h2>
 
                         <div class="actor-preview-contact" id="previewContact">
@@ -1071,7 +1088,8 @@ input[type="date"] {
                         <?php if ($lastSerie): ?>
                         <div class="series-poster">
                             <?php if (!empty($lastSerie['logo'])): ?>
-                            <img src="../../uploads/series/<?php echo htmlspecialchars($lastSerie['logo']); ?>" alt="<?= htmlspecialchars($lastSerie['titre']) ?>">
+                            <img src="../../uploads/series/<?php echo htmlspecialchars($lastSerie['logo']); ?>"
+                                alt="<?= htmlspecialchars($lastSerie['titre']) ?>">
                             <?php else: ?>
                             <div class="series-poster-placeholder">
                                 <i class="fas fa-film"></i>
@@ -1090,7 +1108,7 @@ input[type="date"] {
                         <div class="series-budget">
                             <span class="series-budget-label">Budget prévisionnel</span>
                             <span class="series-budget-value">
-                                <?= number_format((float)($lastSerie['budget'] ?? 0), 0, ',', ' ') ?>
+                                <?= number_format((float) ($lastSerie['budget'] ?? 0), 0, ',', ' ') ?>
                                 <small>FCFA</small>
                             </span>
                         </div>
@@ -1158,7 +1176,8 @@ document.addEventListener('DOMContentLoaded', function() {
     ===================================================== */
 
     contact.addEventListener('input', function() {
-        document.getElementById('previewContact').textContent = this.value.trim() || 'Contact non renseigné';
+        document.getElementById('previewContact').textContent = this.value.trim() ||
+            'Contact non renseigné';
     });
 
     /* =====================================================
