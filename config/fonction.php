@@ -2728,4 +2728,194 @@ function deleteSalariesBulk($ids) {
     $stmt->bind_param($types, ...$ids);
     return $stmt->execute();
 }
+
+/*
+ * |--------------------------------------------------------------------------
+ * | FONCTIONS
+ * |--------------------------------------------------------------------------
+ */
+
+function getOutils() {
+    global $connexion;
+    $sql = "SELECT * FROM outils ORDER BY nom ASC";
+    $result = mysqli_query($connexion, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function getOutilById($id) {
+    global $connexion;
+    $sql = "SELECT * FROM outils WHERE id = $id";
+    $result = mysqli_query($connexion, $sql);
+    return mysqli_fetch_assoc($result);
+}
+
+// Fonction ajouterOutil modifiée
+function ajouterOutil($nom, $reference, $type, $description, $proprietaire, $emplacement, $etat, $date_enregistrement, $date_prise = null) {
+    global $connexion;
+    
+    $date_prise_sql = $date_prise ? "'$date_prise'" : "NULL";
+    $sql = "INSERT INTO outils (nom, reference, type, description, proprietaire, emplacement, etat, date_enregistrement, date_prise) 
+            VALUES ('$nom', '$reference', '$type', '$description', '$proprietaire', '$emplacement', '$etat', '$date_enregistrement', $date_prise_sql)";
+    
+    return mysqli_query($connexion, $sql);
+}
+
+// Fonction modifierOutil modifiée
+function modifierOutil($id, $nom, $type, $description, $proprietaire, $emplacement, $etat, $date_prise = null) {
+    global $connexion;
+    
+    $date_prise_sql = $date_prise ? ", date_prise = '$date_prise'" : "";
+    $sql = "UPDATE outils SET 
+            nom = '$nom', 
+            type = '$type', 
+            description = '$description', 
+            proprietaire = '$proprietaire', 
+            emplacement = '$emplacement', 
+            etat = '$etat'
+            $date_prise_sql
+            WHERE id = $id";
+    
+    return mysqli_query($connexion, $sql);
+}
+
+function supprimerOutil($id) {
+    global $connexion;
+    $sql = "DELETE FROM outils WHERE id = $id";
+    return mysqli_query($connexion, $sql);
+}
+
+
+function genererReference() {
+    global $connexion;
+
+    // Les 2 derniers chiffres de l'année
+    $annee = date('y');
+
+    // Récupérer la dernière référence de l'année en cours
+    $sql = "SELECT reference 
+            FROM outils 
+            WHERE reference LIKE 'REF_{$annee}_%' 
+            ORDER BY id DESC 
+            LIMIT 1";
+
+    $result = mysqli_query($connexion, $sql);
+
+    if (!$result) {
+        return 'REF_' . $annee . '_0001';
+    }
+
+    $row = mysqli_fetch_assoc($result);
+
+    if ($row) {
+        // Exemple : REF_26_0005
+        $parts = explode('_', $row['reference']);
+
+        // Dernière partie = 0005
+        $num = (int) end($parts) + 1;
+    } else {
+        $num = 1;
+    }
+
+    return 'REF_' . $annee . '_' . str_pad($num, 4, '0', STR_PAD_LEFT);
+}
+/*
+|--------------------------------------------------------------------------
+| RÉCUPÉRER UN OUTIL
+|--------------------------------------------------------------------------
+*/
+function getOutil($id)
+{
+    global $connexion;
+
+    $sql = "SELECT * FROM outils WHERE id = ? LIMIT 1";
+    $stmt = mysqli_prepare($connexion, $sql);
+
+    if (!$stmt) {
+        return null;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $outil = $result ? mysqli_fetch_assoc($result) : null;
+    mysqli_stmt_close($stmt);
+
+    return $outil;
+}
+/*
+|--------------------------------------------------------------------------
+| ENREGISTRER DANS L'HISTORIQUE
+|--------------------------------------------------------------------------
+*/
+
+function enregistrerHistorique(
+    $outil_id,
+    $action,
+    $ancien_proprietaire = null,
+    $nouveau_proprietaire = null,
+    $ancien_emplacement = null,
+    $nouvel_emplacement = null,
+    $ancien_etat = null,
+    $nouvel_etat = null,
+    $commentaire = null
+) {
+    global $connexion;
+
+    $utilisateur = $_SESSION['nom'] ?? $_SESSION['username'] ?? $_SESSION['user'] ?? 'Utilisateur';
+
+    $sql = "INSERT INTO outils_historique
+            (outil_id, action, ancien_proprietaire, nouveau_proprietaire,
+             ancien_emplacement, nouvel_emplacement, ancien_etat, nouvel_etat,
+             commentaire, utilisateur, date_action)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+    $stmt = mysqli_prepare($connexion, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "isssssssss",
+        $outil_id,
+        $action,
+        $ancien_proprietaire,
+        $nouveau_proprietaire,
+        $ancien_emplacement,
+        $nouvel_emplacement,
+        $ancien_etat,
+        $nouvel_etat,
+        $commentaire,
+        $utilisateur
+    );
+
+    $ok = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $ok;
+}
+/*
+|--------------------------------------------------------------------------
+| REDIRECTION
+|--------------------------------------------------------------------------
+*/
+
+function redirectPage($params = '')
+{
+    header('Location: add_outil.php' . ($params !== '' ? '?' . $params : ''));
+    exit;
+}
+
+/*
+|--------------------------------------------------------------------------
+| NETTOYER LES MESSAGES DE SESSION
+|--------------------------------------------------------------------------
+*/
+
+function clearMessages()
+{
+    unset($_SESSION['success']);
+    unset($_SESSION['error']);
+}
 ?>

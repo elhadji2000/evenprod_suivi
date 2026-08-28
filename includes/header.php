@@ -588,7 +588,7 @@ $role = $_SESSION['role'] ?? '';
 
                     <?php if (
                         $role === 'admin' ||
-                        $role === 'secretaire'
+                        $role === 'Assistante Prod'
                     ): ?>
 
                     <li class="nav-item dropdown">
@@ -731,6 +731,25 @@ $role = $_SESSION['role'] ?? '';
 
                     </li>
 
+                    <?php endif; ?>
+
+                    <!-- =================================================
+                        SALARIÉS EVENPROD
+                        ================================================== -->
+
+                    <?php if (
+                        $role === 'admin' ||
+                        $role === 'Assistante Prod'
+                    ): ?>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="<?= $url_base ?>pages/outils/add_outil" 
+                            aria-expanded="false">
+                            <!-- <i class="fa-solid fa-user-tie"></i> -->
+                            <span>Outils</span>
+                        </a>
+                    </li>
                     <?php endif; ?>
 
 

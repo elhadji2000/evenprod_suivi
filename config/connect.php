@@ -19,7 +19,7 @@ if (!empty($_POST['email']) && !empty($_POST['mot_de_passe'])) {
             header('Location: ../public/appManager/series/home.php');
             exit();
         } 
-        else if ($row['role'] == 'secretaire') {
+        else if ($row['role'] == 'Assistante Prod') {
            header('Location: ../public/appManager/series/home.php');
             exit();
         }
