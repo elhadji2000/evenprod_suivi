@@ -50,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'add') {
         $nom = trim($_POST['nom'] ?? '');
         $type = trim($_POST['type'] ?? '');
-        $description = trim($_POST['description'] ?? '');
         $proprietaire = trim($_POST['proprietaire'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $detenteur = trim($_POST['detenteur'] ?? '');
         $emplacement = trim($_POST['emplacement'] ?? '');
         $etat = trim($_POST['etat'] ?? 'disponible');
 
@@ -78,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date_prise = ($etat === 'utilise') ? $date_enregistrement : null;
 
         $sql = 'INSERT INTO outils
-                (nom, reference, type, description, proprietaire, emplacement, etat, date_enregistrement, date_prise)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                (nom, reference, type, description, proprietaire, detenteur, emplacement, etat, date_enregistrement, date_prise)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
         $stmt = mysqli_prepare($connexion, $sql);
 
@@ -90,12 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         mysqli_stmt_bind_param(
             $stmt,
-            'sssssssss',
+            'ssssssssss',
             $nom,
             $reference,
             $type,
             $description,
             $proprietaire,
+            $detenteur,
             $emplacement,
             $etat,
             $date_enregistrement,
@@ -115,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $outil_id,
             'CREATION',
             null,
-            $proprietaire !== '' ? $proprietaire : null,
+            $detenteur !== '' ? $detenteur : null,
             null,
             $emplacement !== '' ? $emplacement : null,
             null,
@@ -137,8 +139,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = (int) ($_POST['id'] ?? 0);
         $nom = trim($_POST['nom'] ?? '');
         $type = trim($_POST['type'] ?? '');
-        $description = trim($_POST['description'] ?? '');
         $proprietaire = trim($_POST['proprietaire'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $detenteur = trim($_POST['detenteur'] ?? '');
         $emplacement = trim($_POST['emplacement'] ?? '');
         $etat = trim($_POST['etat'] ?? 'disponible');
 
@@ -173,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $sql = 'UPDATE outils SET
-                nom = ?, type = ?, description = ?, proprietaire = ?,
+                nom = ?, type = ?, description = ?, proprietaire = ?, detenteur = ?,
                 emplacement = ?, etat = ?, date_prise = ?
                 WHERE id = ?';
 
@@ -191,6 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $type,
             $description,
             $proprietaire,
+            $detenteur,
             $emplacement,
             $etat,
             $date_prise,
@@ -205,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirectPage();
         }
 
-        $changement = ($ancien['proprietaire'] ?? '') !== $proprietaire ||
+        $changement = ($ancien['detenteur'] ?? '') !== $detenteur ||
             ($ancien['emplacement'] ?? '') !== $emplacement ||
             ($ancien['etat'] ?? '') !== $etat;
 
@@ -213,8 +217,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             enregistrerHistorique(
                 $id,
                 'MODIFICATION',
-                $ancien['proprietaire'] ?? null,
-                $proprietaire !== '' ? $proprietaire : null,
+                $ancien['detenteur'] ?? null,
+                $detenteur !== '' ? $detenteur : null,
                 $ancien['emplacement'] ?? null,
                 $emplacement !== '' ? $emplacement : null,
                 $ancien['etat'] ?? null,
@@ -271,7 +275,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'tracking') {
         $id = (int) ($_POST['id'] ?? 0);
-        $proprietaire = trim($_POST['proprietaire'] ?? '');
+        $detenteur = trim($_POST['detenteur'] ?? '');
         $emplacement = trim($_POST['emplacement'] ?? '');
         $etat = trim($_POST['etat'] ?? 'disponible');
 
@@ -304,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $date_prise = !empty($ancien['date_prise']) ? $ancien['date_prise'] : date('Y-m-d H:i:s');
         }
 
-        $sql = 'UPDATE outils SET proprietaire = ?, emplacement = ?, etat = ?, date_prise = ? WHERE id = ?';
+        $sql = 'UPDATE outils SET detenteur = ?, emplacement = ?, etat = ?, date_prise = ? WHERE id = ?';
         $stmt = mysqli_prepare($connexion, $sql);
 
         if (!$stmt) {
@@ -312,7 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirectPage();
         }
 
-        mysqli_stmt_bind_param($stmt, 'ssssi', $proprietaire, $emplacement, $etat, $date_prise, $id);
+        mysqli_stmt_bind_param($stmt, 'ssssi', $detenteur, $emplacement, $etat, $date_prise, $id);
         $ok = mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
@@ -324,8 +328,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         enregistrerHistorique(
             $id,
             'SUIVI',
-            $ancien['proprietaire'] ?? null,
-            $proprietaire !== '' ? $proprietaire : null,
+            $ancien['detenteur'] ?? null,
+            $detenteur !== '' ? $detenteur : null,
             $ancien['emplacement'] ?? null,
             $emplacement,
             $ancien['etat'] ?? null,
@@ -1309,7 +1313,7 @@ include '../../includes/header.php';
         <div class="filters-bar">
             <div class="filter-group">
                 <label><i class="fas fa-search"></i> Rechercher</label>
-                <input type="text" id="searchInput" placeholder="Nom, référence, propriétaire..."
+                <input type="text" id="searchInput" placeholder="Nom, référence, Détenteur..."
                     oninput="filterTable()">
             </div>
             <div class="filter-group">
@@ -1358,7 +1362,8 @@ include '../../includes/header.php';
                             <th>Référence</th>
                             <th>Nom</th>
                             <th>Type</th>
-                            <th>Propriétaire</th>
+                            <th>Propiétaire</th>
+                            <th>Détenteur</th>
                             <th>Emplacement</th>
                             <th>État</th>
                             <th>Date enregistrement</th>
@@ -1385,6 +1390,7 @@ include '../../includes/header.php';
                                 </span>
                             </td>
                             <td data-label="Propriétaire"><?= e($outil['proprietaire'] ?: 'Non défini') ?></td>
+                            <td data-label="Détenteur"><?= e($outil['detenteur'] ?: 'Non défini') ?></td>
                             <td data-label="Emplacement"><?= e($outil['emplacement'] ?: 'Non défini') ?></td>
                             <td data-label="État">
                                 <span class="badge-status <?= e($etat) ?>">
@@ -1418,13 +1424,13 @@ include '../../includes/header.php';
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <!-- SUPPRIMER -->
-                                    <form method="POST" style="display:inline" onsubmit="return confirmDelete();">
+                                    <!-- <form method="POST" style="display:inline" onsubmit="return confirmDelete();">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $id ?>">
                                         <button type="submit" class="btn-action delete" title="Supprimer">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                    </form>
+                                    </form> -->
                                 </div>
                             </td>
                         </tr>
@@ -1485,6 +1491,13 @@ include '../../includes/header.php';
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>Propriétaire <span class="required">*</span></label>
+                        <select class="form-control" name="proprietaire" id="formProprietaire" required>
+                            <option value="Evenprod">Evenprod</option>
+                            <option value="Media Tv">Media Tv</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>État <span class="required">*</span></label>
                         <select class="form-control" name="etat" id="formEtat" required>
                             <option value="disponible">Disponible</option>
@@ -1503,8 +1516,8 @@ include '../../includes/header.php';
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Propriétaire</label>
-                        <input type="text" class="form-control" name="proprietaire" id="formProprietaire"
+                        <label>Détenteur</label>
+                        <input type="text" class="form-control" name="detenteur" id="formdetenteur"
                             placeholder="Personne / service">
                     </div>
                     <div class="form-group">
@@ -1562,8 +1575,8 @@ include '../../includes/header.php';
                 <input type="hidden" name="id" id="trackingId">
 
                 <div class="form-group">
-                    <label>Propriétaire / Responsable</label>
-                    <input type="text" class="form-control" name="proprietaire" id="trackingProprietaire"
+                    <label>Détenteur / Responsable</label>
+                    <input type="text" class="form-control" name="detenteur" id="trackingdetenteur"
                         placeholder="Personne ou service">
                 </div>
 
@@ -1622,7 +1635,7 @@ include '../../includes/header.php';
                         <strong id="historyReference">-</strong>
                     </div>
                     <div class="tracking-item">
-                        <small>Propriétaire actuel</small>
+                        <small>Détenteur actuel</small>
                         <strong id="historyOwner">-</strong>
                     </div>
                     <div class="tracking-item">
@@ -1671,6 +1684,7 @@ function openAddModal() {
     document.getElementById('formAction').value = 'add';
     document.getElementById('formId').value = '';
     document.getElementById('formType').value = 'materiel';
+    document.getElementById('formProprietaire').value = '';
     document.getElementById('formEtat').value = 'disponible';
     document.getElementById('outilModalTitle').innerHTML = '<i class="fas fa-plus"></i> Ajouter un outil';
     document.getElementById('submitText').textContent = 'Enregistrer';
@@ -1715,8 +1729,9 @@ function openEdit(id) {
     document.getElementById('formNom').value = outil.nom || '';
     document.getElementById('formReference').value = outil.reference || '';
     document.getElementById('formType').value = outil.type || 'materiel';
-    document.getElementById('formDescription').value = outil.description || '';
     document.getElementById('formProprietaire').value = outil.proprietaire || '';
+    document.getElementById('formDescription').value = outil.description || '';
+    document.getElementById('formdetenteur').value = outil.detenteur || '';
     document.getElementById('formEmplacement').value = outil.emplacement || '';
     document.getElementById('formEtat').value = outil.etat || 'disponible';
 
@@ -1746,7 +1761,7 @@ function openTracking(id) {
     document.getElementById('trackingReference').textContent = outil.reference || '-';
     document.getElementById('trackingCurrentEtat').textContent = etatLabels[outil.etat] || outil.etat || '-';
     document.getElementById('trackingCurrentLocation').textContent = outil.emplacement || 'Non défini';
-    document.getElementById('trackingProprietaire').value = outil.proprietaire || '';
+    document.getElementById('trackingdetenteur').value = outil.detenteur || '';
     document.getElementById('trackingEmplacement').value = outil.emplacement || '';
     document.getElementById('trackingEtat').value = outil.etat || 'disponible';
     document.getElementById('trackingCommentaire').value = '';
@@ -1772,7 +1787,7 @@ function openHistory(id) {
 
     document.getElementById('historyName').textContent = outil.nom || '-';
     document.getElementById('historyReference').textContent = outil.reference || '-';
-    document.getElementById('historyOwner').textContent = outil.proprietaire || 'Non défini';
+    document.getElementById('historyOwner').textContent = outil.detenteur || 'Non défini';
     document.getElementById('historyLocation').textContent = outil.emplacement || 'Non défini';
 
     document.getElementById('historyList').innerHTML = `
@@ -1832,7 +1847,7 @@ function renderHistory(items) {
                     <div class="history-date">${escapeHtml(date)}</div>
                     <div class="history-action">${escapeHtml(item.action || 'Mouvement')}</div>
                     <div class="history-change">
-                        <strong>Propriétaire :</strong> ${escapeHtml(item.ancien_proprietaire || '-')} → ${escapeHtml(item.nouveau_proprietaire || '-')}
+                        <strong>Détenteur :</strong> ${escapeHtml(item.ancien_detenteur || '-')} → ${escapeHtml(item.nouveau_detenteur || '-')}
                         <br>
                         <strong>Emplacement :</strong> ${escapeHtml(item.ancien_emplacement || '-')} → ${escapeHtml(item.nouvel_emplacement || '-')}
                         <br>
